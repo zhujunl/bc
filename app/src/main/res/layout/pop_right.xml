@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="50.0dip"
+        android:layout_gravity="center"
+        android:background="@drawable/point_bg"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/iv_kefu"
+            style="@style/Sj_MyButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/point_ser_style" />
+
+        <RelativeLayout
+            android:layout_width="45.0dip"
+            android:layout_height="45.0dip" >
+
+            <Button
+                android:id="@+id/iv_account"
+                style="@style/Sj_MyButton"
+                android:layout_width="45.0dip"
+                android:layout_height="45.0dip"
+                android:layout_marginTop="1.0dip"
+                android:background="@drawable/point_ac_style" />
+
+            <TextView
+                android:id="@+id/tv_msg"
+                android:layout_width="7dip"
+                android:layout_height="7dip"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dip"
+                android:layout_marginTop="5dip"
+                android:background="@drawable/point_background_enable"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/suspended_solids" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
