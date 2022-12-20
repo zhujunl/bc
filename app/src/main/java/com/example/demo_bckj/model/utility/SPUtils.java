@@ -2,6 +2,9 @@ package com.example.demo_bckj.model.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import com.example.demo_bckj.model.bean.AccountPwBean;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -308,5 +311,19 @@ public class SPUtils {
             }
         }
         return true;
+    }
+
+    /**保存AccountPwBean类*/
+    public void save(AccountPwBean data,String password){
+        put("accountPW", data.getData().getAccount());
+        put("tel", data.getData().getTel());
+        put("slug", data.getData().getSlug());
+        put("nick_name", data.getData().getNickName());
+        put("is_authenticated", data.getData().getIsAuthenticated());
+        put("realname", data.getData().getRealname());
+        put("birthday", data.getData().getBirthday());
+        put("age", data.getData().getAge());
+        if (!TextUtils.isEmpty(password))
+            put("password", password);
     }
 }

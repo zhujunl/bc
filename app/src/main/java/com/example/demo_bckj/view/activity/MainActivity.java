@@ -48,7 +48,6 @@ import com.example.demo_bckj.inter.ClickListener;
 import com.example.demo_bckj.inter.PlayInterface;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
-import com.example.demo_bckj.model.utility.FileUtils;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.DemoPresenter;
 import com.example.demo_bckj.view.fragment.CServiceFragment;
@@ -69,13 +68,13 @@ import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
 public class MainActivity extends BaseActivity<DemoPresenter> implements ClickListener {
 
     private androidx.drawerlayout.widget.DrawerLayout DrawerLayout;
-    private Button welfareBtn,cServiceBtn,personBtn;
+    private Button welfareBtn, cServiceBtn, personBtn;
     private android.widget.LinearLayout leftLayout;
-    private androidx.appcompat.widget.LinearLayoutCompat welfareLin,cServiceLin,PersonLin;
+    private androidx.appcompat.widget.LinearLayoutCompat welfareLin, cServiceLin, PersonLin;
     private ImageView userHead;
     private ImageView userMorePh;
     private ImageView userMorePw;
-    private TextView userMore,welfareTxt,cServiceTxt,personTxt;
+    private TextView userMore, welfareTxt, cServiceTxt, personTxt;
     private ImageView userMoreAgreement;
     private ImageView userMorePrivacy;
     private TextView userQuitLogin;
@@ -111,7 +110,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     private String info;
 
     private String tel = null;
-    SPUtils bcSP ;
+    SPUtils bcSP;
 
     @Override
     protected void initData() {
@@ -119,10 +118,10 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         Log.d("tag", getDeviceId());
 
         /**
-        *隐私政策
-        * */
+         *隐私政策
+         * */
         handler.postDelayed(runnable, 500);
-        bcSP=SPUtils.getInstance(this, "bcSP");
+        bcSP = SPUtils.getInstance(this, "bcSP");
 
 
         //       //沉浸式状态栏
@@ -130,9 +129,9 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
-        cs=CServiceFragment.getInstance();
-        pf=PersonFragment.getInstance();
-        wp=WelfaceFragment.getInstance();
+        cs = CServiceFragment.getInstance();
+        pf = PersonFragment.getInstance();
+        wp = WelfaceFragment.getInstance();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -240,7 +239,8 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         welfareBtn.setOnClickListener(view -> {
             Welfare(false);
         });
-        cServiceBtn.setOnClickListener(view -> {;
+        cServiceBtn.setOnClickListener(view -> {
+            ;
             CService(false);
         });
         personBtn.setOnClickListener(view -> {
@@ -294,6 +294,18 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     public void Switch() {
         RoundView.getInstance().closeRoundView(this);
         popupLoginCode();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        RoundView.getInstance().removeSmallWindow(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RoundView.getInstance().closeRoundView(this);
     }
 
     //用户协议弹窗
@@ -375,7 +387,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
-        TextView play=inflate.findViewById(R.id.try_play);
+        TextView play = inflate.findViewById(R.id.try_play);
         LoginBuilder = new AlertDialog.Builder(this);
         LoginBuilder.setView(inflate);
         LoginBuilder.setCancelable(false);
@@ -400,7 +412,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
-                popupNumberRegister("","",false);
+                popupNumberRegister("", "", false);
             }
         });
         //输入框监听
@@ -472,8 +484,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                presenter.getPhoneLogin(this,this,popupLogin.getText().toString().trim(),popupEtCode.getText().toString().trim(),alertDialog);
-                Personal(false);
+                presenter.getPhoneLogin(this, this, popupLogin.getText().toString().trim(), popupEtCode.getText().toString().trim(), alertDialog);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -482,10 +493,10 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         //跳转
         popupLoginPw.setOnClickListener(view -> {
             alertDialog.dismiss();
-            popupLoginPw("","",false);
+            popupLoginPw("", "", false);
         });
 
-        play.setOnClickListener(v->{
+        play.setOnClickListener(v -> {
             if (!popupRb.isChecked()) {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             } else {
@@ -493,7 +504,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                     @Override
                     public void onSuccess(String account, String password) {
                         alertDialog.dismiss();
-                        popupNumberRegister(account,password,true);
+                        popupNumberRegister(account, password, true);
                         getScreenView();
                     }
 
@@ -507,7 +518,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     }
 
     //账号密码登录弹窗
-    private void popupLoginPw(String account,String password,boolean isChecked) {
+    private void popupLoginPw(String account, String password, boolean isChecked) {
         if (LoginPwBuilder != null) {
             return;
         }
@@ -546,14 +557,14 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             popupLoginCode();
         });
         //立即注册
-        popupRegister.setOnClickListener(view -> popupNumberRegister("","",false));
+        popupRegister.setOnClickListener(view -> popupNumberRegister("", "", false));
         //忘记密码
         popup_forget_pw.setOnClickListener(view -> popupForgetPassword());
         //账号密码登录
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
                 HashMap<Object, Object> map = new HashMap<>();
-                presenter.getLoginPwLo(this,popupLogin,popup_et_pw,alertDialog,this);
+                presenter.getLoginPwLo(this, popupLogin, popup_et_pw, alertDialog, this);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -725,7 +736,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     //重置密码
     private void popupResetPassword() {
-        if (ResetPwBuilder!=null){
+        if (ResetPwBuilder != null) {
             return;
         }
         View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_reset_password, null);
@@ -736,7 +747,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         ImageView popup_remove_pw_pw = inflate.findViewById(R.id.popup_remove_pw_pw);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
-        ResetPwBuilder=new AlertDialog.Builder(this);
+        ResetPwBuilder = new AlertDialog.Builder(this);
         ResetPwBuilder.setView(inflate);
         ResetPwBuilder.setCancelable(false);
         AlertDialog alertDialog = ResetPwBuilder.create();
@@ -813,7 +824,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     }
 
     //账号密码注册弹窗
-    private void popupNumberRegister(String user,String password,boolean isChecked) {
+    private void popupNumberRegister(String user, String password, boolean isChecked) {
         if (RegisterBuilder != null) {
             return;
         }
@@ -853,13 +864,13 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             alertDialog.dismiss();
         });
         popupSubmit.setOnClickListener(view -> {
-            String number=popup_number.getText().toString().trim();
-            String pass=popup_password.getText().toString().trim();
-            String pass2=popup_password_pw.getText().toString().trim();
+            String number = popup_number.getText().toString().trim();
+            String pass = popup_password.getText().toString().trim();
+            String pass2 = popup_password_pw.getText().toString().trim();
             if (popupRb.isChecked()) {
-                if (TextUtils.equals(pass,pass2)){
-                    presenter.getLoginPwRe(this,number,pass,pass2,alertDialog,MainActivity.this);
-                }else {
+                if (TextUtils.equals(pass, pass2)) {
+                    presenter.getLoginPwRe(this, number, pass, pass2, alertDialog, MainActivity.this);
+                } else {
                     Toast.makeText(MainActivity.this, "两次密码不正确", Toast.LENGTH_SHORT).show();
                 }
             } else {
@@ -954,12 +965,12 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (RoundView.getInstance().winStatus == RoundView.WIN_BIG) {
-            RoundView.getInstance().createSmallWindow(MainActivity.this,this);
+            RoundView.getInstance().createSmallWindow(MainActivity.this, this);
             RoundView.getInstance().removeBigWindow(this);
         }
-        if (event.getAction()==MotionEvent.ACTION_DOWN){
-            View v=getCurrentFocus();
-            if (isShouldHideKeyboard(v,event)){
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, event)) {
                 hideKeyboard(v.getWindowToken());
             }
         }
@@ -1048,7 +1059,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 }
             }
         } else {
-//            popupLoginCode();
+            //            popupLoginCode();
         }
     }
 
@@ -1091,7 +1102,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         }
     }
 
-    private void changeStyle(int style){
+    private void changeStyle(int style) {
         switch (style) {
             case 0:
                 personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
@@ -1123,7 +1134,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     }
 
     /*截屏*/
-    public  void getScreenView(){
+    public void getScreenView() {
         //获取窗口管理类,获取窗口的宽度和高度
         WindowManager windowManager = getWindowManager();
         Display display = windowManager.getDefaultDisplay();
@@ -1141,6 +1152,5 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         screenView.setDrawingCacheEnabled(true);
         //返回屏幕View的视图缓存
         bitmap = screenView.getDrawingCache();
-        FileUtils.saveBitmapToSdcard(bitmap);
     }
 }

@@ -8,4 +8,5 @@ package com.example.demo_bckj.view;
 public class Constants {
 //    public static String BASE_URL="http://bcapi.mfbmn.com/";
     public static String BASE_URL="https://apitest.infinite-game.cn";
+    public static String AUTHORIZATION="";
 }

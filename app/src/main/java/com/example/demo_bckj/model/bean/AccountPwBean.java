@@ -68,7 +68,7 @@ public class AccountPwBean {
         @SerializedName("birthday")
         private String birthday;
         @SerializedName("age")
-        private String age;
+        private Integer age;
 
         public String getAccount() {
             return account;
@@ -126,11 +126,11 @@ public class AccountPwBean {
             this.birthday = birthday;
         }
 
-        public String getAge() {
+        public Integer getAge() {
             return age;
         }
 
-        public void setAge(String age) {
+        public void setAge(Integer age) {
             this.age = age;
         }
 

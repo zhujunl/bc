@@ -2,11 +2,14 @@ package com.example.demo_bckj.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.presenter.PersonPresenter;
 
 import androidx.annotation.NonNull;
 
@@ -24,10 +27,12 @@ public class ModifyPWDialog extends Dialog {
     private ImageView back, remove, AMove;
     private EditText pw, newPw, newPwA;
     private Button submit;
+    private PersonPresenter presenter;
 
-    public ModifyPWDialog(@NonNull Context context) {
+    public ModifyPWDialog(@NonNull Context context, PersonPresenter presenter) {
         super(context);
         this.context = context;
+        this.presenter=presenter;
         setContentView(R.layout.dialog_modifypw);
         initView();
 
@@ -48,6 +53,16 @@ public class ModifyPWDialog extends Dialog {
     private void click() {
         back.setOnClickListener(v->{
             dismiss();
+        });
+        submit.setOnClickListener(v->{
+            String trim = pw.getText().toString().trim();
+            String trim1 = newPw.getText().toString().trim();
+            String trim2 = newPwA.getText().toString().trim();
+            if (!TextUtils.equals(trim1,trim2)){
+                Toast.makeText(context, "两次密码不一致", Toast.LENGTH_SHORT).show();
+            }else {
+                presenter.modifyPwd(context,trim,trim1,trim2,this);
+            }
         });
     }
 }

@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import com.example.demo_bckj.inter.ClickListener;
+import com.example.demo_bckj.model.utility.FileUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -157,6 +158,7 @@ public class RoundWindowSmallView extends LinearLayout {
         lastClickTime = time;
         return false;
     }
+
     protected boolean isOnClickEvent() {
         return System.currentTimeMillis() - mLastTouchDownTime < TOUCH_TIME_THRESHOLD;
     }
@@ -258,9 +260,9 @@ public class RoundWindowSmallView extends LinearLayout {
     public void hidePop(){
         Animation mAnimation = null;
         if (RoundView.isNearLeft) {
-            mAnimation = AnimationUtils.loadAnimation(context,FileUtil.getResIdFromFileName(context, "anim", "slide_out_left"));
+            mAnimation = AnimationUtils.loadAnimation(context, FileUtil.getResIdFromFileName(context, "anim", "slide_out_left"));
         } else {
-            mAnimation = AnimationUtils.loadAnimation(context,FileUtil.getResIdFromFileName(context, "anim", "slide_out_right"));
+            mAnimation = AnimationUtils.loadAnimation(context, FileUtil.getResIdFromFileName(context, "anim", "slide_out_right"));
         }
         view.startAnimation(mAnimation);
         mAnimation.setAnimationListener(new Animation.AnimationListener() {

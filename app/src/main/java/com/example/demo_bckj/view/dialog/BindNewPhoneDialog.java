@@ -2,6 +2,7 @@ package com.example.demo_bckj.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.model.utility.DeviceIdUtil;
+import com.example.demo_bckj.presenter.PersonPresenter;
 
 import androidx.annotation.NonNull;
 
@@ -26,18 +29,22 @@ public class BindNewPhoneDialog extends Dialog {
     private EditText phone,code;
     private Button submit;
     private VerifyPhoneDialog dialog;
+    private PersonPresenter presenter;
+    private String codeOld;
 
-    public BindNewPhoneDialog(@NonNull Context context,VerifyPhoneDialog dialog) {
+    public BindNewPhoneDialog(@NonNull Context context, VerifyPhoneDialog dialog, PersonPresenter presenter) {
         super(context);
         this.context=context;
         this.dialog=dialog;
+        this.presenter=presenter;
         setContentView(R.layout.dialog_bindnewphone);
         initView();
     }
 
-    public BindNewPhoneDialog(@NonNull Context context) {
+    public BindNewPhoneDialog(@NonNull Context context,PersonPresenter presenter) {
         super(context);
         this.context=context;
+        this.presenter=presenter;
         setContentView(R.layout.dialog_bindnewphone);
         initView();
     }
@@ -68,11 +75,36 @@ public class BindNewPhoneDialog extends Dialog {
             }
         });
         submit.setOnClickListener(v->{
-            if (dialog!=null){
-                dialog.dismiss();
+            if (TextUtils.isEmpty(code.getText().toString().trim())){
+                Toast.makeText(context, "请输入验证码", Toast.LENGTH_SHORT).show();
+                return;
             }
-            dismiss();
-            Toast.makeText(context, dialog!=null?"换绑成功":"绑定成功", Toast.LENGTH_SHORT).show();
+            if (dialog==null){
+                presenter.BindPhone(context,phone.getText().toString().trim(),code.getText().toString().trim(),this);
+            }else {
+                presenter.modifyBindPhone(context,codeOld,code.getText().toString().trim(),phone.getText().toString().trim(),dialog,this);
+            }
+        });
+        TCode.setOnClickListener(v->{
+            String p = phone.getText().toString().trim();
+            boolean mobileNO = DeviceIdUtil.isMobileNO(p);
+            if (!mobileNO) {
+                Toast.makeText(getContext(), "请输入合法手机号", Toast.LENGTH_SHORT).show();
+            } else {
+                //获取短信
+                if (dialog==null) {
+                    presenter.BindPhoneCode(context, p, TCode);
+                }else {
+                    presenter.modifyBindCode(context,p,TCode);
+                }
+            }
+
+
         });
     }
+
+    public void set(String trim, String trim1) {
+        codeOld=trim1;
+    }
+
 }

@@ -19,18 +19,13 @@ import android.util.Log;
 
 import com.example.demo_bckj.model.bean.SignInfoBean;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -38,10 +33,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import androidx.core.app.ActivityCompat;
 
@@ -434,9 +425,7 @@ public class DeviceIdUtil {
 
 
     //获取sign和info
-    public static SignInfoBean getSign(Context context) throws JSONException, InvalidAlgorithmParameterException,
-            NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException,
-            NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public static SignInfoBean getSign(Context context) throws Exception {
         String nonce = Encryptutility.getRandomString(32);
         Log.d("tag", "当前随机数：" + nonce);
         char[] charArray = nonce.toCharArray();

@@ -1,9 +1,14 @@
 package com.example.demo_bckj.model;
 
+import android.content.Context;
 import android.os.Build;
+import android.text.TextUtils;
 
+import com.example.demo_bckj.model.bean.SignInfoBean;
+import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.view.Constants;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -14,7 +19,11 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 
+import androidx.annotation.NonNull;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -29,7 +38,7 @@ public class RetrofitManager {
     public static RetrofitManager retrofitManager;
     private ApiService apiService;
 
-    private RetrofitManager(){
+    private RetrofitManager(Context context){
         final X509TrustManager trustManager = new X509TrustManager() {
             @Override
             public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -65,6 +74,27 @@ public class RetrofitManager {
         };
         client.hostnameVerifier((hostname, session) -> true);
         client.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        client.addInterceptor(new Interceptor() {
+            @NonNull
+            @Override
+            public Response intercept(@NonNull Chain chain) throws IOException {
+                try {
+                    SignInfoBean sign = DeviceIdUtil.getSign(context);
+                    Request original = chain.request();
+                    Request.Builder requestBuilder = original.newBuilder()
+                            .header("sign", sign.sign)
+                            .header("info", sign.info);
+                    if (!TextUtils.isEmpty(Constants.AUTHORIZATION)){
+                        requestBuilder.addHeader("Authorization","Bearer "+Constants.AUTHORIZATION);
+                    }
+                    Request request = requestBuilder.build();
+                    return chain.proceed(request);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
         OkHttpClient build = client.build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -76,10 +106,10 @@ public class RetrofitManager {
         apiService=retrofit.create(ApiService.class);
     }
     //单例
-    public static RetrofitManager getInstance(){
+    public static RetrofitManager getInstance(Context context){
         if (retrofitManager==null){
             synchronized (RetrofitManager.class){
-                retrofitManager=new RetrofitManager();
+                retrofitManager=new RetrofitManager(context);
             }
         }
         return retrofitManager;

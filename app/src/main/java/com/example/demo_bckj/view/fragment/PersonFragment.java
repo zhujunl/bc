@@ -1,18 +1,20 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.PrivacyDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
-import com.example.demo_bckj.view.dialog.RechargeDialog;
 import com.example.demo_bckj.view.dialog.UserAgreeDialog;
+import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 
 /**
  * @author ZJL
@@ -28,8 +30,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private TextView account, phone, userMore;
     private RelativeLayout modifyPw, phoneRe, realName, userAgree, privacy;
     private Button quit;
-
-    private String phoneNumber="18762742750";
+    private SPUtils sp;
+    private String tel, nickName;
 
     public static PersonFragment getInstance() {
         if (instance == null) {
@@ -43,7 +45,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     @Override
     protected void initData() {
-
+        init();
     }
 
     @Override
@@ -58,12 +60,9 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         quit = v.findViewById(R.id.user_quit_login);
         phoneRe = v.findViewById(R.id.phoneRe);
 
-        String s = phoneNumber.substring(0, 3) + "****" + phoneNumber.substring(7, phoneNumber.length());
-        account.setText(s);
-        phone.setText(s);
-
         click();
     }
+
 
     @Override
     protected int initLayoutID() {
@@ -77,7 +76,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     @Override
     public void onSuccess(Object o) {
-
+        init();
     }
 
     @Override
@@ -85,35 +84,61 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     }
 
+    private void init(){
+        sp = SPUtils.getInstance(getContext(), "bcSP");
+        nickName = sp.getString("nick_name", "");
+        tel = sp.getString("tel", "");
+        if (TextUtils.isEmpty(tel)) {
+            account.setText(nickName);
+            phone.setText("绑定");
+            phone.setTextColor(0xFF5293FF);
+        } else {
+            String s = tel.substring(0, 3) + "****" + tel.substring(7, tel.length());
+            account.setText(s);
+            phone.setText(s);
+        }
+        boolean isAuthenticated = sp.getBoolean("is_authenticated", false);
+        userMore.setText(isAuthenticated?"已认证":"未认证");
+        userMore.setTextColor(isAuthenticated?0x999999:0xFF5293FF);
+    }
+//未成年充值提醒
+//    RechargeDialog rechargeDialog = new RechargeDialog(getActivity());
+//            rechargeDialog.show();
+
     private void click() {
         phoneRe.setOnClickListener(v -> {
-            ////验证手机号
-            //            VerifyPhoneDialog verifyPhoneDialog = new VerifyPhoneDialog(getActivity());
-            //            verifyPhoneDialog.show();
-            //绑定手机号
-            BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity());
-            bindNewPhoneDialog.show();
+            if (TextUtils.isEmpty(tel)) {
+                //绑定手机号
+                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(),presenter);
+                bindNewPhoneDialog.show();
+            } else {
+                //验证手机号
+                VerifyPhoneDialog verifyPhoneDialog = new VerifyPhoneDialog(getActivity(),presenter);
+                verifyPhoneDialog.show();
+            }
+
+
         });
         modifyPw.setOnClickListener(v -> {
             //修改密码
-            ModifyPWDialog modifyPWDialog=new ModifyPWDialog(getActivity());
+            ModifyPWDialog modifyPWDialog = new ModifyPWDialog(getActivity(),presenter);
             modifyPWDialog.show();
         });
         realName.setOnClickListener(v -> {
-            RealNameDialog realNameDialog=new RealNameDialog(getActivity());
+            //实名认证
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(),presenter);
             realNameDialog.show();
         });
         userAgree.setOnClickListener(v -> {
-            UserAgreeDialog userAgreeDialog=new UserAgreeDialog(getActivity());
+            UserAgreeDialog userAgreeDialog = new UserAgreeDialog(getActivity());
             userAgreeDialog.show();
         });
-         privacy.setOnClickListener(v -> {
-             PrivacyDialog privacyDialog=new PrivacyDialog(getActivity());
-             privacyDialog.show();
+        privacy.setOnClickListener(v -> {
+            PrivacyDialog privacyDialog = new PrivacyDialog(getActivity());
+            privacyDialog.show();
         });
-         quit.setOnClickListener(v->{
-             RechargeDialog rechargeDialog=new RechargeDialog(getActivity());
-             rechargeDialog.show();
-         });
+        quit.setOnClickListener(v -> {
+            presenter.loginOut(getContext());
+        });
     }
 }

@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 public class RealNameRegisterDialog extends Dialog {
 
     private Context context;
-
     public RealNameRegisterDialog(@NonNull Context context) {
         super(context);
         this.context=context;
