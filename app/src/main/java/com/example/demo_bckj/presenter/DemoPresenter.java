@@ -3,6 +3,7 @@ package com.example.demo_bckj.presenter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
@@ -14,6 +15,7 @@ import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
 import com.example.demo_bckj.model.bean.DateUpBean;
 import com.example.demo_bckj.model.bean.PlayBean;
+import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.view.round.RoundView;
@@ -200,5 +202,39 @@ public class DemoPresenter extends BasePresenter {
 
 
     }
-    
+
+
+    //忘记密码
+    public void forgetPwd(Context context, String number, TextView popupTvCode) {
+        RetrofitManager.getInstance(context).getApiService().forgetPwd(number).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
+                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(popupTvCode, 60000, 1000);
+                countDownTimerUtils.start();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    //重置密码
+    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation, AlertDialog resetDialog, AlertDialog forgetDialog) {
+        RetrofitManager.getInstance(context).getApiService().resetPwd(tel, code, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                Toast.makeText(context, "密码修改成功", Toast.LENGTH_SHORT).show();
+                resetDialog.dismiss();
+                forgetDialog.dismiss();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

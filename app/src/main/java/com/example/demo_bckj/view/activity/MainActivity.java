@@ -85,6 +85,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     private AlertDialog.Builder LoginPwBuilder = null;
     private AlertDialog.Builder ForgetPwBuilder = null;
     private AlertDialog.Builder ResetPwBuilder = null;
+    private AlertDialog loginDialog,registerDialog,loginPwDialog,forgetDialog,resetDialog;
 
 
     private CServiceFragment cs;
@@ -391,17 +392,17 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         LoginBuilder = new AlertDialog.Builder(this);
         LoginBuilder.setView(inflate);
         LoginBuilder.setCancelable(false);
-        AlertDialog alertDialog = LoginBuilder.create();
-        alertDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
+        loginDialog= LoginBuilder.create();
+        loginDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) alertDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(alertDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+                InputMethodManager imm = (InputMethodManager) loginDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(loginDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
                 return true;
             }
         });
-        alertDialog.show();
-        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        loginDialog.show();
+        loginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 LoginBuilder = null;
@@ -411,7 +412,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         popup_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialog.dismiss();
+                loginDialog.dismiss();
                 popupNumberRegister("", "", false);
             }
         });
@@ -484,7 +485,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                presenter.getPhoneLogin(this, this, popupLogin.getText().toString().trim(), popupEtCode.getText().toString().trim(), alertDialog);
+                presenter.getPhoneLogin(this, this, popupLogin.getText().toString().trim(), popupEtCode.getText().toString().trim(), loginDialog);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -492,7 +493,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
         //跳转
         popupLoginPw.setOnClickListener(view -> {
-            alertDialog.dismiss();
+            loginDialog.dismiss();
             popupLoginPw("", "", false);
         });
 
@@ -503,7 +504,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 presenter.getDemoAccount(this, new PlayInterface() {
                     @Override
                     public void onSuccess(String account, String password) {
-                        alertDialog.dismiss();
+                        loginDialog.dismiss();
                         popupNumberRegister(account, password, true);
                         getScreenView();
                     }
@@ -537,34 +538,37 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         LoginPwBuilder = new AlertDialog.Builder(this);
         LoginPwBuilder.setView(inflate);
         LoginPwBuilder.setCancelable(false);
-        AlertDialog alertDialog = LoginPwBuilder.create();
-        alertDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
+        loginPwDialog = LoginPwBuilder.create();
+        loginPwDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) alertDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(alertDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+                InputMethodManager imm = (InputMethodManager) loginPwDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(loginPwDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
                 return true;
             }
         });
-        alertDialog.show();
-        alertDialog.setOnDismissListener(dialogInterface -> LoginPwBuilder = null);
+        loginPwDialog.show();
+        loginPwDialog.setOnDismissListener(dialogInterface -> LoginPwBuilder = null);
         popupLogin.setText(account);
         popup_et_pw.setText(password);
         popupRb.setChecked(isChecked);
         //返回
         popup_back.setOnClickListener(view -> {
-            alertDialog.dismiss();
+            loginPwDialog.dismiss();
             popupLoginCode();
         });
         //立即注册
         popupRegister.setOnClickListener(view -> popupNumberRegister("", "", false));
         //忘记密码
-        popup_forget_pw.setOnClickListener(view -> popupForgetPassword());
+        popup_forget_pw.setOnClickListener(view -> {
+            loginPwDialog.hide();
+            popupForgetPassword();
+        });
         //账号密码登录
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
                 HashMap<Object, Object> map = new HashMap<>();
-                presenter.getLoginPwLo(this, popupLogin, popup_et_pw, alertDialog, this);
+                presenter.getLoginPwLo(this, popupLogin, popup_et_pw, loginPwDialog, this);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -648,27 +652,41 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         ForgetPwBuilder = new AlertDialog.Builder(this);
         ForgetPwBuilder.setView(inflate);
         ForgetPwBuilder.setCancelable(false);
-        AlertDialog alertDialog = ForgetPwBuilder.create();
-        alertDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
+        forgetDialog = ForgetPwBuilder.create();
+        forgetDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) alertDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(alertDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+                InputMethodManager imm = (InputMethodManager) forgetDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(forgetDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
                 return true;
             }
         });
-        alertDialog.show();
-        alertDialog.setOnDismissListener(dialogInterface -> ForgetPwBuilder = null);
+        forgetDialog.show();
+        forgetDialog.setOnDismissListener(dialogInterface -> ForgetPwBuilder = null);
         //验证
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                popupResetPassword();
+                String trim1 = popupLogin.getText().toString().trim();
+                String trim2 = popupEtCode.getText().toString().trim();
+                if (TextUtils.isEmpty(trim1)||TextUtils.isEmpty(trim2)){
+                    Toast.makeText(this, "请输入手机号与验证码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!DeviceIdUtil.isMobileNO(trim1)){
+                    Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                forgetDialog.hide();
+                popupResetPassword(trim1,trim2);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         //返回上一级
-        popup_back.setOnClickListener(view -> alertDialog.dismiss());
+        popup_back.setOnClickListener(view -> {
+            loginPwDialog.show();
+            forgetDialog.dismiss();
+        });
         //跳转联系客服
         popup_service.setOnClickListener(view -> Toast.makeText(MainActivity.this, "尽请期待", Toast.LENGTH_SHORT).show());
         //输入框监听
@@ -729,13 +747,21 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         });
         popup_loginPw.setOnClickListener(view -> popupLoginCode());
         popupTvCode.setOnClickListener(view -> {
-            CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(popupTvCode, 60000, 1000);
-            countDownTimerUtils.start();
+            String trim1 = popupLogin.getText().toString().trim();
+            if (TextUtils.isEmpty(trim1)){
+                Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!DeviceIdUtil.isMobileNO(trim1)){
+                Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            presenter.forgetPwd(this,trim1,popupTvCode);
         });
     }
 
     //重置密码
-    private void popupResetPassword() {
+    private void popupResetPassword(String n,String c) {
         if (ResetPwBuilder != null) {
             return;
         }
@@ -750,20 +776,28 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         ResetPwBuilder = new AlertDialog.Builder(this);
         ResetPwBuilder.setView(inflate);
         ResetPwBuilder.setCancelable(false);
-        AlertDialog alertDialog = ResetPwBuilder.create();
+        resetDialog = ResetPwBuilder.create();
         // dialog 外部监听
-        alertDialog.getWindow().getDecorView().setOnTouchListener((v, event) -> {
-            InputMethodManager imm = (InputMethodManager) alertDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(alertDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+        resetDialog.getWindow().getDecorView().setOnTouchListener((v, event) -> {
+            InputMethodManager imm = (InputMethodManager) resetDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(resetDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
             return true;
         });
-        alertDialog.show();
+        resetDialog.show();
+        resetDialog.setOnDismissListener(dialog -> {
+            ResetPwBuilder=null;
+        });
         //确认重置密码
         popupSubmit.setOnClickListener(view -> {
-
+            String trim1 = popup_new_password.getText().toString().trim();
+            String trim2 = popup_password_pw.getText().toString().trim();
+            presenter.resetPwd(this,n,c,trim1,trim2,resetDialog,forgetDialog);
         });
         //返回上一级
-        popup_back.setOnClickListener(view -> alertDialog.dismiss());
+        popup_back.setOnClickListener(view -> {
+            forgetDialog.show();
+            resetDialog.dismiss();
+        });
         //输入框监听
         popup_new_password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -820,7 +854,10 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 }
             }
         });
-        popup_loginPw.setOnClickListener(view -> popupLoginCode());
+        popup_loginPw.setOnClickListener(view -> {
+            resetDialog.dismiss();
+            popupLoginCode();
+        });
     }
 
     //账号密码注册弹窗
@@ -843,17 +880,17 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         RegisterBuilder = new AlertDialog.Builder(this);
         RegisterBuilder.setView(inflate);
         RegisterBuilder.setCancelable(false);
-        AlertDialog alertDialog = RegisterBuilder.create();
-        alertDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
+        registerDialog = RegisterBuilder.create();
+        registerDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) alertDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(alertDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+                InputMethodManager imm = (InputMethodManager) registerDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(registerDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
                 return true;
             }
         });
-        alertDialog.show();
-        alertDialog.setOnDismissListener(dialogInterface -> RegisterBuilder = null);
+        registerDialog.show();
+        registerDialog.setOnDismissListener(dialogInterface -> RegisterBuilder = null);
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
@@ -861,7 +898,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         //返回
         popup_back.setOnClickListener(view -> {
             popupLoginCode();
-            alertDialog.dismiss();
+            registerDialog.dismiss();
         });
         popupSubmit.setOnClickListener(view -> {
             String number = popup_number.getText().toString().trim();
@@ -869,7 +906,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             String pass2 = popup_password_pw.getText().toString().trim();
             if (popupRb.isChecked()) {
                 if (TextUtils.equals(pass, pass2)) {
-                    presenter.getLoginPwRe(this, number, pass, pass2, alertDialog, MainActivity.this);
+                    presenter.getLoginPwRe(this, number, pass, pass2, registerDialog, MainActivity.this);
                 } else {
                     Toast.makeText(MainActivity.this, "两次密码不正确", Toast.LENGTH_SHORT).show();
                 }

@@ -189,35 +189,6 @@ public class PersonPresenter extends BasePresenter {
         });
     }
 
-    //忘记密码
-    public void forgetPwd(Context context, String number) {
-        RetrofitManager.getInstance(context).getApiService().forgetPwd(number).enqueue(new MyCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(JSONObject jsStr) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    //重置密码
-    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation) {
-        RetrofitManager.getInstance(context).getApiService().resetPwd(tel, code, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(JSONObject jsStr) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     public void loginOut(Context context) {
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
