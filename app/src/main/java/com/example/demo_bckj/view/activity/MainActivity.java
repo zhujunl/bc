@@ -1,6 +1,7 @@
 package com.example.demo_bckj.view.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -67,6 +69,8 @@ import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
 
 public class MainActivity extends BaseActivity<DemoPresenter> implements ClickListener {
 
+    private final String TAG="MainActivity";
+
     private androidx.drawerlayout.widget.DrawerLayout DrawerLayout;
     private Button welfareBtn, cServiceBtn, personBtn;
     private android.widget.LinearLayout leftLayout;
@@ -85,7 +89,8 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     private AlertDialog.Builder LoginPwBuilder = null;
     private AlertDialog.Builder ForgetPwBuilder = null;
     private AlertDialog.Builder ResetPwBuilder = null;
-    private AlertDialog loginDialog,registerDialog,loginPwDialog,forgetDialog,resetDialog;
+    private AlertDialog.Builder AutoBuilder = null;
+    private AlertDialog loginDialog,registerDialog,loginPwDialog,forgetDialog,resetDialog,autoDialog;
 
 
     private CServiceFragment cs;
@@ -118,11 +123,13 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         //调用显示悬浮球
         Log.d("tag", getDeviceId());
 
-        /**
-         *隐私政策
-         * */
-        handler.postDelayed(runnable, 500);
         bcSP = SPUtils.getInstance(this, "bcSP");
+        handler.postDelayed(runnable, 500);
+
+            /**
+             *隐私政策
+             * */
+
 
 
         //       //沉浸式状态栏
@@ -167,36 +174,19 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 bcSP.put("isFirst", true);
                 popupAgreement();
             } else {
-                popupLoginCode();
+                String password = bcSP.getString("password", "");
+                String account = bcSP.getString("account", "");
+                if (!TextUtils.isEmpty(password)&&!TextUtils.isEmpty(account)){
+//                    LoginPop loginPop=new LoginPop(MainActivity.this,MainActivity.this);
+                    popupLoginAuto( account, password);
+
+                }else {
+                    popupLoginCode();
+                }
             }
         }
     };
 
-    //    //动态权限运行时申请回调
-    //    @Override
-    //    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-    //        switch (requestCode) {
-    //            case REQUEST_READ_PHONE_STATE:
-    //                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-    //                    try {
-    //                        Class<?> c =Class.forName("android.os.SystemProperties");
-    //                        Method get =c.getMethod("get", String.class);
-    //                        String serial = (String)get.invoke(c, "ro.serialno");
-    //
-    //                        //android 获取sim卡运营商信息
-    //                        TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-    //                        @SuppressLint("MissingPermission") String subscriberId = telManager.getSubscriberId();
-    //
-    //
-    //                    } catch (Exception e) {
-    //                        e.printStackTrace();
-    //                    }
-    //                }
-    //                break;
-    //            default:
-    //                break;
-    //        }
-    //    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -271,6 +261,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     @Override
     public void CService(boolean show) {
+        Log.d(TAG, "CService"  );
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(1);
@@ -279,6 +270,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     @Override
     public void Personal(boolean show) {
+        Log.d(TAG, "Personal"  );
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(0);
@@ -287,13 +279,16 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     @Override
     public void Welfare(boolean isShow) {
+        Log.d(TAG, "Welfare"  );
         changeStyle(2);
         nvTo(wp);
     }
 
     @Override
     public void Switch() {
+        Log.d(TAG, "Switch"  );
         RoundView.getInstance().closeRoundView(this);
+        bcSP.put("password","");
         popupLoginCode();
     }
 
@@ -568,7 +563,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
                 HashMap<Object, Object> map = new HashMap<>();
-                presenter.getLoginPwLo(this, popupLogin, popup_et_pw, loginPwDialog, this);
+                presenter.getLoginPwLo(this, popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(),loginPwDialog, this);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -999,6 +994,39 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         });
     }
 
+    //自动登录弹窗
+    @SuppressLint("ClickableViewAccessibility")
+    private void popupLoginAuto(String account, String password){
+        if (AutoBuilder!=null){
+            return;
+        }
+        AutoBuilder=new AlertDialog.Builder(this);
+        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.pop_login_tittle, null);
+        TextView txt =inflate.findViewById(R.id.login_account);
+        TextView btn =inflate.findViewById(R.id.login_switch);
+        String tel = bcSP.getString("tel", "");
+        txt.setText(TextUtils.isEmpty(tel)?account.substring(0, 3) + "****" + account.substring(7, account.length()):
+                tel.substring(0, 3) + "****" + tel.substring(7, tel.length()));
+        AutoBuilder.setView(inflate);
+        autoDialog=AutoBuilder.create();
+        Window window = autoDialog.getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        window.setGravity(Gravity.TOP|Gravity.CENTER);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+        window.clearFlags( WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        params.windowAnimations = R.style.popwindowAnimStyle;
+        params.width= 0;
+        params.y=80;
+        autoDialog.getWindow().setAttributes(params);
+        autoDialog.show();
+        autoDialog.setOnDismissListener(dialogInterface -> AutoBuilder = null);
+        presenter.getLoginPwLo(MainActivity.this,account,password,autoDialog,MainActivity.this);
+        btn.setOnClickListener(v-> {
+            autoDialog.dismiss();
+            Switch();
+        });
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (RoundView.getInstance().winStatus == RoundView.WIN_BIG) {
@@ -1024,7 +1052,6 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                     boolean isAllGranted = checkPermissionAllGranted(PermissionString);
                     if (isAllGranted) {
                         //跳转至手机号验证码登录
-                        popupLoginCode();
                         return true;
                     }
                     ActivityCompat.requestPermissions(this, PermissionString, 1);
@@ -1095,8 +1122,6 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                     mDialog.show();
                 }
             }
-        } else {
-            //            popupLoginCode();
         }
     }
 

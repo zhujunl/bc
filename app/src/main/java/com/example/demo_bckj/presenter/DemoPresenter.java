@@ -2,7 +2,6 @@ package com.example.demo_bckj.presenter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -145,15 +144,16 @@ public class DemoPresenter extends BasePresenter {
                 });
     }
     //账号密码登录
-    public void getLoginPwLo(Context context, EditText name,EditText password, AlertDialog dialog,ClickListener listener){
+    public void getLoginPwLo(Context context, String name, String password, AlertDialog dialog, ClickListener listener){
         RetrofitManager.getInstance(context)
                 .getApiService()
-                .getLoginPwLo(name.getText().toString().trim(),password.getText().toString().trim()).enqueue(new MyCallback<ResponseBody>() {
+                .getLoginPwLo(name,password).enqueue(new MyCallback<ResponseBody>() {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
+                        if (dialog!=null)
+                            dialog.dismiss();
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        SPUtils.getInstance(context, "bcSP").save(data,password.getText().toString().trim());
-                        dialog.dismiss();
+                        SPUtils.getInstance(context, "bcSP").save(data,password);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false);
                     }
