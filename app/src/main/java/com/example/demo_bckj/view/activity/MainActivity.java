@@ -1,23 +1,17 @@
 package com.example.demo_bckj.view.activity;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -50,8 +44,10 @@ import com.example.demo_bckj.inter.ClickListener;
 import com.example.demo_bckj.inter.PlayInterface;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
+import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.DemoPresenter;
+import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.fragment.CServiceFragment;
 import com.example.demo_bckj.view.fragment.PersonFragment;
 import com.example.demo_bckj.view.fragment.WelfaceFragment;
@@ -99,38 +95,22 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     public final static int REQUEST_READ_PHONE_STATE = 1;
     private int targetSdkVersion = 0;
-    String[] PermissionString = {
-            Manifest.permission.INTERNET,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
-    };
+
 
 
     private Handler handler = new Handler();
-    private String sign;
-    private String info;
 
     private String tel = null;
     SPUtils bcSP;
 
     @Override
     protected void initData() {
-        //调用显示悬浮球
         Log.d("tag", getDeviceId());
 
+
         bcSP = SPUtils.getInstance(this, "bcSP");
+
         handler.postDelayed(runnable, 500);
-
-            /**
-             *隐私政策
-             * */
-
-
 
         //       //沉浸式状态栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -141,9 +121,6 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         pf = PersonFragment.getInstance();
         wp = WelfaceFragment.getInstance();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
 
         //设备型号
         String model = Build.MODEL;
@@ -154,12 +131,12 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         Log.d("TAG", "AndroidName==" + AndroidName);
 
         //设备网络运营商代码
-        TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String operator = DeviceIdUtil.getSimOperator(telManager.getSimOperator());
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            tel = telManager.getLine1Number();//手机号码
-        }
-        Log.e("tel  ", operator + "   " + tel);
+//        TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//        String operator = DeviceIdUtil.getSimOperator(telManager.getSimOperator());
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+//            tel = telManager.getLine1Number();//手机号码
+//        }
+//        Log.e("tel  ", operator + "   " + tel);
 
         //接口请求
         presenter.getSdk(this);
@@ -170,16 +147,14 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         public void run() {
             //用户协议弹窗
             boolean isFirstRun = bcSP.getBoolean("isFirst", false);
-            if (!isFirstRun || !checkPermission()) {
+            if (!isFirstRun||!checkPermissionAllGranted(Constants.PermissionString)) {
                 bcSP.put("isFirst", true);
                 popupAgreement();
             } else {
                 String password = bcSP.getString("password", "");
                 String account = bcSP.getString("account", "");
                 if (!TextUtils.isEmpty(password)&&!TextUtils.isEmpty(account)){
-//                    LoginPop loginPop=new LoginPop(MainActivity.this,MainActivity.this);
                     popupLoginAuto( account, password);
-
                 }else {
                     popupLoginCode();
                 }
@@ -348,22 +323,19 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         popupWindow.setFocusable(false);
         popupWindow.setOutsideTouchable(false);
         //显示popupWindow
-        popupWindow.showAtLocation(inflate, Gravity.CENTER, 0, 0);
-        //同意
-        popup_agree.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.main_layout).post(new Runnable() {
             @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-                checkPermission();
+            public void run() {
+                popupWindow.showAtLocation(inflate, Gravity.CENTER, 0, 0);
             }
+        });
+        //同意
+        popup_agree.setOnClickListener(v -> {
+            popupWindow.dismiss();
+            ActivityCompat.requestPermissions(this, Constants.PermissionString, 1);
         });
         //不同意协议
-        popup_disagree.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        popup_disagree.setOnClickListener(v -> finish());
     }
 
     //手机号验证码登录
@@ -501,7 +473,6 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                     public void onSuccess(String account, String password) {
                         loginDialog.dismiss();
                         popupNumberRegister(account, password, true);
-                        getScreenView();
                     }
 
                     @Override
@@ -890,6 +861,13 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         popup_password.setText(password);
         popup_password_pw.setText(password);
         popupRb.setChecked(isChecked);
+
+        inflate.post(new Runnable() {
+            @Override
+            public void run() {
+                getScreenView(registerDialog);
+            }
+        });
         //返回
         popup_back.setOnClickListener(view -> {
             popupLoginCode();
@@ -992,10 +970,10 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 }
             }
         });
+
     }
 
     //自动登录弹窗
-    @SuppressLint("ClickableViewAccessibility")
     private void popupLoginAuto(String account, String password){
         if (AutoBuilder!=null){
             return;
@@ -1042,85 +1020,38 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         return super.dispatchTouchEvent(event);
     }
 
-    public boolean checkPermission() {
-        try {
-            final PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            targetSdkVersion = info.applicationInfo.targetSdkVersion;//获取应用的Target版本
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (targetSdkVersion >= Build.VERSION_CODES.M) {
-                    //第 1 步: 检查是否有相应的权限
-                    boolean isAllGranted = checkPermissionAllGranted(PermissionString);
-                    if (isAllGranted) {
-                        //跳转至手机号验证码登录
-                        return true;
-                    }
-                    ActivityCompat.requestPermissions(this, PermissionString, 1);
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
+    /**
+     * 检查是否获取所有权限
+     */
     private boolean checkPermissionAllGranted(String[] permissions) {
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                // 只要有一个权限没有被授予, 则直接返回 false
                 return false;
             }
         }
         return true;
     }
 
-    private AlertDialog mDialog;
-
-    //申请权限结果返回处理
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            for (int i = 0; i < permissions.length; i++) {
-                //已授权
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    if (i == permissions.length - 1) {
-                        popupLoginCode();
-                    }
-                    continue;
+        PackageManager packageManager = this.getPackageManager();
+        PermissionInfo permissionInfo = null;
+        for (int i = 0; i < permissions.length; i++) {
+            try {
+                permissionInfo = packageManager.getPermissionInfo(permissions[i], 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            CharSequence permissionName = permissionInfo.loadLabel(packageManager);
+            if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                if (i==permissions.length - 1){
+                    popupLoginCode();
                 }
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
-                    //选择禁止
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("授权");
-                    builder.setMessage("需要允许授权才可使用");
-                    int finalI = i;
-                    builder.setPositiveButton("去允许", (dialog, id) -> {
-                        if (mDialog != null && mDialog.isShowing()) {
-                            mDialog.dismiss();
-                        }
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{permissions[finalI]}, 1);
-                    });
-                    mDialog = builder.create();
-                    mDialog.setCanceledOnTouchOutside(false);
-                    mDialog.show();
-                } else {
-                    //选择禁止并勾选禁止后不再询问
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("授权");
-                    builder.setMessage("需要允许授权才可使用");
-                    builder.setPositiveButton("去授权", (dialog, id) -> {
-                        if (mDialog != null && mDialog.isShowing()) {
-                            mDialog.dismiss();
-                        }
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        //调起应用设置页面
-                        startActivityForResult(intent, 2);
-                    });
-                    mDialog = builder.create();
-                    mDialog.setCanceledOnTouchOutside(false);
-                    mDialog.show();
-                }
+                Log.i(TAG, "您同意了【" + permissionName + "】权限");
+            } else {
+                Log.i(TAG, "您拒绝了【" + permissionName + "】权限");
             }
         }
     }
@@ -1195,8 +1126,9 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         }
     }
 
-    /*截屏*/
-    public void getScreenView() {
+    /**截屏
+     * @param registerDialog*/
+    public void getScreenView(AlertDialog registerDialog) {
         //获取窗口管理类,获取窗口的宽度和高度
         WindowManager windowManager = getWindowManager();
         Display display = windowManager.getDefaultDisplay();
@@ -1209,10 +1141,11 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
          */
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         //获取屏幕
-        View screenView = getWindow().getDecorView();
+        View screenView = registerDialog.getWindow().getDecorView();
         //开启绘图缓存
         screenView.setDrawingCacheEnabled(true);
         //返回屏幕View的视图缓存
         bitmap = screenView.getDrawingCache();
+        FileUtil.saveImg(this,bitmap);
     }
 }

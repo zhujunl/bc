@@ -3,9 +3,14 @@ package com.example.demo_bckj.model.utility;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.os.SystemClock;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -17,6 +22,8 @@ import okio.BufferedSource;
 
 public class FileUtil {
 
+    static final String TAG="FileUtil";
+
     /**
      *
      * @param context
@@ -24,6 +31,8 @@ public class FileUtil {
      * @param file_name
      * @return
      */
+
+    public static String imgPath= Environment.getExternalStorageState()+ File.separator+"bc";
 
     public static int getResIdFromFileName(Context context, String defType, String file_name) {
         Resources rs = context.getResources();
@@ -67,6 +76,23 @@ public class FileUtil {
             }
         }
         return JSONObject.parseObject(buffer.clone().readString(charset));
+    }
+
+    /**/
+    public static void saveImg(Context context,Bitmap bitmap){
+        File file=new File(context.getExternalFilesDir("img").getPath()+File.separator+ SystemClock.currentThreadTimeMillis()+".png");
+        try {
+            if (!file.exists()){
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

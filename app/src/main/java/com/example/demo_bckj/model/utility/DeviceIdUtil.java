@@ -21,7 +21,6 @@ import com.example.demo_bckj.model.bean.SignInfoBean;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -125,35 +124,33 @@ public class DeviceIdUtil {
     }
 
 
+//    String androidId = Settings.Secure.getString(context.getContentResolver(),
+//            Settings.Secure.ANDROID_ID);
+//
+//    UUID androidId_UUID = UUID
+//            .nameUUIDFromBytes(androidId.getBytes("utf8"));
+//
+//    String unique_id = androidId_UUID.toString();
+
     /**
      * IMEI 1号
      * @param context
      * @return
      */
-    public static String getIMEI(Context context) {
-        String imei = "null";
+    public static String getIMEI_1(Context context){
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return "";
+        }
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        Class clazz = tm.getClass();
         try {
-            TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return  tm.getDeviceId();
-                }
-                return imei;
-            } else {
-                Method method = tm.getClass().getMethod("getImei");
-                imei = (String) method.invoke(tm);
-            }
+            Method getImei = clazz.getDeclaredMethod("getImei",int.class);
+            Object invoke = getImei.invoke(tm, 0);
+            return invoke==null?"":invoke.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return imei;
+        return "";
     }
 
     /**
@@ -161,29 +158,33 @@ public class DeviceIdUtil {
      * @param context
      * @return
      */
-    public static String getIMEI_2(Context context) {
+    public static String getIMEI_2 (Context context)  {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         Class clazz = tm.getClass();
-        String imei = "null";
-        try {
-            Method getImei = clazz.getDeclaredMethod("getImei", int.class);
-            Object invoke = getImei.invoke(tm, 1);
-            return invoke == null ? imei : invoke.toString();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return "";
         }
-        return null;
+        try {
+            Method getImei = clazz.getDeclaredMethod("getImei",int.class);
+            Object invoke = getImei.invoke(tm, 1);
+            return invoke==null?"":invoke.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return " ";
+        }
     }
-
-    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String getIMSI(Context context) {
-        //        TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
-        //        if (tm == null) return "";
-        return "";
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return "";
+        }
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
+            if (tm == null) return "";
+            return tm.getSubscriberId();
+        }catch (Exception e){
+            e.printStackTrace();
+            return " ";
+        }
     }
 
 
@@ -228,21 +229,13 @@ public class DeviceIdUtil {
 
     /**获取sim卡序列号*/
     public static String getSimSerial(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);  //拿到电话管理器
         //        //返回SIM卡的序列号
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            String simSerialNumber = tm.getSimSerialNumber();
-            return simSerialNumber;
+            return "";
         }
-        //                  System.out.println("返回SIM卡的序列号"+simSerialNumber);
-        return "";
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);  //拿到电话管理器
+
+        return tm.getSimSerialNumber();
     }
 
     /**
@@ -254,26 +247,27 @@ public class DeviceIdUtil {
                 ((i >> 16) & 0xFF) + "." +
                 (i >> 24 & 0xFF);
     }
+
     /**
      * Get Ip address 获取IP地址
      *
      * @throws Exception
      */
-    public static String getNetworkIp(){
+    public static String getNetworkIp() {
         try {
             List<NetworkInterface> infos = Collections.list(NetworkInterface.getNetworkInterfaces());
 
-            for (NetworkInterface info: infos) {
+            for (NetworkInterface info : infos) {
                 if (!info.getName().equals("wlan0")) {
                     continue;
                 }
 
                 String ipAddr = "0.0.0.0";
                 Enumeration<InetAddress> addrs = info.getInetAddresses();
-                while (addrs.hasMoreElements()){
+                while (addrs.hasMoreElements()) {
                     InetAddress addr = addrs.nextElement();
                     // 过滤ipv6
-                    if(addr.toString().length() <= 16){
+                    if (addr.toString().length() <= 16) {
                         ipAddr = addr.toString().subSequence(1, addr.toString().length()).toString();
                     }
                 }
@@ -284,23 +278,24 @@ public class DeviceIdUtil {
         }
         return "0.0.0.0";
     }
+
     /**
      * Get Ip address 获取Mac地址
      *
      * @throws Exception
      */
-    public static String getNetworkMac(){
+    public static String getNetworkMac() {
         try {
             List<NetworkInterface> infos = Collections.list(NetworkInterface.getNetworkInterfaces());
 
-            for (NetworkInterface info: infos) {
+            for (NetworkInterface info : infos) {
                 if (!info.getName().equals("wlan0")) {
                     continue;
                 }
 
                 byte[] macBytes = info.getHardwareAddress();
                 List<String> macByteList = new ArrayList<>();
-                for (Byte byt: macBytes) {
+                for (Byte byt : macBytes) {
                     macByteList.add(String.format("%02X", byt));
                 }
                 String macAddr = null;
@@ -314,6 +309,7 @@ public class DeviceIdUtil {
         }
         return "00:00:00:00:00:00";
     }
+
     /**
      * 获取手机当前网络类型
      *
@@ -321,41 +317,45 @@ public class DeviceIdUtil {
      */
     public static String getNetworkType(Context context) {
         String strNetworkType = "UnKnown";
-        final NetworkInfo activeNetworkInfo = ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        final NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         if (activeNetworkInfo != null && activeNetworkInfo.getType() == 1) {
             strNetworkType = "WIFI";
-        }else if (activeNetworkInfo != null && activeNetworkInfo.getType() == 0) {
+        } else if (activeNetworkInfo != null && activeNetworkInfo.getType() == 0) {
             String subtypeName = activeNetworkInfo.getSubtypeName();
-            switch (((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE)).getNetworkType()) {
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                case TelephonyManager.NETWORK_TYPE_CDMA:
-                case TelephonyManager.NETWORK_TYPE_1xRTT:
-                case TelephonyManager.NETWORK_TYPE_IDEN: //api<8 : replace by 11
-                    strNetworkType = "2G";
-                    break;
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                case TelephonyManager.NETWORK_TYPE_EVDO_B: //api<9 : replace by 14
-                case TelephonyManager.NETWORK_TYPE_EHRPD:  //api<11 : replace by 12
-                case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
-                    strNetworkType = "3G";
-                    break;
-                case TelephonyManager.NETWORK_TYPE_LTE:
-                    strNetworkType = "4G";
-                    break;
-                default:
-                    if (subtypeName.equalsIgnoreCase("TD-SCDMA") || subtypeName.equalsIgnoreCase("WCDMA") || subtypeName.equalsIgnoreCase("CDMA2000")) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                switch (((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getNetworkType()) {
+                    case TelephonyManager.NETWORK_TYPE_GPRS:
+                    case TelephonyManager.NETWORK_TYPE_EDGE:
+                    case TelephonyManager.NETWORK_TYPE_CDMA:
+                    case TelephonyManager.NETWORK_TYPE_1xRTT:
+                    case TelephonyManager.NETWORK_TYPE_IDEN: //api<8 : replace by 11
+                        strNetworkType = "2G";
+                        break;
+                    case TelephonyManager.NETWORK_TYPE_UMTS:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                    case TelephonyManager.NETWORK_TYPE_HSDPA:
+                    case TelephonyManager.NETWORK_TYPE_HSUPA:
+                    case TelephonyManager.NETWORK_TYPE_HSPA:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_B: //api<9 : replace by 14
+                    case TelephonyManager.NETWORK_TYPE_EHRPD:  //api<11 : replace by 12
+                    case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
                         strNetworkType = "3G";
                         break;
-                    }
-                    strNetworkType = subtypeName;
-                    break;
+                    case TelephonyManager.NETWORK_TYPE_LTE:
+                        strNetworkType = "4G";
+                        break;
+                    default:
+                        if (subtypeName.equalsIgnoreCase("TD-SCDMA") || subtypeName.equalsIgnoreCase("WCDMA") || subtypeName.equalsIgnoreCase("CDMA2000")) {
+                            strNetworkType = "3G";
+                            break;
+                        }
+                        strNetworkType = subtypeName;
+                        break;
+                }
+                return strNetworkType;
             }
+
         }
         return strNetworkType;
     }
@@ -471,46 +471,6 @@ public class DeviceIdUtil {
         String sign = Base64.encodeToString(string.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         Log.d("tag", "Base64编码sign为：" + sign);
 
-        String j="{\n" +
-                "    \"type\": \"ML\",\n" +
-                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
-                "    \"channel\": \"\",\n" +
-                "    \"package\": \"\",\n" +
-                "    \"plan\": \"\",\n" +
-                "    \"material\": \"\",\n" +
-                "    \"device\": {\n" +
-                "        \"os\": \"Android\",\n" +
-                "        \"android\": {\n" +
-                "            \"system_version\": \"10\",\n" +
-                "            \"android_id\": \"3559324b96572744\",\n" +
-                "            \"android_q\": {\n" +
-                "                \"aaid\": \"748d89ad-dd0d-424a-83df-d934519f0489\",\n" +
-                "                \"oaid\": \"92e60edb3de3f9d0\",\n" +
-                "                \"vaid\": \"416bffbb34374591\"\n" +
-                "            },\n" +
-                "            \"id\": \"QKQ1.200419.002\",\n" +
-                "            \"imei\": [\"\", \"\"],\n" +
-                "            \"imsi\": \"\",\n" +
-                "            \"model\": \"M2007J1SC\",\n" +
-                "            \"product\": \"cas\",\n" +
-                "            \"brand\": \"Xiaomi\",\n" +
-                "            \"game_package_name\": \"com.aaaa.bbbb\",\n" +
-                "            \"game_version\": \"1.0.2\",\n" +
-                "            \"sdk_package_name\": \"com.dsadads.ewqreqwrqwe\",\n" +
-                "            \"sdk_version\": \"v2.1.6.1583728\",\n" +
-                "            \"serial\": \"unknown\",\n" +
-                "            \"sim_serial\": [\"\"]\n" +
-                "        },\n" +
-                "        \"network\": {\n" +
-                "            \"code\": 46002,\n" +
-                "            \"intranet_ip\": \"10.48.6.16\",\n" +
-                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
-                "            \"name\": \"那就这样\",\n" +
-                "            \"type\": \"wifi\"\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
-
 //        String j="{\n" +
 //                "    \"type\": \"ML\",\n" +
 //                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
@@ -521,25 +481,25 @@ public class DeviceIdUtil {
 //                "    \"device\": {\n" +
 //                "        \"os\": \"Android\",\n" +
 //                "        \"android\": {\n" +
-//                "            \"system_version\": \""+DeviceIdUtil.getSystemVersion()+"\",\n" +
-//                "            \"android_id\": \""+DeviceIdUtil.getAndroidId(context)+"\",\n" +
+//                "            \"system_version\": \"10\",\n" +
+//                "            \"android_id\": \"3559324b96572744\",\n" +
 //                "            \"android_q\": {\n" +
-//                "                \"aaid\": \""+"748d89ad-dd0d-424a-83df-d934519f0489"+"\",\n" +
-//                "                \"oaid\": \""+"92e60edb3de3f9d0"+"\",\n" +
-//                "                \"vaid\": \""+"416bffbb34374591"+"\"\n" +
+//                "                \"aaid\": \"748d89ad-dd0d-424a-83df-d934519f0489\",\n" +
+//                "                \"oaid\": \"92e60edb3de3f9d0\",\n" +
+//                "                \"vaid\": \"416bffbb34374591\"\n" +
 //                "            },\n" +
-//                "            \"id\": \""+"QKQ1.200419.002"+"\",\n" +
-//                "            \"imei\": ["+DeviceIdUtil.getIMEI(context)+", "+DeviceIdUtil.getIMEI_2(context)+"],\n" +
-//                "            \"imsi\": "+DeviceIdUtil.getIMSI(context)+",\n" +
-//                "            \"model\": \""+Build.MODEL+"\",\n" +
-//                "            \"product\": \""+"cas"+"\",\n" +
-//                "            \"brand\": \""+Build.BRAND+"\",\n" +
-//                "            \"game_package_name\": \""+""+"\",\n" +
-//                "            \"game_version\": \""+""+"\",\n" +
-//                "            \"sdk_package_name\": \""+DeviceIdUtil.getTopPackage(context)+"\",\n" +
-//                "            \"sdk_version\": \""+DeviceIdUtil.getVersionName(context)+"\",\n" +
-//                "            \"serial\": \""+DeviceIdUtil.getSERIAL()+"\",\n" +
-//                "            \"sim_serial\": ["+DeviceIdUtil.getSimSerial(context)+"]\n" +
+//                "            \"id\": \"QKQ1.200419.002\",\n" +
+//                "            \"imei\": [\"\", \"\"],\n" +
+//                "            \"imsi\": \"\",\n" +
+//                "            \"model\": \"M2007J1SC\",\n" +
+//                "            \"product\": \"cas\",\n" +
+//                "            \"brand\": \"Xiaomi\",\n" +
+//                "            \"game_package_name\": \"com.aaaa.bbbb\",\n" +
+//                "            \"game_version\": \"1.0.2\",\n" +
+//                "            \"sdk_package_name\": \"com.dsadads.ewqreqwrqwe\",\n" +
+//                "            \"sdk_version\": \"v2.1.6.1583728\",\n" +
+//                "            \"serial\": \"unknown\",\n" +
+//                "            \"sim_serial\": [\"\"]\n" +
 //                "        },\n" +
 //                "        \"network\": {\n" +
 //                "            \"code\": 46002,\n" +
@@ -550,6 +510,46 @@ public class DeviceIdUtil {
 //                "        }\n" +
 //                "    }\n" +
 //                "}";
+
+        String j="{\n" +
+                "    \"type\": \"ML\",\n" +
+                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
+                "    \"channel\": \"\",\n" +
+                "    \"package\": \"\",\n" +
+                "    \"plan\": \"\",\n" +
+                "    \"material\": \"\",\n" +
+                "    \"device\": {\n" +
+                "        \"os\": \"Android\",\n" +
+                "        \"android\": {\n" +
+                "            \"system_version\": \""+DeviceIdUtil.getSystemVersion()+"\",\n" +
+                "            \"android_id\": \""+DeviceIdUtil.getAndroidId(context)+"\",\n" +
+                "            \"android_q\": {\n" +
+                "                \"aaid\": \""+"748d89ad-dd0d-424a-83df-d934519f0489"+"\",\n" +
+                "                \"oaid\": \""+"92e60edb3de3f9d0"+"\",\n" +
+                "                \"vaid\": \""+"416bffbb34374591"+"\"\n" +
+                "            },\n" +
+                "            \"id\": \""+"QKQ1.200419.002"+"\",\n" +
+                "            \"imei\": ["+DeviceIdUtil.getIMEI_1(context)+","+DeviceIdUtil.getIMEI_2(context)+"],\n" +
+                "            \"imsi\": \""+DeviceIdUtil.getIMSI(context)+"\",\n" +
+                "            \"model\": \""+Build.MODEL+"\",\n" +
+                "            \"product\": \""+"cas"+"\",\n" +
+                "            \"brand\": \""+Build.BRAND+"\",\n" +
+                "            \"game_package_name\": \""+""+"\",\n" +
+                "            \"game_version\": \""+""+"\",\n" +
+                "            \"sdk_package_name\": \""+DeviceIdUtil.getTopPackage(context)+"\",\n" +
+                "            \"sdk_version\": \""+DeviceIdUtil.getVersionName(context)+"\",\n" +
+                "            \"serial\": \""+DeviceIdUtil.getSERIAL()+"\",\n" +
+                "            \"sim_serial\": ["+DeviceIdUtil.getSimSerial(context)+"]\n" +
+                "        },\n" +
+                "        \"network\": {\n" +
+                "            \"code\": 46002,\n" +
+                "            \"intranet_ip\": \"10.48.6.16\",\n" +
+                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
+                "            \"name\": \"那就这样\",\n" +
+                "            \"type\": \"wifi\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
         JSONObject json = new JSONObject(j);
         Log.d("tag","设备信息的字符串为"+json);
         //加密
