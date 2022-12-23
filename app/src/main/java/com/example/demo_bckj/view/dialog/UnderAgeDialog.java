@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.widget.Button;
 
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.model.utility.SPUtils;
 
 import androidx.annotation.NonNull;
 
@@ -49,7 +50,7 @@ public class UnderAgeDialog extends Dialog {
 
         @Override
         public void onFinish() {
-            System.exit(0);
+            SPUtils.getInstance(getContext(),"bcSP").clear();
         }
     }
 }

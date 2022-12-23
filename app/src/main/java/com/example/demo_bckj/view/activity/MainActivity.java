@@ -51,11 +51,13 @@ import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.fragment.CServiceFragment;
 import com.example.demo_bckj.view.fragment.PersonFragment;
 import com.example.demo_bckj.view.fragment.WelfaceFragment;
+import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.RoundView;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -102,6 +104,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     private String tel = null;
     SPUtils bcSP;
+    SPUtils deviceSP;
 
     @Override
     protected void initData() {
@@ -109,7 +112,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
 
         bcSP = SPUtils.getInstance(this, "bcSP");
-
+        deviceSP = SPUtils.getInstance(this, "open");
         handler.postDelayed(runnable, 500);
 
         //       //沉浸式状态栏
@@ -146,9 +149,9 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         @Override
         public void run() {
             //用户协议弹窗
-            boolean isFirstRun = bcSP.getBoolean("isFirst", false);
+            boolean isFirstRun = deviceSP.getBoolean("isFirst", false);
             if (!isFirstRun||!checkPermissionAllGranted(Constants.PermissionString)) {
-                bcSP.put("isFirst", true);
+                deviceSP.put("isFirst", true);
                 popupAgreement();
             } else {
                 String password = bcSP.getString("password", "");
@@ -346,6 +349,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
+        Button spinnerImg=inflate.findViewById(R.id.spinnerImg);
         TextView popupTvCode = inflate.findViewById(R.id.popup_Tv_code);
         CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
         TextView popupUser = inflate.findViewById(R.id.popup_user);
@@ -356,6 +360,12 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
+        List<String> telLists = deviceSP.getList("tel", "");
+        View v= LayoutInflater.from(MainActivity.this).inflate(R.layout.pop_tel_list, null);
+        spinnerImg.setOnClickListener(view-> {
+            PopupTel popupTel=new PopupTel(this,telLists,popupLogin,v,inflate.getWidth(),200,true);
+            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin,0, 0));
+        });
         LoginBuilder = new AlertDialog.Builder(this);
         LoginBuilder.setView(inflate);
         LoginBuilder.setCancelable(false);
@@ -452,7 +462,12 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                presenter.getPhoneLogin(this, this, popupLogin.getText().toString().trim(), popupEtCode.getText().toString().trim(), loginDialog);
+                String number = popupLogin.getText().toString().trim();
+                if (!telLists.contains(number)){
+                    telLists.add(number);
+                    SPUtils.getInstance(this,"open").put("tel",telLists);
+                }
+//                presenter.getPhoneLogin(this, this, number, popupEtCode.getText().toString().trim(), loginDialog);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -464,7 +479,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             popupLoginPw("", "", false);
         });
 
-        play.setOnClickListener(v -> {
+        play.setOnClickListener(view -> {
             if (!popupRb.isChecked()) {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             } else {

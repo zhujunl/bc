@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -32,7 +33,7 @@ public class FileUtil {
      * @return
      */
 
-    public static String imgPath= Environment.getExternalStorageState()+ File.separator+"bc";
+    public static String imgPath= Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"bc";
 
     public static int getResIdFromFileName(Context context, String defType, String file_name) {
         Resources rs = context.getResources();
@@ -90,6 +91,7 @@ public class FileUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
+            Log.d(TAG, "saveImg"  );
         }catch (Exception e){
             e.printStackTrace();
         }

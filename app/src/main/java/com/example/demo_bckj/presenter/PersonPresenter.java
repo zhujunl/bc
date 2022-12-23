@@ -195,7 +195,6 @@ public class PersonPresenter extends BasePresenter {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 SPUtils.getInstance(context, "bcSP").clear();
-                System.exit(0);
             }
 
             @Override

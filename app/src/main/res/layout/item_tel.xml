@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:background="@drawable/item_selected"
+    android:id="@+id/tel_item">
+    <TextView
+        android:id="@+id/tel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="9"
+        android:layout_gravity="center"
+        android:gravity="left|center"
+        android:layout_marginLeft="10dp"
+        android:text="01234567980"
+        android:textColor="#000"/>
+    <Button
+        android:id="@+id/tel_remove_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/tel_delete"/>
+</LinearLayout>

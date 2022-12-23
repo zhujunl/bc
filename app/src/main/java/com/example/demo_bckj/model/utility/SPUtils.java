@@ -5,9 +5,13 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.example.demo_bckj.model.bean.AccountPwBean;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -221,6 +225,26 @@ public class SPUtils {
         return getStringSet(key, Collections.<String>emptySet());
     }
 
+    /**SP中写入List<T>*/
+    public <T> void put(@NonNull String key, @NonNull List<T> list){
+        Gson gson = new Gson();
+        //将list转成Json
+        String jsonStr = gson.toJson(list);
+        sp.edit().putString(key,jsonStr).apply();
+    }
+
+    /**SP中读取List<T>*/
+    public <T> List<T> getList(@NonNull String key,@NonNull String defaultValue){//声明
+        List<T> listArr = new ArrayList();
+        String str = sp.getString(key,defaultValue);
+        if (!str.equals("") ){
+            Gson gson = new Gson();
+            //TypeToken<List<T>>()将json数据转成List集合
+            listArr = gson.fromJson(str,new TypeToken<List<T>>(){}.getType());
+        }
+        return listArr;
+    }
+
     /**
      * SP中读取StringSet
      *
@@ -231,7 +255,6 @@ public class SPUtils {
     public Set<String> getStringSet(@NonNull String key, @NonNull Set<String> defaultValue) {
         return sp.getStringSet(key, defaultValue);
     }
-
 
     public static byte[] BytesToString(String data){
         String hexString=data.toUpperCase().trim();
@@ -265,9 +288,6 @@ public class SPUtils {
         return retData;
     }
 
-
-
-
     /**
      * SP中获取所有键值对
      *
@@ -300,7 +320,8 @@ public class SPUtils {
      * SP中清除所有数据
      */
     public void clear() {
-        sp.edit().clear().apply();
+        sp.edit().clear().commit();
+        System.exit(0);
     }
 
     private static boolean isSpace(String s) {
