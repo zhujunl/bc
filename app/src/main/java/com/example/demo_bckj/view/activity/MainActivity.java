@@ -463,11 +463,8 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
                 String number = popupLogin.getText().toString().trim();
-                if (!telLists.contains(number)){
-                    telLists.add(number);
-                    SPUtils.getInstance(this,"open").put("tel",telLists);
-                }
-//                presenter.getPhoneLogin(this, this, number, popupEtCode.getText().toString().trim(), loginDialog);
+                String code = popupEtCode.getText().toString().trim();
+                presenter.getPhoneLogin(this, this, number,code, telLists,loginDialog);
             } else {
                 Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }

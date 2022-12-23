@@ -19,6 +19,8 @@ import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.view.round.RoundView;
 
+import java.util.List;
+
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -104,7 +106,7 @@ public class DemoPresenter extends BasePresenter {
                     });
     }
     //手机号登录
-    public void getPhoneLogin(Context context, ClickListener listener, String tel, String code, AlertDialog dialog){
+    public void getPhoneLogin(Context context, ClickListener listener, String tel, String code, List<String> telLists, AlertDialog dialog){
             RetrofitManager.getInstance(context)
                     .getApiService()
                     .getPhoneLogin(tel,code).enqueue(new MyCallback<ResponseBody>() {
@@ -113,6 +115,10 @@ public class DemoPresenter extends BasePresenter {
                             AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                             SPUtils.getInstance(context, "bcSP").save(data,"");
                             dialog.dismiss();
+                            if (!telLists.contains(tel)){
+                                telLists.add(tel);
+                                SPUtils.getInstance(context,"open").put("tel",telLists);
+                            }
                             RoundView.getInstance().showRoundView(context, listener);
                             listener.Personal(false);
                         }
