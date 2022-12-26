@@ -2,7 +2,10 @@ package com.example.demo_bckj.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -61,6 +64,38 @@ public class RealNameDialog extends Dialog {
                 return;
             }
             presenter.setRealName(context,c,n,this);
+        });
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+              remove.setVisibility(TextUtils.isEmpty(name.getText().toString())? View.INVISIBLE:View.VISIBLE);
+            }
+        });
+        code.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                removeCode.setVisibility(TextUtils.isEmpty(code.getText().toString())? View.INVISIBLE:View.VISIBLE);
+            }
         });
         remove.setOnClickListener(v -> {
             name.setText("");

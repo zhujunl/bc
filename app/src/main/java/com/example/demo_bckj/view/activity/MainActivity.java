@@ -282,12 +282,16 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     @Override
     public void Switch() {
         Log.d(TAG, "Switch");
+        DrawerLayout.closeDrawers();
         RoundView.getInstance().closeRoundView(this);
         bcSP.clear();
         popupLoginCode();
-        pf.onDestroy();
-        wp.onDestroy();
-        cs.onDestroy();
+        if (pf!=null)
+            pf.onDestroy();
+        if (wp!=null)
+            wp.onDestroy();
+        if (cs!=null)
+            cs.onDestroy();
     }
 
     @Override

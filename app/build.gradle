@@ -7,7 +7,7 @@ android {
 //    buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.example.demo_bckj"
+        applicationId "com.bc.sdk"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
