@@ -5,7 +5,10 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.model.MyCallback;
+import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.view.adapter.RechargeAdapter;
 
 import java.util.Arrays;
@@ -15,11 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import okhttp3.ResponseBody;
 
 /**
  * @author ZJL
  * @date 2022/12/16 11:03
- * @des
+ * @des 支付选择弹窗
  * @updateAuthor
  * @updateDes
  */
@@ -31,6 +35,8 @@ public class RechargeSubDialog extends Dialog{
     private RechargeAdapter adapter;
     private Button btn;
     private List<String> lists= Arrays.asList("支付宝","微信");
+    private String number_game="",props_name="",server_id="",server_name="",role_id="",role_name="",callback_url="",extend_data="";
+    private int money;
 
     public RechargeSubDialog(@NonNull Context context) {
         super(context);
@@ -49,6 +55,21 @@ public class RechargeSubDialog extends Dialog{
         comDetails.setText("￥28");
         btn.setOnClickListener(v->{
             dismiss();
+        });
+    }
+
+    private void charge(){
+        RetrofitManager.getInstance(getContext()).getApiService().CreateOrder(number_game,money,props_name,server_id,
+                                        server_name,role_id,role_name,callback_url,extend_data).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
         });
     }
 

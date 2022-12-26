@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 /**
  * @author ZJL
  * @date 2022/12/15 13:54
- * @des
+ * @des 用户协议弹窗
  * @updateAuthor
  * @updateDes
  */

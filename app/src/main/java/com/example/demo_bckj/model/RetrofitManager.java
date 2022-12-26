@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.example.demo_bckj.model.bean.SignInfoBean;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
+import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.view.Constants;
 
 import java.io.IOException;
@@ -84,8 +85,9 @@ public class RetrofitManager {
                     Request.Builder requestBuilder = original.newBuilder()
                             .header("sign", sign.sign)
                             .header("info", sign.info);
-                    if (!TextUtils.isEmpty(Constants.AUTHORIZATION)){
-                        requestBuilder.addHeader("Authorization","Bearer "+Constants.AUTHORIZATION);
+                    String AUTHORIZATION = SPUtils.getInstance(context, "bcSP").getString("Authorization");
+                    if (!TextUtils.isEmpty(AUTHORIZATION)){
+                        requestBuilder.addHeader("Authorization","Bearer "+AUTHORIZATION);
                     }
                     Request request = requestBuilder.build();
                     return chain.proceed(request);

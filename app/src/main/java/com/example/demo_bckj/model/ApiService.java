@@ -36,12 +36,14 @@ public interface ApiService {
     @POST("sdk/v1/login")
     Call<ResponseBody> getLoginPwLo(@Query("username")String username,
                                           @Query("password")String password);
-//    Observable<ResponseBody> getLoginPwLo(@Query("username")String username,
-//                                           @Query("password")String password);
 
     //随机账号密码
     @GET("sdk/v1/register/account")
     Observable<ResponseBody> getDemoAccount();
+
+    //刷新token
+    @GET("sdk/v1/token/refresh")
+    Call<ResponseBody> refreshToken();
 
     //登出
     @GET("sdk/v1/logout")
@@ -68,7 +70,7 @@ public interface ApiService {
     @GET("sdk/v1/sms/pwd")
     Call<ResponseBody> forgetPwd(@Query("tel") String number);
     //重置密码
-    @POST("sdk/v1/sms/pwd")
+    @POST("/sdk/v1/user/pwd/reset")
     Call<ResponseBody> resetPwd(@Query("tel") String tel,
                                 @Query("code") String code,
                                 @Query("password") String password,
@@ -91,5 +93,25 @@ public interface ApiService {
     Call<ResponseBody> modifyBindPhone(@Query("code_old") String codeOld,
                                        @Query("code_new") String codeNew,
                                        @Query("tel") String tel);
+
+
+    /**=========================================订单信息======================================================================*/
+    //创建订单
+    @POST("sdk/v1/order")
+    Call<ResponseBody> CreateOrder(@Query("number_game") String number_game,
+                                   @Query("money") int money,
+                                   @Query("props_name") String props_name,
+                                   @Query("server_id") String server_id,
+                                   @Query("server_name") String server_name,
+                                   @Query("role_id") String role_id,
+                                   @Query("role_name") String role_name,
+                                   @Query("callback_url") String callback_url,
+                                   @Query("extend_data") String extend_data);
+    //支付宝-原生支付
+    @POST("sdk/v1/order/pay/ali/app")
+    Call<ResponseBody> AliPay(@Query("number") String number);
+    //微信-扫码支付
+    @POST("sdk/v1/order/pay/wc/scan")
+    Call<ResponseBody> WeiChatPay(@Query("number") String number);
 
 }

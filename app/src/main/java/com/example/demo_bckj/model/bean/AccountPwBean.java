@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * @author WangKun
- * @description:
+ * @description: 响应登录请求类
  * @date :2022/10/26 11:49
  */
 public class AccountPwBean {

@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.demo_bckj.inter.IBaseView;
+import com.example.demo_bckj.listener.IBaseView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

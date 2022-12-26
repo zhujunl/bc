@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 /**
  * @author ZJL
  * @date 2022/12/15 13:21
- * @des
+ * @des 实名注册成功弹窗
  * @updateAuthor
  * @updateDes
  */

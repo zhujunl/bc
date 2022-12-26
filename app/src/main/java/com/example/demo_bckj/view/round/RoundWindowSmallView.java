@@ -15,7 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
-import com.example.demo_bckj.inter.ClickListener;
+import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.model.utility.FileUtil;
 
 import java.util.Timer;

@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.demo_bckj.inter.ClickListener;
+import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.model.utility.FileUtil;
 
 /**

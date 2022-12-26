@@ -9,12 +9,11 @@ package com.example.demo_bckj.model;
  */
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.model.utility.FileUtil;
-import com.example.demo_bckj.view.Constants;
+import com.example.demo_bckj.model.utility.SPUtils;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -41,7 +40,7 @@ public abstract class MyCallback<ResponseBody extends okhttp3.ResponseBody> impl
     }
 
     public MyCallback(Context mContext) {
-
+        this.mContext=mContext;
     }
 
     @Override
@@ -52,8 +51,8 @@ public abstract class MyCallback<ResponseBody extends okhttp3.ResponseBody> impl
         }
         Headers headers = response.headers();
         String Authorization = headers.get("Authorization");
-        if (!TextUtils.isEmpty(Authorization)){
-            Constants.AUTHORIZATION=Authorization;
+        if (mContext!=null){
+            SPUtils.getInstance(mContext,"bcSP").put("Authorization",Authorization);
         }
         JSONObject json = FileUtil.getResponseBody(response.body());
         Object code = json.get("code");

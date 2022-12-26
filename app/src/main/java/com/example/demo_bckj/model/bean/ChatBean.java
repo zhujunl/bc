@@ -3,7 +3,7 @@ package com.example.demo_bckj.model.bean;
 /**
  * @author ZJL
  * @date 2022/12/15 15:20
- * @des
+ * @des 客服聊天内容
  * @updateAuthor
  * @updateDes
  */

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.WindowManager;
 
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.inter.IBaseView;
+import com.example.demo_bckj.listener.IBaseView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

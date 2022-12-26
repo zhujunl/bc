@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 /**
  * @author ZJL
  * @date 2022/12/15 11:00
- * @des
+ * @des 绑定新手机弹窗
  * @updateAuthor
  * @updateDes
  */

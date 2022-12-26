@@ -321,7 +321,6 @@ public class SPUtils {
      */
     public void clear() {
         sp.edit().clear().commit();
-        System.exit(0);
     }
 
     private static boolean isSpace(String s) {

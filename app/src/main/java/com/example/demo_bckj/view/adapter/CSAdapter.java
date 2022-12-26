@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * @author ZJL
  * @date 2022/12/15 14:32
- * @des
+ * @des 客服聊天记录Adapter
  * @updateAuthor
  * @updateDes
  */

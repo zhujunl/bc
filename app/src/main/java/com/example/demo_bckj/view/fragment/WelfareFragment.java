@@ -1,5 +1,7 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.util.Log;
+
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.presenter.WelfarePresenter;
@@ -7,22 +9,24 @@ import com.example.demo_bckj.presenter.WelfarePresenter;
 /**
  * @author ZJL
  * @date 2022/12/14 14:44
- * @des
+ * @des 福利Fragment
  * @updateAuthor
  * @updateDes
  */
-public class WelfaceFragment extends BaseFragment<WelfarePresenter> {
+public class WelfareFragment extends BaseFragment<WelfarePresenter> {
 
-    public static WelfaceFragment instance;
+    private final String TAG="WelfareFragment";
 
-    public static WelfaceFragment getInstance(){
+    public static WelfareFragment instance;
+
+    public static WelfareFragment getInstance(){
         if (instance==null){
-            instance=new WelfaceFragment();
+            instance=new WelfareFragment();
         }
         return instance;
     }
 
-    public WelfaceFragment() {
+    public WelfareFragment() {
     }
 
     @Override
@@ -53,5 +57,12 @@ public class WelfaceFragment extends BaseFragment<WelfarePresenter> {
     @Override
     public void onError(String msg) {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy" );
+        instance=null;
     }
 }

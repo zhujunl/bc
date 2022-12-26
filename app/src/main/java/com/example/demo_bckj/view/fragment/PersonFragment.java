@@ -1,6 +1,7 @@
 package com.example.demo_bckj.view.fragment;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,7 +20,7 @@ import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 /**
  * @author ZJL
  * @date 2022/12/14 14:43
- * @des
+ * @des 个人中心Fragment
  * @updateAuthor
  * @updateDes
  */
@@ -84,7 +85,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     }
 
-    private void init(){
+    public void init(){
         sp = SPUtils.getInstance(getContext(), "bcSP");
         nickName = sp.getString("nick_name", "");
         tel = sp.getString("tel", "");
@@ -98,8 +99,16 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             phone.setText(s);
         }
         boolean isAuthenticated = sp.getBoolean("is_authenticated", false);
-        userMore.setText(isAuthenticated?"已认证":"未认证");
-        userMore.setTextColor(isAuthenticated?0x999999:0xFF5293FF);
+        if (isAuthenticated){
+            userMore.setText("已认证");
+            userMore.setTextColor(0xFF999999);
+            realName.setClickable(false);
+        }else {
+            userMore.setText("未认证");
+            userMore.setTextColor(0xFF5293FF);
+            realName.setClickable(true);
+        }
+
     }
 //未成年充值提醒
 //    RechargeDialog rechargeDialog = new RechargeDialog(getActivity());
@@ -116,8 +125,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
                 VerifyPhoneDialog verifyPhoneDialog = new VerifyPhoneDialog(getActivity(),presenter);
                 verifyPhoneDialog.show();
             }
-
-
         });
         modifyPw.setOnClickListener(v -> {
             if (TextUtils.isEmpty(tel)) {
@@ -147,4 +154,13 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             presenter.loginOut(getContext());
         });
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "fragment  onDestroy" );
+        instance=null;
+    }
+
+
 }

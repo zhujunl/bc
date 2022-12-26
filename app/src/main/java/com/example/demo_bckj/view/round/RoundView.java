@@ -10,7 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.demo_bckj.inter.ClickListener;
+import com.example.demo_bckj.listener.ClickListener;
 
 /**
  * @author WangKun

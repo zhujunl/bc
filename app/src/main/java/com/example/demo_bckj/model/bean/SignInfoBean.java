@@ -3,7 +3,7 @@ package com.example.demo_bckj.model.bean;
 /**
  * @author ZJL
  * @date 2022/12/14 17:35
- * @des
+ * @des sign与info实体类
  * @updateAuthor
  * @updateDes
  */

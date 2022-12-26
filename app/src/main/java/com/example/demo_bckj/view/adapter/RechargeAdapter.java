@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * @author ZJL
  * @date 2022/12/16 11:18
- * @des
+ * @des 充值选项Adapter
  * @updateAuthor
  * @updateDes
  */

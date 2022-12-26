@@ -51,6 +51,7 @@ public class PersonPresenter extends BasePresenter {
         RetrofitManager.getInstance(context).getApiService().BindPhone(tel, code).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
+                view.onSuccess("");
                 bindNewPhoneDialog.dismiss();
                 SPUtils.getInstance(context, "bcSP").put("tel", tel);
                 Toast.makeText(context, "绑定成功", Toast.LENGTH_SHORT).show();
@@ -102,7 +103,7 @@ public class PersonPresenter extends BasePresenter {
         RetrofitManager.getInstance(context).getApiService().modifyBindPhone(codeOld, codeNew, tel).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-
+                view.onSuccess("");
                 dialog.dismiss();
                 bindNewPhoneDialog.dismiss();
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
@@ -121,7 +122,7 @@ public class PersonPresenter extends BasePresenter {
         RetrofitManager.getInstance(context).getApiService().IsRealName().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-
+                view.onSuccess("");
             }
 
             @Override
@@ -195,6 +196,7 @@ public class PersonPresenter extends BasePresenter {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 SPUtils.getInstance(context, "bcSP").clear();
+                System.exit(0);
             }
 
             @Override

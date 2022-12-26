@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 /**
  * @author ZJL
  * @date 2022/12/15 13:23
- * @des
+ * @des 防沉迷提示弹窗
  * @updateAuthor
  * @updateDes
  */
@@ -51,6 +51,7 @@ public class UnderAgeDialog extends Dialog {
         @Override
         public void onFinish() {
             SPUtils.getInstance(getContext(),"bcSP").clear();
+            System.exit(0);
         }
     }
 }

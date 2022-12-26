@@ -1,6 +1,6 @@
 package com.example.demo_bckj.base;
 
-import com.example.demo_bckj.inter.IBaseView;
+import com.example.demo_bckj.listener.IBaseView;
 
 /**
  * @author WangKun

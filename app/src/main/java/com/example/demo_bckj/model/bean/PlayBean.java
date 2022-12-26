@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author ZJL
  * @date 2022/12/19 13:17
- * @des
+ * @des 响应快速试玩请求类
  * @updateAuthor
  * @updateDes
  */

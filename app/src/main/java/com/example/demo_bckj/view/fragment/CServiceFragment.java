@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * @author ZJL
  * @date 2022/12/14 14:44
- * @des
+ * @des 客服Fragment
  * @updateAuthor
  * @updateDes
  */
@@ -42,12 +42,9 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
     private static String TAG="CServiceFragment";
 
     public static CServiceFragment getInstance() {
-        Log.d(TAG, "1" );
         if (instance == null) {
-            Log.d(TAG, "2" );
             instance = new CServiceFragment();
         }
-        Log.d(TAG, "3" );
         return instance;
     }
 
@@ -105,5 +102,12 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
     @Override
     public void onError(String msg) {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy" );
+        instance=null;
     }
 }
