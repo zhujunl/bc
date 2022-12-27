@@ -3,6 +3,7 @@ package com.example.demo_bckj.view.fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.PrivacyDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
+import com.example.demo_bckj.view.dialog.RechargeDialog;
 import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 
@@ -33,6 +35,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private Button quit;
     private SPUtils sp;
     private String tel, nickName;
+    private ImageView header;
 
     public static PersonFragment getInstance() {
         if (instance == null) {
@@ -60,6 +63,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         privacy = v.findViewById(R.id.PrivacyRe);
         quit = v.findViewById(R.id.user_quit_login);
         phoneRe = v.findViewById(R.id.phoneRe);
+        header=v.findViewById(R.id.user_head);
 
         click();
     }
@@ -152,6 +156,10 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         });
         quit.setOnClickListener(v -> {
             presenter.loginOut(getContext());
+        });
+        header.setOnClickListener(v->{
+            RechargeDialog rechargeDialog=new RechargeDialog(getActivity());
+            rechargeDialog.show();
         });
     }
 

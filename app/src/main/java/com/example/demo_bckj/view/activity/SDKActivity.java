@@ -1,12 +1,15 @@
 package com.example.demo_bckj.view.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -30,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -43,6 +47,7 @@ import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseActivity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.PlayInterface;
+import com.example.demo_bckj.model.PayBus;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.model.utility.FileUtil;
@@ -57,6 +62,8 @@ import com.example.demo_bckj.view.fragment.WelfareFragment;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.RoundView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -69,7 +76,7 @@ import androidx.core.content.ContextCompat;
 
 import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
 
-public class MainActivity extends BaseActivity<DemoPresenter> implements ClickListener {
+public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickListener {
 
     private final String TAG = "MainActivity";
 
@@ -110,11 +117,13 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     private String tel = null;
     SPUtils bcSP;
     SPUtils deviceSP;
+    EventBus eventBus;
 
     @Override
     protected void initData() {
         Log.d("tag", getDeviceId());
-
+        eventBus=EventBus.getDefault();
+        eventBus.register(this);
 
         bcSP = SPUtils.getInstance(this, "bcSP");
         deviceSP = SPUtils.getInstance(this, "open");
@@ -166,7 +175,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 }else {
                     boolean refresh=false;
                     try {
-                        refresh=presenter.refreshToken(MainActivity.this,MainActivity.this);
+                        refresh=presenter.refreshToken(SDKActivity.this, SDKActivity.this);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -192,6 +201,11 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         Log.d("SSID------", wifiInfo.getSSID());
         return wifiInfo.getSSID();
 
+    }
+
+    @Subscribe()
+    public void PayBus(PayBus payBus){
+        String url = payBus.getUrl();
     }
 
     @Override
@@ -222,7 +236,6 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             Welfare(false);
         });
         cServiceBtn.setOnClickListener(view -> {
-            ;
             CService(false);
         });
         personBtn.setOnClickListener(view -> {
@@ -237,7 +250,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     @Override
     protected int initLayoutId() {
-        return R.layout.activity_main;
+        return R.layout.activity_sdk;
     }
 
     @Override
@@ -308,7 +321,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
     //用户协议弹窗
     private void popupAgreement() {
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_agreement, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_agreement, null);
         Button popup_agree = inflate.findViewById(R.id.popup_agree);
         TextView popup_disagree = inflate.findViewById(R.id.popup_disagree);
         TextView privacyTxt = inflate.findViewById(R.id.txt_privacy);
@@ -370,7 +383,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         if (LoginBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_code, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
@@ -385,7 +398,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
         List<String> telLists = deviceSP.getList("tel", "");
-        View v = LayoutInflater.from(MainActivity.this).inflate(R.layout.pop_tel_list, null);
+        View v = LayoutInflater.from(SDKActivity.this).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
             PopupTel popupTel = new PopupTel(this, telLists, popupLogin, v, inflate.getWidth(), 200, true);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
@@ -493,7 +506,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 String code = popupEtCode.getText().toString().trim();
                 presenter.getPhoneLogin(this, this, number, code, telLists, loginDialog);
             } else {
-                Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -505,7 +518,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
 
         play.setOnClickListener(view -> {
             if (!popupRb.isChecked()) {
-                Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             } else {
                 presenter.getDemoAccount(this, new PlayInterface() {
                     @Override
@@ -528,7 +541,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         if (LoginPwBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_pw_login, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_et_pw = inflate.findViewById(R.id.popup_et_pw);
@@ -575,7 +588,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 HashMap<Object, Object> map = new HashMap<>();
                 presenter.getLoginPwLo(this, popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog, this);
             } else {
-                Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         popupLogin.addTextChangedListener(new TextWatcher() {
@@ -644,7 +657,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         if (ForgetPwBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_code_phone, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_code_phone, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
         TextView popupTvCode = inflate.findViewById(R.id.popup_Tv_code);
@@ -688,7 +701,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
                 forgetDialog.hide();
                 popupResetPassword(trim1, trim2);
             } else {
-                Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         //返回上一级
@@ -697,7 +710,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             forgetDialog.dismiss();
         });
         //跳转联系客服
-        popup_service.setOnClickListener(view -> Toast.makeText(MainActivity.this, "尽请期待", Toast.LENGTH_SHORT).show());
+        popup_service.setOnClickListener(view -> Toast.makeText(SDKActivity.this, "尽请期待", Toast.LENGTH_SHORT).show());
         //输入框监听
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
@@ -774,7 +787,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         if (ResetPwBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_reset_password, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_reset_password, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_new_password = inflate.findViewById(R.id.popup_new_password);
         EditText popup_password_pw = inflate.findViewById(R.id.popup_password_pw);
@@ -874,7 +887,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         if (RegisterBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_number_register, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_number_register, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_number = inflate.findViewById(R.id.popup_number);
         ImageView popup_remove_number = inflate.findViewById(R.id.popup_remove_number);
@@ -922,12 +935,12 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             String pass2 = popup_password_pw.getText().toString().trim();
             if (popupRb.isChecked()) {
                 if (TextUtils.equals(pass, pass2)) {
-                    presenter.getLoginPwRe(this, number, pass, pass2, registerDialog, MainActivity.this);
+                    presenter.getLoginPwRe(this, number, pass, pass2, registerDialog, SDKActivity.this);
                 } else {
-                    Toast.makeText(MainActivity.this, "两次密码不正确", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SDKActivity.this, "两次密码不正确", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MainActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         popup_number.addTextChangedListener(new TextWatcher() {
@@ -1025,7 +1038,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
             return;
         }
         AutoBuilder = new AlertDialog.Builder(this);
-        View inflate = LayoutInflater.from(MainActivity.this).inflate(R.layout.pop_login_tittle, null);
+        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.pop_login_tittle, null);
         TextView txt = inflate.findViewById(R.id.login_account);
         TextView btn = inflate.findViewById(R.id.login_switch);
         String tel = bcSP.getString("tel", "");
@@ -1044,7 +1057,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         autoDialog.getWindow().setAttributes(params);
         autoDialog.show();
         autoDialog.setOnDismissListener(dialogInterface -> AutoBuilder = null);
-        presenter.getLoginPwLo(MainActivity.this, account, password, autoDialog, MainActivity.this);
+        presenter.getLoginPwLo(SDKActivity.this, account, password, autoDialog, SDKActivity.this);
         btn.setOnClickListener(v -> {
             autoDialog.dismiss();
             Switch();
@@ -1054,7 +1067,7 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (RoundView.getInstance().winStatus == RoundView.WIN_BIG) {
-            RoundView.getInstance().createSmallWindow(MainActivity.this, this);
+            RoundView.getInstance().createSmallWindow(SDKActivity.this, this);
             RoundView.getInstance().removeBigWindow(this);
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -1220,5 +1233,33 @@ public class MainActivity extends BaseActivity<DemoPresenter> implements ClickLi
         }
         mPrivacyDialog = new PrivacyDialog(this);
         mPrivacyDialog.show();
+    }
+
+    public boolean shouldOverrideUrlLoading(final WebView view, String url) {
+        // 获取上下文, H5PayDemoActivity为当前页面
+        final Activity context = SDKActivity.this;
+        // ------  对alipays:相关的scheme处理 -------
+        if(url.startsWith("alipays:") || url.startsWith("alipay")) {
+            try {
+                context.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(url)));
+            } catch (Exception e) {
+                new AlertDialog.Builder(context)
+                        .setMessage("未检测到支付宝客户端，请安装后重试。")
+                        .setPositiveButton("立即安装", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Uri alipayUrl = Uri.parse("https://d.alipay.com");
+                                context.startActivity(new Intent("android.intent.action.VIEW", alipayUrl));
+                            }
+                        }).setNegativeButton("取消", null).show();
+            }
+            return true;
+        }
+        // ------- 处理结束 -------
+        if (!(url.startsWith("http") || url.startsWith("https"))) {
+            return true;
+        }
+        view.loadUrl(url);
+        return true;
     }
 }

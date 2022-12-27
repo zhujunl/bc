@@ -19,4 +19,7 @@
     <string name="popup_pw"><font size="13">请输入原密码</font></string>
     <string name="popup_new_pw"><font size="13">请输入新密码</font></string>
     <string name="popup_new_again"><font size="13">请再次输入新密码</font></string>
+
+    <string name="pay_success">支付成功:</string>
+    <string name="pay_failed">支付失败:</string>
 </resources>

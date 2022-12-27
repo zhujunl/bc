@@ -113,5 +113,9 @@ public interface ApiService {
     //微信-扫码支付
     @POST("sdk/v1/order/pay/wc/scan")
     Call<ResponseBody> WeiChatPay(@Query("number") String number);
+    //支付宝-手机网站（h5）支付
+    @POST("sdk/v1/order/pay/ali/wap")
+    Call<ResponseBody> AliH5Pay(@Query("number") String number,
+                                @Query("type") String type);
 
 }

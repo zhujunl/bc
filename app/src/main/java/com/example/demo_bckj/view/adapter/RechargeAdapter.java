@@ -25,10 +25,12 @@ public class RechargeAdapter extends RecyclerView.Adapter<RechargeAdapter.MyView
     private Context context;
     private int p=0;
     private List<String> lists;
+    private ChargeListener listener;
 
-    public RechargeAdapter(Context context, List<String> lists) {
+    public RechargeAdapter(Context context, List<String> lists,ChargeListener listener) {
         this.context = context;
         this.lists = lists;
+        this.listener=listener;
     }
 
     @NonNull
@@ -43,6 +45,7 @@ public class RechargeAdapter extends RecyclerView.Adapter<RechargeAdapter.MyView
         holder.txt.setText(lists.get(position));
         holder.itemView.setOnClickListener(v->{
             p=position+1;
+            listener.click(p);
             notifyDataSetChanged();
         });
         if (p==position+1){
@@ -87,5 +90,9 @@ public class RechargeAdapter extends RecyclerView.Adapter<RechargeAdapter.MyView
             select=v.findViewById(R.id.recharge_sel);
             txt=v.findViewById(R.id.recharge_txt);
         }
+    }
+
+    public interface ChargeListener{
+        void click(int position);
     }
 }

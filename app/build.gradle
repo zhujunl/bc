@@ -59,4 +59,7 @@ dependencies {
 //    implementation 'com.tencent:mmkv:1.2.14'
 
     implementation 'com.alibaba:fastjson:1.2.48'
+
+    // 支付宝 SDK AAR 包所需的配置
+    api 'com.alipay.sdk:alipaysdk-android:+@aar'
 }
