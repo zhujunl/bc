@@ -334,12 +334,12 @@ public class SPUtils {
     }
 
     /**保存AccountPwBean类*/
-    public void save(AccountPwBean data,String password){
+    public void save(AccountPwBean data, String password){
         put("account", data.getData().getAccount());
         put("tel", data.getData().getTel());
         put("slug", data.getData().getSlug());
         put("nick_name", data.getData().getNickName());
-        put("is_authenticated", data.getData().getIsAuthenticated());
+        put("is_authenticated", data.getData().getAuthenticated());
         put("realname", data.getData().getRealname());
         put("birthday", data.getData().getBirthday());
         if(data.getData().getAge()!=null)

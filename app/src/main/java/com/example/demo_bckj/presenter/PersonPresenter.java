@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.base.BasePresenter;
+import com.example.demo_bckj.listener.SDKListener;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
@@ -28,6 +29,11 @@ import okhttp3.ResponseBody;
  * @updateDes
  */
 public class PersonPresenter extends BasePresenter {
+    private SDKListener sdkListener;
+
+    public PersonPresenter(SDKListener sdkListener) {
+        this.sdkListener = sdkListener;
+    }
 
     //绑定手机发送验证码
     public void BindPhoneCode(Context context, String tel, TextView TCode) {
@@ -108,6 +114,7 @@ public class PersonPresenter extends BasePresenter {
                 bindNewPhoneDialog.dismiss();
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                 SPUtils.getInstance(context, "bcSP").save(data, "");
+                sdkListener.BindNewPhone(data.getData());
             }
 
             @Override
@@ -195,6 +202,7 @@ public class PersonPresenter extends BasePresenter {
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
+                sdkListener.SignOut();
                 SPUtils.getInstance(context, "bcSP").clear();
                 System.exit(0);
             }

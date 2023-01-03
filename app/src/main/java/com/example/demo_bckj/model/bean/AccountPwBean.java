@@ -16,7 +16,7 @@ public class AccountPwBean {
     @SerializedName("message")
     private String message;
     @SerializedName("data")
-    private DataBean data;
+    private Account data;
     @SerializedName("errors")
     private List<?> errors;
 
@@ -36,11 +36,11 @@ public class AccountPwBean {
         this.message = message;
     }
 
-    public DataBean getData() {
+    public Account getData() {
         return data;
     }
 
-    public void setData(DataBean data) {
+    public void setData(Account data) {
         this.data = data;
     }
 

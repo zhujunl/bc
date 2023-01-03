@@ -5,12 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.demo_bckj.R;
 import com.example.demo_bckj.listener.IBaseView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
+import androidx.fragment.app.FragmentManager;
 import me.jessyan.autosize.internal.CustomAdapt;
 
 /**
@@ -21,6 +22,7 @@ import me.jessyan.autosize.internal.CustomAdapt;
 public abstract class BaseFragment <P extends BasePresenter> extends Fragment implements IBaseView, CustomAdapt {
     protected P presenter;
     protected View v;
+    private FragmentManager fm;
 
     @Nullable
     @Override
@@ -30,6 +32,7 @@ public abstract class BaseFragment <P extends BasePresenter> extends Fragment im
         if (presenter!=null){
             presenter.attachView(this);
         }
+        fm= getActivity().getSupportFragmentManager();
          v = inflater.inflate(initLayoutID(), container, false);
         return v;
     }
@@ -69,5 +72,13 @@ public abstract class BaseFragment <P extends BasePresenter> extends Fragment im
         if (presenter!=null){
             presenter.detachView();
         }
+    }
+
+
+    public void nvTo(Fragment fragment){
+        fm.beginTransaction()
+                .replace(R.id.container,fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

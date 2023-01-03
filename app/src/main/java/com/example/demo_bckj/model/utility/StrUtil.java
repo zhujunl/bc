@@ -1,5 +1,6 @@
 package com.example.demo_bckj.model.utility;
 
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,5 +114,10 @@ public class StrUtil {
         return m.charAt(index) == carNumber.charAt(17);
     }
 
+    /**分转元*/
+    public static String changeF2Y(String amount){
+        return new BigDecimal(amount).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+
+    }
 
 }

@@ -23,7 +23,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Demo_bckj">
         <activity
-            android:name="com.example.demo_bckj.view.activity.WebActivity"
+            android:name=".view.activity.MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".view.activity.WebActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -33,11 +44,6 @@
             android:name=".view.activity.SDKActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <meta-data

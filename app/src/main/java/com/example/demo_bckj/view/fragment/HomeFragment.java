@@ -1,21 +1,15 @@
-package com.example.demo_bckj.view.activity;
+package com.example.demo_bckj.view.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.IBinder;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -33,7 +27,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -44,26 +37,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.base.BaseActivity;
+import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.model.PayBus;
+import com.example.demo_bckj.listener.SDKListener;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
-import com.example.demo_bckj.presenter.DemoPresenter;
+import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.PrivacyDialog;
 import com.example.demo_bckj.view.dialog.UserAgreeDialog;
-import com.example.demo_bckj.view.fragment.CServiceFragment;
-import com.example.demo_bckj.view.fragment.PersonFragment;
-import com.example.demo_bckj.view.fragment.WelfareFragment;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.RoundView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -71,14 +59,28 @@ import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
 
-public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickListener {
+/**
+ * @author ZJL
+ * @date 2023/1/3 10:38
+ * @des 主页
+ * @updateAuthor
+ * @updateDes
+ */
+public class HomeFragment extends BaseFragment<HomePresenter> implements ClickListener {
+    private final String TAG="HomeFragment";
 
-    private final String TAG = "MainActivity";
+    public static HomeFragment instance;
+
+    public static HomeFragment getInstance(SDKListener sdkListener){
+        if (instance==null){
+            instance=new HomeFragment(sdkListener);
+        }
+        return instance;
+    }
 
     private androidx.drawerlayout.widget.DrawerLayout DrawerLayout;
     private Button welfareBtn, cServiceBtn, personBtn;
@@ -115,18 +117,19 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     private Handler handler;
 
     private String tel = null;
-    SPUtils bcSP;
-    SPUtils deviceSP;
-    EventBus eventBus;
+    SPUtils bcSP, deviceSP;
+    private SDKListener sdkListener;
+
+    public HomeFragment(SDKListener sdkListener){
+        this.sdkListener=sdkListener;
+    }
 
     @Override
     protected void initData() {
         Log.d("tag", getDeviceId());
-        eventBus=EventBus.getDefault();
-        eventBus.register(this);
 
-        bcSP = SPUtils.getInstance(this, "bcSP");
-        deviceSP = SPUtils.getInstance(this, "open");
+        bcSP = SPUtils.getInstance(getActivity(), "bcSP");
+        deviceSP = SPUtils.getInstance(getActivity(), "open");
         mHandlerThread=new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler=new Handler(mHandlerThread.getLooper());
@@ -134,7 +137,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
 
         //       //沉浸式状态栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
 
@@ -156,7 +159,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         //        Log.e("tel  ", operator + "   " + tel);
 
         //接口请求
-        presenter.getSdk(this);
+        presenter.getSdk(getActivity());
     }
 
     private Runnable runnable = new Runnable() {
@@ -175,7 +178,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
                 }else {
                     boolean refresh=false;
                     try {
-                        refresh=presenter.refreshToken(SDKActivity.this, SDKActivity.this);
+                        refresh=presenter.refreshToken(getActivity(), HomeFragment.this);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -188,49 +191,28 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     };
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-    }
-
-    //获取网络名称
-    private String getConnectWifiSsid() {
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        Log.d("wifiInfo------", wifiInfo.toString());
-        Log.d("SSID------", wifiInfo.getSSID());
-        return wifiInfo.getSSID();
-
-    }
-
-    @Subscribe()
-    public void PayBus(PayBus payBus){
-        String url = payBus.getUrl();
-    }
-
-    @Override
     protected void initView() {
-        DrawerLayout = (androidx.drawerlayout.widget.DrawerLayout) findViewById(R.id.DrawerLayout);
-        leftLayout = (LinearLayout) findViewById(R.id.left_layout);
-        userHead = (ImageView) findViewById(R.id.user_head);
-        userMorePh = (ImageView) findViewById(R.id.user_morePh);
-        userMorePw = (ImageView) findViewById(R.id.user_morePw);
-        userMore = (TextView) findViewById(R.id.user_more);
-        userMoreAgreement = (ImageView) findViewById(R.id.user_more_agreement);
-        userMorePrivacy = (ImageView) findViewById(R.id.user_more_privacy);
-        userQuitLogin = (TextView) findViewById(R.id.user_quit_login);
+        DrawerLayout = (androidx.drawerlayout.widget.DrawerLayout) v.findViewById(R.id.DrawerLayout);
+        leftLayout = (LinearLayout) v.findViewById(R.id.left_layout);
+        userHead = (ImageView) v.findViewById(R.id.user_head);
+        userMorePh = (ImageView) v.findViewById(R.id.user_morePh);
+        userMorePw = (ImageView) v.findViewById(R.id.user_morePw);
+        userMore = (TextView) v.findViewById(R.id.user_more);
+        userMoreAgreement = (ImageView) v.findViewById(R.id.user_more_agreement);
+        userMorePrivacy = (ImageView) v.findViewById(R.id.user_more_privacy);
+        userQuitLogin = (TextView) v.findViewById(R.id.user_quit_login);
 
-        welfareLin = (androidx.appcompat.widget.LinearLayoutCompat) findViewById(R.id.welfare_lin);
-        cServiceLin = (androidx.appcompat.widget.LinearLayoutCompat) findViewById(R.id.cservice_lin);
-        PersonLin = (androidx.appcompat.widget.LinearLayoutCompat) findViewById(R.id.person_lin);
+        welfareLin = (androidx.appcompat.widget.LinearLayoutCompat) v.findViewById(R.id.welfare_lin);
+        cServiceLin = (androidx.appcompat.widget.LinearLayoutCompat) v.findViewById(R.id.cservice_lin);
+        PersonLin = (androidx.appcompat.widget.LinearLayoutCompat) v.findViewById(R.id.person_lin);
 
-        welfareTxt = (TextView) findViewById(R.id.welfare_txt);
-        cServiceTxt = (TextView) findViewById(R.id.cservice_txt);
-        personTxt = (TextView) findViewById(R.id.person_txt);
+        welfareTxt = (TextView) v.findViewById(R.id.welfare_txt);
+        cServiceTxt = (TextView) v.findViewById(R.id.cservice_txt);
+        personTxt = (TextView) v.findViewById(R.id.person_txt);
 
-        welfareBtn = (Button) findViewById(R.id.welfare_btn);
-        cServiceBtn = (Button) findViewById(R.id.cservice_btn);
-        personBtn = (Button) findViewById(R.id.person_btn);
+        welfareBtn = (Button) v.findViewById(R.id.welfare_btn);
+        cServiceBtn = (Button) v.findViewById(R.id.cservice_btn);
+        personBtn = (Button) v.findViewById(R.id.person_btn);
 
         welfareBtn.setOnClickListener(view -> {
             Welfare(false);
@@ -244,13 +226,13 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     }
 
     @Override
-    protected DemoPresenter initPresenter() {
-        return new DemoPresenter();
+    protected int initLayoutID() {
+        return R.layout.fragment_home;
     }
 
     @Override
-    protected int initLayoutId() {
-        return R.layout.activity_sdk;
+    protected HomePresenter initPresenter() {
+        return new HomePresenter(sdkListener);
     }
 
     @Override
@@ -260,7 +242,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
 
     @Override
     public void onError(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -277,7 +259,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     @Override
     public void Personal(boolean show) {
         Log.d(TAG, "Personal");
-        pf = PersonFragment.getInstance(null);
+        pf = PersonFragment.getInstance(sdkListener);
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(0);
@@ -296,7 +278,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     public void Switch() {
         Log.d(TAG, "Switch");
         DrawerLayout.closeDrawers();
-        RoundView.getInstance().closeRoundView(this);
+        RoundView.getInstance().closeRoundView(getActivity());
         bcSP.clear();
         popupLoginCode();
         if (pf!=null)
@@ -308,20 +290,20 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
-        RoundView.getInstance().removeSmallWindow(this);
+        RoundView.getInstance().removeSmallWindow(getActivity());
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        RoundView.getInstance().closeRoundView(this);
+        RoundView.getInstance().closeRoundView(getActivity());
     }
 
     //用户协议弹窗
     private void popupAgreement() {
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_agreement, null);
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_agreement, null);
         Button popup_agree = inflate.findViewById(R.id.popup_agree);
         TextView popup_disagree = inflate.findViewById(R.id.popup_disagree);
         TextView privacyTxt = inflate.findViewById(R.id.txt_privacy);
@@ -363,7 +345,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         popupWindow.setFocusable(false);
         popupWindow.setOutsideTouchable(false);
         //显示popupWindow
-        findViewById(R.id.main_layout).post(new Runnable() {
+        v.findViewById(R.id.main_layout).post(new Runnable() {
             @Override
             public void run() {
                 popupWindow.showAtLocation(inflate, Gravity.CENTER, 0, 0);
@@ -372,10 +354,10 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         //同意
         popup_agree.setOnClickListener(v -> {
             popupWindow.dismiss();
-            ActivityCompat.requestPermissions(this, Constants.PermissionString, 1);
+            requestPermissions(Constants.PermissionString, 1);
         });
         //不同意协议
-        popup_disagree.setOnClickListener(v -> finish());
+        popup_disagree.setOnClickListener(v -> System.exit(0));
     }
 
     //手机号验证码登录
@@ -383,7 +365,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         if (LoginBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_code, null);
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
@@ -398,12 +380,12 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
         List<String> telLists = deviceSP.getList("tel", "");
-        View v = LayoutInflater.from(SDKActivity.this).inflate(R.layout.pop_tel_list, null);
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
-            PopupTel popupTel = new PopupTel(this, telLists, popupLogin, v, inflate.getWidth(), 200, true);
+            PopupTel popupTel = new PopupTel(getActivity(), telLists, popupLogin, v, inflate.getWidth(), 200, true);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
-        LoginBuilder = new AlertDialog.Builder(this);
+        LoginBuilder = new AlertDialog.Builder(getActivity());
         LoginBuilder.setView(inflate);
         LoginBuilder.setCancelable(false);
         loginDialog = LoginBuilder.create();
@@ -489,11 +471,11 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         //获取验证码
         popupTvCode.setOnClickListener(view -> {
             if (DeviceIdUtil.isMobileNO(popupLogin.getText().toString().trim())) {
-                presenter.getPhoneLoginCode(this, popupLogin.getText().toString().trim());
+                presenter.getPhoneLoginCode(getActivity(), popupLogin.getText().toString().trim());
                 CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(popupTvCode, 60000, 1000);
                 countDownTimerUtils.start();
             } else {
-                Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
             }
         });
         //用户协议
@@ -504,9 +486,9 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             if (popupRb.isChecked()) {
                 String number = popupLogin.getText().toString().trim();
                 String code = popupEtCode.getText().toString().trim();
-                presenter.getPhoneLogin(this, this, number, code, telLists, loginDialog);
+                presenter.getPhoneLogin(getActivity(), this, number, code, telLists, loginDialog);
             } else {
-                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -518,9 +500,9 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
 
         play.setOnClickListener(view -> {
             if (!popupRb.isChecked()) {
-                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             } else {
-                presenter.getDemoAccount(this, new PlayInterface() {
+                presenter.getDemoAccount(getActivity(), new PlayInterface() {
                     @Override
                     public void onSuccess(String account, String password) {
                         loginDialog.dismiss();
@@ -541,7 +523,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         if (LoginPwBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_pw_login, null);
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_et_pw = inflate.findViewById(R.id.popup_et_pw);
@@ -553,7 +535,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         TextView popupRegister = inflate.findViewById(R.id.popup_register);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_forget_pw = inflate.findViewById(R.id.popup_forget_pw);
-        LoginPwBuilder = new AlertDialog.Builder(this);
+        LoginPwBuilder = new AlertDialog.Builder(getActivity());
         LoginPwBuilder.setView(inflate);
         LoginPwBuilder.setCancelable(false);
         loginPwDialog = LoginPwBuilder.create();
@@ -586,9 +568,9 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
                 HashMap<Object, Object> map = new HashMap<>();
-                presenter.getLoginPwLo(this, popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog, this);
+                presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog, this);
             } else {
-                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         popupLogin.addTextChangedListener(new TextWatcher() {
@@ -657,7 +639,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         if (ForgetPwBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_code_phone, null);
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code_phone, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
         TextView popupTvCode = inflate.findViewById(R.id.popup_Tv_code);
@@ -671,7 +653,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
-        ForgetPwBuilder = new AlertDialog.Builder(this);
+        ForgetPwBuilder = new AlertDialog.Builder(getActivity());
         ForgetPwBuilder.setView(inflate);
         ForgetPwBuilder.setCancelable(false);
         forgetDialog = ForgetPwBuilder.create();
@@ -691,17 +673,17 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
                 String trim1 = popupLogin.getText().toString().trim();
                 String trim2 = popupEtCode.getText().toString().trim();
                 if (TextUtils.isEmpty(trim1) || TextUtils.isEmpty(trim2)) {
-                    Toast.makeText(this, "请输入手机号与验证码", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "请输入手机号与验证码", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!DeviceIdUtil.isMobileNO(trim1)) {
-                    Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 forgetDialog.hide();
                 popupResetPassword(trim1, trim2);
             } else {
-                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         //返回上一级
@@ -710,7 +692,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             forgetDialog.dismiss();
         });
         //跳转联系客服
-        popup_service.setOnClickListener(view -> Toast.makeText(SDKActivity.this, "尽请期待", Toast.LENGTH_SHORT).show());
+        popup_service.setOnClickListener(view -> Toast.makeText(getActivity(), "尽请期待", Toast.LENGTH_SHORT).show());
         //输入框监听
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
@@ -771,14 +753,14 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         popupTvCode.setOnClickListener(view -> {
             String trim1 = popupLogin.getText().toString().trim();
             if (TextUtils.isEmpty(trim1)) {
-                Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请输入手机号", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!DeviceIdUtil.isMobileNO(trim1)) {
-                Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                 return;
             }
-            presenter.forgetPwd(this, trim1, popupTvCode);
+            presenter.forgetPwd(getActivity(), trim1, popupTvCode);
         });
     }
 
@@ -787,7 +769,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         if (ResetPwBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_reset_password, null);
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_reset_password, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_new_password = inflate.findViewById(R.id.popup_new_password);
         EditText popup_password_pw = inflate.findViewById(R.id.popup_password_pw);
@@ -795,7 +777,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         ImageView popup_remove_pw_pw = inflate.findViewById(R.id.popup_remove_pw_pw);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
-        ResetPwBuilder = new AlertDialog.Builder(this);
+        ResetPwBuilder = new AlertDialog.Builder(getActivity());
         ResetPwBuilder.setView(inflate);
         ResetPwBuilder.setCancelable(false);
         resetDialog = ResetPwBuilder.create();
@@ -813,7 +795,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         popupSubmit.setOnClickListener(view -> {
             String trim1 = popup_new_password.getText().toString().trim();
             String trim2 = popup_password_pw.getText().toString().trim();
-            presenter.resetPwd(this, n, c, trim1, trim2, resetDialog, forgetDialog,loginPwDialog);
+            presenter.resetPwd(getActivity(), n, c, trim1, trim2, resetDialog, forgetDialog,loginPwDialog);
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
@@ -887,7 +869,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         if (RegisterBuilder != null) {
             return;
         }
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.popup_number_register, null);
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_number_register, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_number = inflate.findViewById(R.id.popup_number);
         ImageView popup_remove_number = inflate.findViewById(R.id.popup_remove_number);
@@ -899,7 +881,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         TextView popupUser = inflate.findViewById(R.id.popup_user);
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
-        RegisterBuilder = new AlertDialog.Builder(this);
+        RegisterBuilder = new AlertDialog.Builder(getActivity());
         RegisterBuilder.setView(inflate);
         RegisterBuilder.setCancelable(false);
         registerDialog = RegisterBuilder.create();
@@ -935,12 +917,12 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             String pass2 = popup_password_pw.getText().toString().trim();
             if (popupRb.isChecked()) {
                 if (TextUtils.equals(pass, pass2)) {
-                    presenter.getLoginPwRe(this, number, pass, pass2, registerDialog, SDKActivity.this);
+                    presenter.getLoginPwRe(getActivity(), number, pass, pass2, registerDialog, this);
                 } else {
-                    Toast.makeText(SDKActivity.this, "两次密码不正确", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "两次密码不正确", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(SDKActivity.this, "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
         });
         popup_number.addTextChangedListener(new TextWatcher() {
@@ -1037,8 +1019,8 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         if (AutoBuilder != null) {
             return;
         }
-        AutoBuilder = new AlertDialog.Builder(this);
-        View inflate = LayoutInflater.from(SDKActivity.this).inflate(R.layout.pop_login_tittle, null);
+        AutoBuilder = new AlertDialog.Builder(getActivity());
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.pop_login_tittle, null);
         TextView txt = inflate.findViewById(R.id.login_account);
         TextView btn = inflate.findViewById(R.id.login_switch);
         String tel = bcSP.getString("tel", "");
@@ -1057,34 +1039,20 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         autoDialog.getWindow().setAttributes(params);
         autoDialog.show();
         autoDialog.setOnDismissListener(dialogInterface -> AutoBuilder = null);
-        presenter.getLoginPwLo(SDKActivity.this, account, password, autoDialog, SDKActivity.this);
+        presenter.getLoginPwLo(getActivity(), account, password, autoDialog, this);
         btn.setOnClickListener(v -> {
             autoDialog.dismiss();
             Switch();
         });
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (RoundView.getInstance().winStatus == RoundView.WIN_BIG) {
-            RoundView.getInstance().createSmallWindow(SDKActivity.this, this);
-            RoundView.getInstance().removeBigWindow(this);
-        }
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (isShouldHideKeyboard(v, event)) {
-                hideKeyboard(v.getWindowToken());
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
 
     /**
      * 检查是否获取所有权限
      */
     private boolean checkPermissionAllGranted(String[] permissions) {
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
                 // 只要有一个权限没有被授予, 则直接返回 false
                 return false;
             }
@@ -1095,7 +1063,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PackageManager packageManager = this.getPackageManager();
+        PackageManager packageManager = getActivity().getPackageManager();
         PermissionInfo permissionInfo = null;
         for (int i = 0; i < permissions.length; i++) {
             try {
@@ -1112,45 +1080,6 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             } else {
                 Log.i(TAG, "您拒绝了【" + permissionName + "】权限");
             }
-        }
-    }
-
-    /**
-     * 根据EditText所在坐标和用户点击的坐标相对比，来判断是否隐藏键盘，因为当用户点击EditText时则不能隐藏
-     *
-     * @param v
-     * @param event
-     * @return
-     */
-    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {  //判断得到的焦点控件是否包含EditText
-            int[] l = {0, 0};
-            v.getLocationInWindow(l);
-            int left = l[0],    //得到输入框在屏幕中上下左右的位置
-                    top = l[1],
-                    bottom = top + v.getHeight(),
-                    right = left + v.getWidth();
-            if (event.getX() > left && event.getX() < right
-                    && event.getY() > top && event.getY() < bottom) {
-                // 点击位置如果是EditText的区域，忽略它，不收起键盘。
-                return false;
-            } else {
-                return true;
-            }
-        }
-        // 如果焦点不是EditText则忽略
-        return false;
-    }
-
-    /**
-     * 获取InputMethodManager，隐藏软键盘
-     *
-     * @param token
-     */
-    private void hideKeyboard(IBinder token) {
-        if (token != null) {
-            InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            im.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
@@ -1192,7 +1121,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
      */
     public void getScreenView(AlertDialog registerDialog) {
         //获取窗口管理类,获取窗口的宽度和高度
-        WindowManager windowManager = getWindowManager();
+        WindowManager windowManager = getActivity().getWindowManager();
         Display display = windowManager.getDefaultDisplay();
         int width = display.getWidth();
         int height = display.getHeight();
@@ -1208,7 +1137,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
         screenView.setDrawingCacheEnabled(true);
         //返回屏幕View的视图缓存
         bitmap = screenView.getDrawingCache();
-        FileUtil.saveImg(this, bitmap);
+        FileUtil.saveImg(getActivity(), bitmap);
     }
 
     /**
@@ -1219,7 +1148,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             mUserAgreeDialog.show();
             return;
         }
-        mUserAgreeDialog = new UserAgreeDialog(this);
+        mUserAgreeDialog = new UserAgreeDialog(getActivity());
         mUserAgreeDialog.show();
     }
 
@@ -1231,35 +1160,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             mPrivacyDialog.show();
             return;
         }
-        mPrivacyDialog = new PrivacyDialog(this);
+        mPrivacyDialog = new PrivacyDialog(getActivity());
         mPrivacyDialog.show();
-    }
-
-    public boolean shouldOverrideUrlLoading(final WebView view, String url) {
-        // 获取上下文, H5PayDemoActivity为当前页面
-        final Activity context = SDKActivity.this;
-        // ------  对alipays:相关的scheme处理 -------
-        if(url.startsWith("alipays:") || url.startsWith("alipay")) {
-            try {
-                context.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(url)));
-            } catch (Exception e) {
-                new AlertDialog.Builder(context)
-                        .setMessage("未检测到支付宝客户端，请安装后重试。")
-                        .setPositiveButton("立即安装", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Uri alipayUrl = Uri.parse("https://d.alipay.com");
-                                context.startActivity(new Intent("android.intent.action.VIEW", alipayUrl));
-                            }
-                        }).setNegativeButton("取消", null).show();
-            }
-            return true;
-        }
-        // ------- 处理结束 -------
-        if (!(url.startsWith("http") || url.startsWith("https"))) {
-            return true;
-        }
-        view.loadUrl(url);
-        return true;
     }
 }

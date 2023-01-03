@@ -18,12 +18,15 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.listener.RechargeListener;
 import com.example.demo_bckj.manager.ActivityManager;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AliPayBean;
 import com.example.demo_bckj.model.bean.OrderBean;
 import com.example.demo_bckj.model.bean.PayResult;
+import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.utility.FileUtil;
+import com.example.demo_bckj.model.utility.StrUtil;
 import com.example.demo_bckj.view.adapter.RechargeAdapter;
 
 import java.io.IOException;
@@ -61,8 +64,10 @@ public class RechargeSubDialog extends Dialog {
     private HandlerThread mHandlerThread;
     private Handler mHandler;
     private int pos;
+    private RechargeOrder rechargeOrder;
+    private RechargeListener listener;
 
-    public RechargeSubDialog(@NonNull Context context) {
+    public RechargeSubDialog(@NonNull Context context, RechargeOrder rechargeOrder,RechargeListener listener) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
@@ -84,9 +89,11 @@ public class RechargeSubDialog extends Dialog {
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
+                            listener.success();
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
+                            listener.fail(context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:
@@ -94,6 +101,9 @@ public class RechargeSubDialog extends Dialog {
                 }
             }
         };
+        this.rechargeOrder=rechargeOrder;
+        this.listener=listener;
+        Log.d(TAG, "订单信息==" +rechargeOrder.toString() );
 
         commodity = findViewById(R.id.Commodity);
         comDetails = findViewById(R.id.ComDetails);
@@ -106,8 +116,8 @@ public class RechargeSubDialog extends Dialog {
         rv.setLayoutManager(new LinearLayoutManager(context));
         rv.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         rv.setAdapter(adapter);
-        commodity.setText("首充28元");
-        comDetails.setText("￥28");
+        commodity.setText(rechargeOrder.getProps_name());
+        comDetails.setText("￥"+ StrUtil.changeF2Y(String.valueOf(rechargeOrder.getMoney())));
         btn.setOnClickListener(v -> {
             new Thread(() -> {
                 if (pos == 1) {
@@ -124,8 +134,10 @@ public class RechargeSubDialog extends Dialog {
     //支付宝支付
     private void charge() {
         try {
-            Response<ResponseBody> execute = RetrofitManager.getInstance(getContext()).getApiService().CreateOrder(number_game, money, props_name, server_id,
-                    server_name, role_id, role_name, callback_url, extend_data).execute();
+            Response<ResponseBody> execute = RetrofitManager.getInstance(getContext()).getApiService().CreateOrder(rechargeOrder.getNumber_game(),
+                    rechargeOrder.getMoney(), rechargeOrder.getProps_name(), rechargeOrder.getServer_id(),
+                    rechargeOrder.getServer_name(), rechargeOrder.getRole_id(), rechargeOrder.getRole_name(), rechargeOrder.getCallback_url(),
+                    rechargeOrder.getExtend_data()).execute();
             JSONObject json = FileUtil.getResponseBody(execute.body());
             if (json.get("code").toString().equals("0")) {
                 OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);

@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.listener.RechargeListener;
+import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
@@ -36,15 +39,17 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private SPUtils sp;
     private String tel, nickName;
     private ImageView header;
+    private SDKListener sdkListener;
 
-    public static PersonFragment getInstance() {
+    public static PersonFragment getInstance(SDKListener sdkListener) {
         if (instance == null) {
-            instance = new PersonFragment();
+            instance = new PersonFragment(sdkListener);
         }
         return instance;
     }
 
-    public PersonFragment() {
+    public PersonFragment(SDKListener sdkListener){
+        this.sdkListener=sdkListener;
     }
 
     @Override
@@ -76,7 +81,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     @Override
     protected PersonPresenter initPresenter() {
-        return new PersonPresenter();
+        return new PersonPresenter(sdkListener);
     }
 
     @Override
@@ -158,7 +163,28 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             presenter.loginOut(getContext());
         });
         header.setOnClickListener(v->{
-            RechargeDialog rechargeDialog=new RechargeDialog(getActivity());
+            RechargeOrder rechargeOrder=new RechargeOrder.Builder()
+                    .number_game("游戏订单号")
+                    .props_name("物品名称")
+                    .server_id("区服 ID")
+                    .server_name("区服名称")
+                    .role_id("角色 ID")
+                    .role_name("角色名称")
+                    .callback_url("https://apitest.infinite-game.cn/ping")
+                    .money(1)
+                    .extend_data("")
+                    .build();
+            RechargeDialog rechargeDialog=new RechargeDialog(getActivity(), rechargeOrder, new RechargeListener() {
+                @Override
+                public void success() {
+
+                }
+
+                @Override
+                public void fail(String message) {
+
+                }
+            });
             rechargeDialog.show();
         });
     }
