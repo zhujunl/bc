@@ -75,9 +75,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     public static HomeFragment instance;
 
-    public static HomeFragment getInstance(SDKListener sdkListener){
-        if (instance==null){
-            instance=new HomeFragment(sdkListener);
+    public static HomeFragment getInstance(SDKListener sdkListener) {
+        if (instance == null) {
+            instance = new HomeFragment(sdkListener);
         }
         return instance;
     }
@@ -120,8 +120,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     SPUtils bcSP, deviceSP;
     private SDKListener sdkListener;
 
-    public HomeFragment(SDKListener sdkListener){
-        this.sdkListener=sdkListener;
+    public HomeFragment(SDKListener sdkListener) {
+        this.sdkListener = sdkListener;
     }
 
     @Override
@@ -130,9 +130,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
         deviceSP = SPUtils.getInstance(getActivity(), "open");
-        mHandlerThread=new HandlerThread("loginHandler");
+        mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
-        handler=new Handler(mHandlerThread.getLooper());
+        handler = new Handler(mHandlerThread.getLooper());
         handler.postDelayed(runnable, 500);
 
         //       //沉浸式状态栏
@@ -175,14 +175,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 String account = bcSP.getString("account", "");
                 if (!TextUtils.isEmpty(password) && !TextUtils.isEmpty(account)) {
                     popupLoginAuto(account, password);
-                }else {
-                    boolean refresh=false;
+                } else {
+                    boolean refresh = false;
                     try {
-                        refresh=presenter.refreshToken(getActivity(), HomeFragment.this);
+                        refresh = presenter.refreshToken(getActivity(), HomeFragment.this);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if (!refresh){
+                    if (!refresh) {
                         popupLoginCode();
                     }
                 }
@@ -281,11 +281,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         RoundView.getInstance().closeRoundView(getActivity());
         bcSP.clear();
         popupLoginCode();
-        if (pf!=null)
+        if (pf != null)
             pf.onDestroy();
-        if (wp!=null)
+        if (wp != null)
             wp.onDestroy();
-        if (cs!=null)
+        if (cs != null)
             cs.onDestroy();
     }
 
@@ -795,7 +795,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popupSubmit.setOnClickListener(view -> {
             String trim1 = popup_new_password.getText().toString().trim();
             String trim2 = popup_password_pw.getText().toString().trim();
-            presenter.resetPwd(getActivity(), n, c, trim1, trim2, resetDialog, forgetDialog,loginPwDialog);
+            presenter.resetPwd(getActivity(), n, c, trim1, trim2, resetDialog, forgetDialog, loginPwDialog);
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {

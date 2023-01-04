@@ -124,29 +124,30 @@ public class DeviceIdUtil {
     }
 
 
-//    String androidId = Settings.Secure.getString(context.getContentResolver(),
-//            Settings.Secure.ANDROID_ID);
-//
-//    UUID androidId_UUID = UUID
-//            .nameUUIDFromBytes(androidId.getBytes("utf8"));
-//
-//    String unique_id = androidId_UUID.toString();
+    //    String androidId = Settings.Secure.getString(context.getContentResolver(),
+    //            Settings.Secure.ANDROID_ID);
+    //
+    //    UUID androidId_UUID = UUID
+    //            .nameUUIDFromBytes(androidId.getBytes("utf8"));
+    //
+    //    String unique_id = androidId_UUID.toString();
 
     /**
      * IMEI 1号
+     *
      * @param context
      * @return
      */
-    public static String getIMEI_1(Context context){
+    public static String getIMEI_1(Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return "";
         }
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         Class clazz = tm.getClass();
         try {
-            Method getImei = clazz.getDeclaredMethod("getImei",int.class);
+            Method getImei = clazz.getDeclaredMethod("getImei", int.class);
             Object invoke = getImei.invoke(tm, 0);
-            return invoke==null?"":invoke.toString();
+            return invoke == null ? "" : invoke.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -155,33 +156,36 @@ public class DeviceIdUtil {
 
     /**
      * IMEI 2号
+     *
      * @param context
      * @return
      */
-    public static String getIMEI_2 (Context context)  {
+    public static String getIMEI_2(Context context) {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         Class clazz = tm.getClass();
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return "";
         }
         try {
-            Method getImei = clazz.getDeclaredMethod("getImei",int.class);
+            Method getImei = clazz.getDeclaredMethod("getImei", int.class);
             Object invoke = getImei.invoke(tm, 1);
-            return invoke==null?"":invoke.toString();
+            return invoke == null ? "" : invoke.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return " ";
         }
     }
+
     public static String getIMSI(Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return "";
         }
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
-            if (tm == null) return "";
+            if (tm == null)
+                return "";
             return tm.getSubscriberId();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return " ";
         }
@@ -227,7 +231,9 @@ public class DeviceIdUtil {
         return serial;
     }
 
-    /**获取sim卡序列号*/
+    /**
+     * 获取sim卡序列号
+     */
     public static String getSimSerial(Context context) {
         //        //返回SIM卡的序列号
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
@@ -361,11 +367,10 @@ public class DeviceIdUtil {
     }
 
     //验证手机号是否合法
-    public static boolean isMobileNO(String mobile){
-        if (mobile.length() != 11)
-        {
+    public static boolean isMobileNO(String mobile) {
+        if (mobile.length() != 11) {
             return false;
-        }else{
+        } else {
             /**
              * 移动号段正则表达式
              */
@@ -373,11 +378,11 @@ public class DeviceIdUtil {
             /**
              * 联通号段正则表达式
              */
-            String pat2  = "^((13[0-2])|(145)|(15[5-6])|(176)|(18[5,6]))\\d{8}|(1709)\\d{7}$";
+            String pat2 = "^((13[0-2])|(145)|(15[5-6])|(176)|(18[5,6]))\\d{8}|(1709)\\d{7}$";
             /**
              * 电信号段正则表达式
              */
-            String pat3  = "^((133)|(153)|(177)|(18[0,1,9])|(149))\\d{8}$";
+            String pat3 = "^((133)|(153)|(177)|(18[0,1,9])|(149))\\d{8}$";
             /**
              * 虚拟运营商正则表达式
              */
@@ -385,33 +390,33 @@ public class DeviceIdUtil {
             Pattern pattern1 = Pattern.compile(pat1);
             Matcher match1 = pattern1.matcher(mobile);
             boolean isMatch1 = match1.matches();
-            if(isMatch1){
+            if (isMatch1) {
                 return true;
             }
             Pattern pattern2 = Pattern.compile(pat2);
             Matcher match2 = pattern2.matcher(mobile);
             boolean isMatch2 = match2.matches();
-            if(isMatch2){
+            if (isMatch2) {
                 return true;
             }
             Pattern pattern3 = Pattern.compile(pat3);
             Matcher match3 = pattern3.matcher(mobile);
             boolean isMatch3 = match3.matches();
-            if(isMatch3){
+            if (isMatch3) {
                 return true;
             }
             Pattern pattern4 = Pattern.compile(pat4);
             Matcher match4 = pattern4.matcher(mobile);
             boolean isMatch4 = match4.matches();
-            if(isMatch4){
+            if (isMatch4) {
                 return true;
             }
             return false;
         }
     }
 
-    public static String getSimOperator(String operator){
-        switch (operator){
+    public static String getSimOperator(String operator) {
+        switch (operator) {
             case "46005":
                 return "中国电信";
             case "46006":
@@ -470,76 +475,81 @@ public class DeviceIdUtil {
 
         String sign = Base64.encodeToString(string.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         Log.d("tag", "Base64编码sign为：" + sign);
+        JSONObject jsonConfig = new JSONObject(StrUtil.getJson(context, "bc_sdk_config.json"));//json数据
+        String type = StrUtil.getValue(jsonConfig, "type");
+        String game = StrUtil.getValue(jsonConfig, "game");
+        String channel = StrUtil.getValue(jsonConfig, "channel");
+        String plan = StrUtil.getValue(jsonConfig, "plan");
+        String pack = StrUtil.getValue(jsonConfig, "package");
+        //        String j="{\n" +
+        //                "    \"type\": \"ML\",\n" +
+        //                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
+        //                "    \"channel\": \"\",\n" +
+        //                "    \"package\": \"\",\n" +
+        //                "    \"plan\": \"\",\n" +
+        //                "    \"material\": \"\",\n" +
+        //                "    \"device\": {\n" +
+        //                "        \"os\": \"Android\",\n" +
+        //                "        \"android\": {\n" +
+        //                "            \"system_version\": \"10\",\n" +
+        //                "            \"android_id\": \"3559324b96572744\",\n" +
+        //                "            \"android_q\": {\n" +
+        //                "                \"aaid\": \"748d89ad-dd0d-424a-83df-d934519f0489\",\n" +
+        //                "                \"oaid\": \"92e60edb3de3f9d0\",\n" +
+        //                "                \"vaid\": \"416bffbb34374591\"\n" +
+        //                "            },\n" +
+        //                "            \"id\": \"QKQ1.200419.002\",\n" +
+        //                "            \"imei\": [\"\", \"\"],\n" +
+        //                "            \"imsi\": \"\",\n" +
+        //                "            \"model\": \"M2007J1SC\",\n" +
+        //                "            \"product\": \"cas\",\n" +
+        //                "            \"brand\": \"Xiaomi\",\n" +
+        //                "            \"game_package_name\": \"com.aaaa.bbbb\",\n" +
+        //                "            \"game_version\": \"1.0.2\",\n" +
+        //                "            \"sdk_package_name\": \"com.dsadads.ewqreqwrqwe\",\n" +
+        //                "            \"sdk_version\": \"v2.1.6.1583728\",\n" +
+        //                "            \"serial\": \"unknown\",\n" +
+        //                "            \"sim_serial\": [\"\"]\n" +
+        //                "        },\n" +
+        //                "        \"network\": {\n" +
+        //                "            \"code\": 46002,\n" +
+        //                "            \"intranet_ip\": \"10.48.6.16\",\n" +
+        //                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
+        //                "            \"name\": \"那就这样\",\n" +
+        //                "            \"type\": \"wifi\"\n" +
+        //                "        }\n" +
+        //                "    }\n" +
+        //                "}";
 
-//        String j="{\n" +
-//                "    \"type\": \"ML\",\n" +
-//                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
-//                "    \"channel\": \"\",\n" +
-//                "    \"package\": \"\",\n" +
-//                "    \"plan\": \"\",\n" +
-//                "    \"material\": \"\",\n" +
-//                "    \"device\": {\n" +
-//                "        \"os\": \"Android\",\n" +
-//                "        \"android\": {\n" +
-//                "            \"system_version\": \"10\",\n" +
-//                "            \"android_id\": \"3559324b96572744\",\n" +
-//                "            \"android_q\": {\n" +
-//                "                \"aaid\": \"748d89ad-dd0d-424a-83df-d934519f0489\",\n" +
-//                "                \"oaid\": \"92e60edb3de3f9d0\",\n" +
-//                "                \"vaid\": \"416bffbb34374591\"\n" +
-//                "            },\n" +
-//                "            \"id\": \"QKQ1.200419.002\",\n" +
-//                "            \"imei\": [\"\", \"\"],\n" +
-//                "            \"imsi\": \"\",\n" +
-//                "            \"model\": \"M2007J1SC\",\n" +
-//                "            \"product\": \"cas\",\n" +
-//                "            \"brand\": \"Xiaomi\",\n" +
-//                "            \"game_package_name\": \"com.aaaa.bbbb\",\n" +
-//                "            \"game_version\": \"1.0.2\",\n" +
-//                "            \"sdk_package_name\": \"com.dsadads.ewqreqwrqwe\",\n" +
-//                "            \"sdk_version\": \"v2.1.6.1583728\",\n" +
-//                "            \"serial\": \"unknown\",\n" +
-//                "            \"sim_serial\": [\"\"]\n" +
-//                "        },\n" +
-//                "        \"network\": {\n" +
-//                "            \"code\": 46002,\n" +
-//                "            \"intranet_ip\": \"10.48.6.16\",\n" +
-//                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
-//                "            \"name\": \"那就这样\",\n" +
-//                "            \"type\": \"wifi\"\n" +
-//                "        }\n" +
-//                "    }\n" +
-//                "}";
-
-        String j="{\n" +
-                "    \"type\": \"ML\",\n" +
-                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
-                "    \"channel\": \"\",\n" +
-                "    \"package\": \"\",\n" +
-                "    \"plan\": \"\",\n" +
+        String j = "{\n" +
+                "    \"type\": \"" + type + "\",\n" +
+                "    \"game\": \"" + game + "\",\n" +
+                "    \"channel\": \"" + channel + "\",\n" +
+                "    \"package\": \"" + pack + "\",\n" +
+                "    \"plan\": \"" + plan + "\",\n" +
                 "    \"material\": \"\",\n" +
                 "    \"device\": {\n" +
                 "        \"os\": \"Android\",\n" +
                 "        \"android\": {\n" +
-                "            \"system_version\": \""+DeviceIdUtil.getSystemVersion()+"\",\n" +
-                "            \"android_id\": \""+DeviceIdUtil.getAndroidId(context)+"\",\n" +
+                "            \"system_version\": \"" + DeviceIdUtil.getSystemVersion() + "\",\n" +
+                "            \"android_id\": \"" + DeviceIdUtil.getAndroidId(context) + "\",\n" +
                 "            \"android_q\": {\n" +
-                "                \"aaid\": \""+"748d89ad-dd0d-424a-83df-d934519f0489"+"\",\n" +
-                "                \"oaid\": \""+"92e60edb3de3f9d0"+"\",\n" +
-                "                \"vaid\": \""+"416bffbb34374591"+"\"\n" +
+                "                \"aaid\": \"" + "748d89ad-dd0d-424a-83df-d934519f0489" + "\",\n" +
+                "                \"oaid\": \"" + "92e60edb3de3f9d0" + "\",\n" +
+                "                \"vaid\": \"" + "416bffbb34374591" + "\"\n" +
                 "            },\n" +
-                "            \"id\": \""+"QKQ1.200419.002"+"\",\n" +
-                "            \"imei\": ["+DeviceIdUtil.getIMEI_1(context)+","+DeviceIdUtil.getIMEI_2(context)+"],\n" +
-                "            \"imsi\": \""+DeviceIdUtil.getIMSI(context)+"\",\n" +
-                "            \"model\": \""+Build.MODEL+"\",\n" +
-                "            \"product\": \""+"cas"+"\",\n" +
-                "            \"brand\": \""+Build.BRAND+"\",\n" +
-                "            \"game_package_name\": \""+""+"\",\n" +
-                "            \"game_version\": \""+""+"\",\n" +
-                "            \"sdk_package_name\": \""+DeviceIdUtil.getTopPackage(context)+"\",\n" +
-                "            \"sdk_version\": \""+DeviceIdUtil.getVersionName(context)+"\",\n" +
-                "            \"serial\": \""+DeviceIdUtil.getSERIAL()+"\",\n" +
-                "            \"sim_serial\": ["+DeviceIdUtil.getSimSerial(context)+"]\n" +
+                "            \"id\": \"" + "QKQ1.200419.002" + "\",\n" +
+                "            \"imei\": [" + DeviceIdUtil.getIMEI_1(context) + "," + DeviceIdUtil.getIMEI_2(context) + "],\n" +
+                "            \"imsi\": \"" + DeviceIdUtil.getIMSI(context) + "\",\n" +
+                "            \"model\": \"" + Build.MODEL + "\",\n" +
+                "            \"product\": \"" + "cas" + "\",\n" +
+                "            \"brand\": \"" + Build.BRAND + "\",\n" +
+                "            \"game_package_name\": \"" + "" + "\",\n" +
+                "            \"game_version\": \"" + "" + "\",\n" +
+                "            \"sdk_package_name\": \"" + DeviceIdUtil.getTopPackage(context) + "\",\n" +
+                "            \"sdk_version\": \"" + DeviceIdUtil.getVersionName(context) + "\",\n" +
+                "            \"serial\": \"" + DeviceIdUtil.getSERIAL() + "\",\n" +
+                "            \"sim_serial\": [" + DeviceIdUtil.getSimSerial(context) + "]\n" +
                 "        },\n" +
                 "        \"network\": {\n" +
                 "            \"code\": 46002,\n" +
@@ -551,16 +561,16 @@ public class DeviceIdUtil {
                 "    }\n" +
                 "}";
         JSONObject json = new JSONObject(j);
-        Log.d("tag","设备信息的字符串为"+json);
+        Log.d("tag", "设备信息的字符串为" + json);
         //加密
         String key = Encryptutility.strMD5(sign);
         Log.d("tag", "加密的字符串keyString值为" + key);
         String info = AESUtils.encrypt(json.toString(), key, key.substring(0, 16));
-        Log.d("tag", "加密的字符串info为"+info);
+        Log.d("tag", "加密的字符串info为" + info);
 
-        SignInfoBean signInfoBean=new SignInfoBean();
-        signInfoBean.sign=sign;
-        signInfoBean.info=info;
+        SignInfoBean signInfoBean = new SignInfoBean();
+        signInfoBean.sign = sign;
+        signInfoBean.info = info;
 
         return signInfoBean;
     }

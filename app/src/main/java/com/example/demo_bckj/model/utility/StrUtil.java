@@ -1,5 +1,15 @@
 package com.example.demo_bckj.model.utility;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,8 +100,10 @@ public class StrUtil {
 
     /**
      * 验证身份证真假
-     * @param  carNumber 身份证号
-     * @return boolean*/
+     *
+     * @param carNumber 身份证号
+     * @return boolean
+     */
     public static boolean isCard(String carNumber) {
         //判断输入身份证号长度是否合法
         if (carNumber.length() != 18) {
@@ -114,10 +126,62 @@ public class StrUtil {
         return m.charAt(index) == carNumber.charAt(17);
     }
 
-    /**分转元*/
-    public static String changeF2Y(String amount){
+    /**
+     * 分转元
+     */
+    public static String changeF2Y(String amount) {
         return new BigDecimal(amount).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 
     }
 
+    /**
+     * 获取Assets路径下的文件
+     *
+     * @param context
+     * @param fileName
+     * @return
+     */
+    public static String getJson(Context context, String fileName) {
+
+        String json = "";
+
+        try {
+
+            AssetManager s = context.getAssets();
+            try {
+                InputStream is = s.open(fileName);
+                byte[] buffer = new byte[is.available()];
+                is.read(buffer);
+                json = new String(buffer, "utf-8");
+                is.close();
+
+                //                JSONObject jsonObject = new JSONObject(json);//json数据
+                //                // 动态获取key值
+                //                Iterator<String> iterator = jsonObject.keys();//使用迭代器
+                //                while (iterator.hasNext()) {
+                //                    String key = iterator.next();//获取key
+                //                    String value = jsonObject.getString(key);//获取value
+                //                    Log.e("key-value","key="+key+" value="+value);
+                //                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("getJson", "文件：" + fileName + "  json:" + json);
+        return json;
+
+    }
+
+    public static String getValue(JSONObject json, String key) {
+        String value = "";
+        try {
+            value = TextUtils.isEmpty(json.getString("key")) ? "" : json.getString("key");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
 }
