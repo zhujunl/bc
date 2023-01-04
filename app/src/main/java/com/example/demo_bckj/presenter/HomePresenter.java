@@ -40,6 +40,12 @@ import retrofit2.Response;
  */
 public class HomePresenter extends BasePresenter {
     private SDKListener sdkListener;
+    private List<String> accountLists, telLists;
+
+    public void setLists(List<String> accountLists,List<String> telLists) {
+        this.accountLists = accountLists;
+        this.telLists = telLists;
+    }
 
     public HomePresenter(SDKListener sdkListener) {
         this.sdkListener = sdkListener;
@@ -124,7 +130,7 @@ public class HomePresenter extends BasePresenter {
     }
 
     //手机号登录
-    public void getPhoneLogin(Context context, ClickListener listener, String tel, String code, List<String> telLists, AlertDialog dialog) {
+    public void getPhoneLogin(Context context, ClickListener listener, String tel, String code, AlertDialog dialog) {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getPhoneLogin(tel, code).enqueue(new MyCallback<ResponseBody>(context) {
@@ -160,6 +166,10 @@ public class HomePresenter extends BasePresenter {
                 SPUtils.getInstance(context, "bcSP").save(data, pass);
                 sdkListener.Login(data.getData());
                 alertDialog.dismiss();
+                if (!accountLists.contains(number)) {
+                    accountLists.add(number);
+                    SPUtils.getInstance(context, "open").put("account", accountLists);
+                }
                 RoundView.getInstance().showRoundView(context, listener);
                listener.Personal(false, data.getData().getAuthenticated());
             }
@@ -183,6 +193,10 @@ public class HomePresenter extends BasePresenter {
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                 SPUtils.getInstance(context, "bcSP").save(data, password);
                 sdkListener.Login(data.getData());
+                if (!accountLists.contains(name)) {
+                    accountLists.add(name);
+                    SPUtils.getInstance(context, "open").put("account", accountLists);
+                }
                 RoundView.getInstance().showRoundView(context, listener);
                listener.Personal(false, data.getData().getAuthenticated());
             }

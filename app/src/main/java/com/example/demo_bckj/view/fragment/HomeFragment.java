@@ -56,7 +56,6 @@ import com.example.demo_bckj.view.round.RoundView;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -120,6 +119,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private String tel = null;
     SPUtils bcSP, deviceSP;
     private SDKListener sdkListener;
+    private List<String> accountLists, telLists;
 
     public HomeFragment(SDKListener sdkListener) {
         this.sdkListener = sdkListener;
@@ -131,6 +131,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
         deviceSP = SPUtils.getInstance(getActivity(), "open");
+        accountLists = deviceSP.getList("account", "");
+        telLists = deviceSP.getList("tel", "");
+        presenter.setLists(accountLists, telLists);
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler = new Handler(mHandlerThread.getLooper());
@@ -221,7 +224,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             CService(false);
         });
         personBtn.setOnClickListener(view -> {
-            Personal(false,true);
+            Personal(false, true);
         });
     }
 
@@ -262,8 +265,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         pf = PersonFragment.getInstance(sdkListener);
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
-        if (!isAuthenticated){
-            RealNameDialog realNameDialog = new RealNameDialog(getActivity(),false,pf);
+        if (!isAuthenticated) {
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(), false, pf);
             realNameDialog.show();
         }
         changeStyle(0);
@@ -383,9 +386,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
-        List<String> telLists = deviceSP.getList("tel", "");
+
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
+            if (telLists.size() == 0)
+                return;
             PopupTel popupTel = new PopupTel(getActivity(), telLists, popupLogin, v, inflate.getWidth(), 200, true);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
@@ -490,7 +495,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (popupRb.isChecked()) {
                 String number = popupLogin.getText().toString().trim();
                 String code = popupEtCode.getText().toString().trim();
-                presenter.getPhoneLogin(getActivity(), this, number, code, telLists, loginDialog);
+                presenter.getPhoneLogin(getActivity(), this, number, code, loginDialog);
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -538,21 +543,27 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         TextView popupRegister = inflate.findViewById(R.id.popup_register);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
+        Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
         TextView popup_forget_pw = inflate.findViewById(R.id.popup_forget_pw);
         LoginPwBuilder = new AlertDialog.Builder(getActivity());
         LoginPwBuilder.setView(inflate);
         LoginPwBuilder.setCancelable(false);
         loginPwDialog = LoginPwBuilder.create();
-        loginPwDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) loginPwDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(loginPwDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
-                return true;
-            }
+        // dialog 外部监听
+        loginPwDialog.getWindow().getDecorView().setOnTouchListener((v, event) -> {
+            InputMethodManager imm = (InputMethodManager) loginPwDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(loginPwDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+            return true;
         });
         loginPwDialog.show();
         loginPwDialog.setOnDismissListener(dialogInterface -> LoginPwBuilder = null);
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
+        spinnerImg.setOnClickListener(view -> {
+            if (accountLists.size() == 0)
+                return;
+            PopupTel popupTel = new PopupTel(getActivity(), accountLists, popupLogin, v, inflate.getWidth(), 200, true);
+            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
+        });
         popupLogin.setText(account);
         popup_et_pw.setText(password);
         popupRb.setChecked(isChecked);
@@ -571,7 +582,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         //账号密码登录
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                HashMap<Object, Object> map = new HashMap<>();
                 presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog, this);
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/background_bg"
-    >
+    android:background="@drawable/background_bg">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,10 +25,10 @@
             android:layout_centerInParent="true"
             android:src="@mipmap/logo" />
     </RelativeLayout>
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
+
         <EditText
             android:id="@+id/popup_login"
             android:layout_width="match_parent"
@@ -37,27 +36,37 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:hint="@string/popup_login_pw_hint"
-            android:maxLength="12"
+            android:maxLength="11"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="18dp"
             android:paddingLeft="15dp"
             android:background="@drawable/background_white"
-            />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"/>
         <ImageView
             android:id="@+id/popup_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/removes_login"
-            android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:layout_marginRight="28dp"
-            android:visibility="gone"
-            />
-    </RelativeLayout>
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/spinnerImg"/>
+        <Button
+            android:id="@+id/spinnerImg"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/dropdown"
+            app:layout_constraintTop_toTopOf="@id/popup_login"
+            app:layout_constraintEnd_toEndOf="@id/popup_login"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="10dp"
         >
         <EditText
             android:id="@+id/popup_et_pw"
