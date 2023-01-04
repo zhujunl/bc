@@ -11,11 +11,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.model.MyCallback;
+import com.example.demo_bckj.model.RetrofitManager;
+import com.example.demo_bckj.model.bean.AccountPwBean;
+import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.model.utility.StrUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
+import com.example.demo_bckj.view.fragment.PersonFragment;
 
 import androidx.annotation.NonNull;
+import okhttp3.ResponseBody;
 
 /**
  * @author ZJL
@@ -31,13 +38,15 @@ public class RealNameDialog extends Dialog {
     private ImageView remove, removeCode;
     private Button submit;
     private PersonPresenter presenter;
+    private PersonFragment personFragment;
     private String n, c;
 
-    public RealNameDialog(@NonNull Context context, PersonPresenter presenter) {
+    public RealNameDialog(@NonNull Context context, boolean isCancelable,PersonFragment personFragment) {
         super(context);
         setContentView(R.layout.popup_autonym);
         this.context = context;
-        this.presenter = presenter;
+        this.personFragment=personFragment;
+        setCancelable(isCancelable);
         initView();
     }
 
@@ -63,7 +72,7 @@ public class RealNameDialog extends Dialog {
                 Toast.makeText(context,"请输入正确身份证号码",Toast.LENGTH_SHORT).show();
                 return;
             }
-            presenter.setRealName(context,c,n,this);
+            setRealName(context,c,n);
         });
         name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -105,5 +114,31 @@ public class RealNameDialog extends Dialog {
         });
     }
 
+    //实名认证
+    public void setRealName(Context context, String idCode, String realname) {
+        RetrofitManager.getInstance(context).getApiService().setRealName(idCode, realname).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
+                SPUtils.getInstance(context, "bcSP").save(data, "");
+                Integer age = data.getData().getAge();
+                dismiss();
+                if (age < 18) {
+                    //未成年弹窗
+                    UnderAgeDialog underAgeDialog = new UnderAgeDialog(context);
+                    underAgeDialog.show();
+                } else {
+                    RealNameRegisterDialog r = new RealNameRegisterDialog(context);
+                    r.show();
+                }
+                personFragment.onSuccess("");
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }

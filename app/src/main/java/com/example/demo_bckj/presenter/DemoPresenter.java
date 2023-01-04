@@ -125,7 +125,7 @@ public class DemoPresenter extends BasePresenter {
                             SPUtils.getInstance(context, "open").put("tel", telLists);
                         }
                         RoundView.getInstance().showRoundView(context, listener);
-                        listener.Personal(false);
+                        listener.Personal(false,true);
                     }
 
                     @Override
@@ -146,7 +146,7 @@ public class DemoPresenter extends BasePresenter {
                         SPUtils.getInstance(context, "bcSP").save(data, pass);
                         alertDialog.dismiss();
                         RoundView.getInstance().showRoundView(context, listener);
-                        listener.Personal(false);
+                        listener.Personal(false,true);
                     }
 
                     @Override
@@ -168,7 +168,7 @@ public class DemoPresenter extends BasePresenter {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         SPUtils.getInstance(context, "bcSP").save(data, password);
                         RoundView.getInstance().showRoundView(context, listener);
-                        listener.Personal(false);
+                        listener.Personal(false,true);
                     }
 
                     @Override

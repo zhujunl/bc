@@ -178,7 +178,7 @@ public class StrUtil {
     public static String getValue(JSONObject json, String key) {
         String value = "";
         try {
-            value = TextUtils.isEmpty(json.getString("key")) ? "" : json.getString("key");
+            value = TextUtils.isEmpty(json.getString(key)) ? "" : json.getString(key);
         } catch (JSONException e) {
             e.printStackTrace();
         }

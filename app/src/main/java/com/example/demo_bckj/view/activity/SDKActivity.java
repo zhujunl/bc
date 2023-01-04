@@ -239,7 +239,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
             CService(false);
         });
         personBtn.setOnClickListener(view -> {
-            Personal(false);
+            Personal(false,true);
         });
     }
 
@@ -275,7 +275,7 @@ public class SDKActivity extends BaseActivity<DemoPresenter> implements ClickLis
     }
 
     @Override
-    public void Personal(boolean show) {
+    public void Personal(boolean show,boolean isAuthenticated) {
         Log.d(TAG, "Personal");
         pf = PersonFragment.getInstance(null);
         if (show)

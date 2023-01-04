@@ -79,10 +79,14 @@ public class RetrofitManager {
             @NonNull
             @Override
             public Response intercept(@NonNull Chain chain) throws IOException {
+                Request original = chain.request();
+                SignInfoBean sign = new SignInfoBean();
                 try {
-                    SignInfoBean sign = DeviceIdUtil.getSign(context);
-                    Request original = chain.request();
-                    Request.Builder requestBuilder = original.newBuilder()
+                    sign = DeviceIdUtil.getSign(context);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Request.Builder requestBuilder = original.newBuilder()
                             .header("sign", sign.sign)
                             .header("info", sign.info);
                     String AUTHORIZATION = SPUtils.getInstance(context, "bcSP").getString("Authorization");
@@ -91,10 +95,6 @@ public class RetrofitManager {
                     }
                     Request request = requestBuilder.build();
                     return chain.proceed(request);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
             }
         });
         OkHttpClient build = client.build();

@@ -148,7 +148,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         });
         realName.setOnClickListener(v -> {
             //实名认证
-            RealNameDialog realNameDialog = new RealNameDialog(getActivity(),presenter);
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(),true,this);
             realNameDialog.show();
         });
         userAgree.setOnClickListener(v -> {

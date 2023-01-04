@@ -8,8 +8,11 @@ package com.example.demo_bckj.listener;
  * @updateDes
  */
 public interface ClickListener {
-     void CService(boolean isShow);
-     void Personal(boolean isShow);
-     void Welfare(boolean isShow);
-     void Switch();
+    void CService(boolean isShow);
+
+    void Personal(boolean isShow, boolean isAuthenticated);
+
+    void Welfare(boolean isShow);
+
+    void Switch();
 }

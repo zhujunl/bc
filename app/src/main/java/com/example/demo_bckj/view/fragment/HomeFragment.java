@@ -48,6 +48,7 @@ import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.PrivacyDialog;
+import com.example.demo_bckj.view.dialog.RealNameDialog;
 import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.RoundView;
@@ -71,7 +72,7 @@ import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
  * @updateDes
  */
 public class HomeFragment extends BaseFragment<HomePresenter> implements ClickListener {
-    private final String TAG="HomeFragment";
+    private final String TAG = "HomeFragment";
 
     public static HomeFragment instance;
 
@@ -139,7 +140,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-
 
 
         //设备型号
@@ -221,7 +221,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             CService(false);
         });
         personBtn.setOnClickListener(view -> {
-            Personal(false);
+            Personal(false,true);
         });
     }
 
@@ -257,11 +257,15 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     @Override
-    public void Personal(boolean show) {
+    public void Personal(boolean show, boolean isAuthenticated) {
         Log.d(TAG, "Personal");
         pf = PersonFragment.getInstance(sdkListener);
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
+        if (!isAuthenticated){
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(),false,pf);
+            realNameDialog.show();
+        }
         changeStyle(0);
         nvTo(pf);
     }

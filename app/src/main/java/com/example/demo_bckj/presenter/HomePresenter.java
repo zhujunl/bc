@@ -45,8 +45,8 @@ public class HomePresenter extends BasePresenter {
         this.sdkListener = sdkListener;
     }
 
-    public void setListener(SDKListener listener){
-        this.sdkListener=listener;
+    public void setListener(SDKListener listener) {
+        this.sdkListener = listener;
     }
 
     //数据上报
@@ -139,7 +139,7 @@ public class HomePresenter extends BasePresenter {
                     SPUtils.getInstance(context, "open").put("tel", telLists);
                 }
                 RoundView.getInstance().showRoundView(context, listener);
-                listener.Personal(false);
+                listener.Personal(false, data.getData().getAuthenticated());
             }
 
             @Override
@@ -161,7 +161,7 @@ public class HomePresenter extends BasePresenter {
                 sdkListener.Login(data.getData());
                 alertDialog.dismiss();
                 RoundView.getInstance().showRoundView(context, listener);
-                listener.Personal(false);
+               listener.Personal(false, data.getData().getAuthenticated());
             }
 
             @Override
@@ -184,7 +184,7 @@ public class HomePresenter extends BasePresenter {
                 SPUtils.getInstance(context, "bcSP").save(data, password);
                 sdkListener.Login(data.getData());
                 RoundView.getInstance().showRoundView(context, listener);
-                listener.Personal(false);
+               listener.Personal(false, data.getData().getAuthenticated());
             }
 
             @Override
@@ -271,12 +271,12 @@ public class HomePresenter extends BasePresenter {
 
 
     //刷新token
-    public boolean refreshToken(Context context,ClickListener listener) throws IOException {
+    public boolean refreshToken(Context context, ClickListener listener) throws IOException {
         Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().refreshToken().execute();
-        if (execute.code()==200){
+        if (execute.code() == 200) {
             Headers headers = execute.headers();
             String Authorization = headers.get("Authorization");
-            SPUtils.getInstance(context,"bcSP").put("Authorization",Authorization);
+            SPUtils.getInstance(context, "bcSP").put("Authorization", Authorization);
             JSONObject json = FileUtil.getResponseBody(execute.body());
             Object code = json.get("code");
             if (code.toString().equals("0")) {
