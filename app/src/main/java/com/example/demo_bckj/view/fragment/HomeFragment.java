@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
@@ -54,6 +55,7 @@ import com.example.demo_bckj.view.round.RoundView;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -128,6 +130,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     protected void initData() {
         Log.d("tag", getDeviceId());        //接口请求
         presenter.getSdk(getActivity());
+
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
         deviceSP = SPUtils.getInstance(getActivity(), "open");
         accountLists = deviceSP.getList("account", "");

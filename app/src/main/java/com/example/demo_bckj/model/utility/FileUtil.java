@@ -1,11 +1,17 @@
 package com.example.demo_bckj.model.utility;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
@@ -24,6 +30,7 @@ import okio.BufferedSource;
 public class FileUtil {
 
     static final String TAG="FileUtil";
+    static final String path=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"DCIM"+File.separator+"bc";
 
     /**
      *
@@ -81,7 +88,7 @@ public class FileUtil {
 
     /**/
     public static void saveImg(Context context,Bitmap bitmap){
-        File file=new File(context.getExternalFilesDir("img").getPath()+File.separator+ SystemClock.currentThreadTimeMillis()+".png");
+        File file=new File(path+File.separator+ SystemClock.currentThreadTimeMillis()+".png");
         try {
             if (!file.exists()){
                 file.getParentFile().mkdirs();
@@ -92,9 +99,39 @@ public class FileUtil {
             fos.flush();
             fos.close();
             Log.d(TAG, "saveImg"  );
+            fos.close();
+            if (Build.VERSION.SDK_INT <29) {
+                // 保存图片后发送广播通知更新数据库
+                Uri uri = Uri.fromFile(file);
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            }else {
+                ContentResolver localContentResolver = context.getContentResolver();
+                ContentValues localContentValues = getImageContentValues(context, file, System.currentTimeMillis());
+                localContentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, localContentValues);
+
+                Intent localIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+                final Uri localUri = Uri.fromFile(file);
+                localIntent.setData(localUri);
+                context.sendBroadcast(localIntent);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+
+    public static ContentValues getImageContentValues(Context paramContext, File paramFile, long paramLong) {
+        ContentValues localContentValues = new ContentValues();
+        localContentValues.put("title", paramFile.getName());
+        localContentValues.put("_display_name", paramFile.getName());
+        localContentValues.put("mime_type", "image/jpeg");
+        localContentValues.put("datetaken", Long.valueOf(paramLong));
+        localContentValues.put("date_modified", Long.valueOf(paramLong));
+        localContentValues.put("date_added", Long.valueOf(paramLong));
+        localContentValues.put("orientation", Integer.valueOf(0));
+        localContentValues.put("_data", paramFile.getAbsolutePath());
+        localContentValues.put("_size", Long.valueOf(paramFile.length()));
+        return localContentValues;
     }
 
 }
