@@ -15,9 +15,11 @@ import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
 import com.example.demo_bckj.model.bean.DateUpBean;
 import com.example.demo_bckj.model.bean.PlayBean;
+import com.example.demo_bckj.model.bean.URLBean;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.round.RoundView;
 
 import java.io.IOException;
@@ -53,6 +55,24 @@ public class HomePresenter extends BasePresenter {
 
     public void setListener(SDKListener listener) {
         this.sdkListener = listener;
+    }
+
+    public boolean init(Context context) throws IOException{
+        Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().init().execute();
+        ResponseBody body = execute.body();
+        JSONObject json = FileUtil.getResponseBody(body);
+        Object code = json.get("code");
+        if (code.toString().equals("0")) {
+            Object data = json.get("data");
+            JSONObject jsonObject=JSONObject.parseObject(data.toString());
+            URLBean urlBean = JSONObject.toJavaObject(jsonObject, URLBean.class);
+            Constants.DEVICE=urlBean.getProtocol_url().getDevice();
+            Constants.REGISTER=urlBean.getProtocol_url().getRegister();
+            Constants.PRIVACY=urlBean.getProtocol_url().getPrivacy();
+            return true;
+        } else {
+           return false;
+        }
     }
 
     //数据上报

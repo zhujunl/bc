@@ -52,4 +52,12 @@ public class MyWebView extends FrameLayout {
     public void btnListener(OnClickListener listener){
         btn.setOnClickListener(listener);
     }
+
+    public void setOnKey(OnKeyListener listener){
+        webView.setOnKeyListener(listener);
+    }
+
+    public WebView getWebView() {
+        return webView;
+    }
 }

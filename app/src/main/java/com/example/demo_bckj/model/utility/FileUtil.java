@@ -32,16 +32,6 @@ public class FileUtil {
     static final String TAG="FileUtil";
     static final String path=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"DCIM"+File.separator+"bc";
 
-    /**
-     *
-     * @param context
-     * @param defType
-     * @param file_name
-     * @return
-     */
-
-    public static String imgPath= Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"bc";
-
     public static int getResIdFromFileName(Context context, String defType, String file_name) {
         Resources rs = context.getResources();
         String packageName = getMyPackageName(context);

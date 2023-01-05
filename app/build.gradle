@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'com.android.application'
 }
@@ -15,7 +17,13 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                //在这里修改apk文件名
+                outputFileName = "${releaseTime()}.apk"
+            }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -63,4 +71,10 @@ dependencies {
     // 支付宝 SDK AAR 包所需的配置
     api 'com.alipay.sdk:alipaysdk-android:+@aar'
 
+}
+
+def releaseTime() {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+    Date curDate = new Date(System.currentTimeMillis());
+    return formatter.format(curDate);
 }

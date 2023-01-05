@@ -16,11 +16,10 @@ import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
-import com.example.demo_bckj.view.dialog.PrivacyDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
 import com.example.demo_bckj.view.dialog.RechargeDialog;
-import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
+import com.example.demo_bckj.view.round.MyWebView;
 
 /**
  * @author ZJL
@@ -40,6 +39,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private String tel, nickName;
     private ImageView header;
     private SDKListener sdkListener;
+    private MyWebView myWebView,webView;
+    private privacyListener listener;
 
     public static PersonFragment getInstance(SDKListener sdkListener) {
         if (instance == null) {
@@ -72,7 +73,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
         click();
     }
-
 
     @Override
     protected int initLayoutID() {
@@ -152,16 +152,10 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             realNameDialog.show();
         });
         userAgree.setOnClickListener(v -> {
-            getActivity().runOnUiThread(() -> {
-                UserAgreeDialog userAgreeDialog = new UserAgreeDialog(getActivity());
-                userAgreeDialog.show();
-            });
+            listener.user();
         });
         privacy.setOnClickListener(v -> {
-            getActivity().runOnUiThread(()->{
-                PrivacyDialog privacyDialog = new PrivacyDialog(getActivity());
-                privacyDialog.show();
-            });
+            listener.privacy();
         });
         quit.setOnClickListener(v -> {
             presenter.loginOut(getContext());
@@ -200,5 +194,17 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         instance=null;
     }
 
+    public void setListener(privacyListener listener) {
+        this.listener = listener;
+    }
+
+    public privacyListener getListener() {
+        return listener;
+    }
+
+    public interface privacyListener{
+        void user();
+        void privacy();
+    }
 
 }

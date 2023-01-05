@@ -13,6 +13,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
     </LinearLayout>
+    <com.example.demo_bckj.view.round.MyWebView
+        android:id="@+id/myWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
+    <com.example.demo_bckj.view.round.MyWebView
+        android:id="@+id/WebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
     <LinearLayout
         android:id="@+id/left_layout"
         android:layout_width="300dp"
