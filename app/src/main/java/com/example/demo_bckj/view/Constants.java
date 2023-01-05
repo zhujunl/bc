@@ -10,7 +10,10 @@ import android.Manifest;
 public class Constants {
 //    public static String BASE_URL="http://bcapi.mfbmn.com/";
     public static String BASE_URL="https://apitest.infinite-game.cn";
-    public static String AUTHORIZATION="";
+    public static String REGISTER="https://static.infinite-game.cn/resources/protocol/register.html";
+    public static String PRIVACY="https://static.infinite-game.cn/resources/protocol/register.html";
+    public static String DEVICE="https://static.infinite-game.cn/resources/protocol/register.html";
+
     public static String[] PermissionString = {
             Manifest.permission.INTERNET,
             Manifest.permission.ACCESS_WIFI_STATE,

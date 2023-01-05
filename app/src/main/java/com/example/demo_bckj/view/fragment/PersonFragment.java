@@ -152,12 +152,16 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             realNameDialog.show();
         });
         userAgree.setOnClickListener(v -> {
-            UserAgreeDialog userAgreeDialog = new UserAgreeDialog(getActivity());
-            userAgreeDialog.show();
+            getActivity().runOnUiThread(() -> {
+                UserAgreeDialog userAgreeDialog = new UserAgreeDialog(getActivity());
+                userAgreeDialog.show();
+            });
         });
         privacy.setOnClickListener(v -> {
-            PrivacyDialog privacyDialog = new PrivacyDialog(getActivity());
-            privacyDialog.show();
+            getActivity().runOnUiThread(()->{
+                PrivacyDialog privacyDialog = new PrivacyDialog(getActivity());
+                privacyDialog.show();
+            });
         });
         quit.setOnClickListener(v -> {
             presenter.loginOut(getContext());

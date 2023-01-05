@@ -13,6 +13,14 @@ import retrofit2.http.Query;
  * @date :2022/9/15 11:20
  */
 public interface ApiService {
+    //初始化
+    //{"code":0,"message":"OK","data":
+    // {"protocol_url":{
+    // "register":"https://static.infinite-game.cn/resources/protocol/register.html",
+    // "privacy":"https://static.infinite-game.cn/resources/protocol/device.html",
+    // "device":"https://static.infinite-game.cn/resources/protocol/device.html"}
+    @GET("sdk/v1/game/init")
+    Call<ResponseBody> init();
 
     /**=========================================注册登录======================================================================*/
     //数据上报

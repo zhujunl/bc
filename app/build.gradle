@@ -62,6 +62,5 @@ dependencies {
 
     // 支付宝 SDK AAR 包所需的配置
     api 'com.alipay.sdk:alipaysdk-android:+@aar'
-    //pdf预览
-//    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+
 }

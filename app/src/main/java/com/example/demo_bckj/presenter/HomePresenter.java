@@ -87,6 +87,8 @@ public class HomePresenter extends BasePresenter {
 
                     }
                 });
+
+//        RetrofitManager.getInstance(context).getApiService().init().enqueue();
     }
 
     //获取手机验证码

@@ -4,11 +4,19 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/activity_main.xml" value="0.23743589743589744" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/activity_main2.xml" value="0.23743589743589744" />
         <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/activity_sdk.xml" value="0.23743589743589744" />
         <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/activity_web.xml" value="0.23743589743589744" />
-        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/fragment_home.xml" value="0.2265625" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/dialog_agreetext.xml" value="0.24114583333333334" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/dialog_peivacy.xml" value="0.23743589743589744" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/fragment_home.xml" value="0.4" />
         <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/fragment_person.xml" value="0.23743589743589744" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/pop_tel_list.xml" value="0.1" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/popup_autonym.xml" value="0.22870370370370371" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/popup_code.xml" value="0.24114583333333334" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/popup_pw_login.xml" value="0.24114583333333334" />
         <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/popup_register_hint.xml" value="0.23743589743589744" />
+        <entry key="..\:/AndroidProject/android-sdk/app/src/main/res/layout/view_web.xml" value="0.40225890529973934" />
       </map>
     </option>
   </component>

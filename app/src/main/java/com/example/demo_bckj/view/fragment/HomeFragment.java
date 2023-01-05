@@ -1,7 +1,6 @@
 package com.example.demo_bckj.view.fragment;
 
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -127,8 +126,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        Log.d("tag", getDeviceId());
-
+        Log.d("tag", getDeviceId());        //接口请求
+        presenter.getSdk(getActivity());
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
         deviceSP = SPUtils.getInstance(getActivity(), "open");
         accountLists = deviceSP.getList("account", "");
@@ -144,25 +143,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
-
-        //设备型号
-        String model = Build.MODEL;
-        Log.d("TAG", "model==" + model);
-        //设备名称
-        BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
-        String AndroidName = defaultAdapter.getName();
-        Log.d("TAG", "AndroidName==" + AndroidName);
-
-        //设备网络运营商代码
-        //        TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        //        String operator = DeviceIdUtil.getSimOperator(telManager.getSimOperator());
-        //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-        //            tel = telManager.getLine1Number();//手机号码
-        //        }
-        //        Log.e("tel  ", operator + "   " + tel);
-
-        //接口请求
-        presenter.getSdk(getActivity());
     }
 
     private Runnable runnable = new Runnable() {
