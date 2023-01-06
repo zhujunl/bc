@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.listener.RechargeListener;
+import com.example.demo_bckj.listener.SDKListener;
 import com.example.demo_bckj.manager.ActivityManager;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AliPayBean;
@@ -65,9 +65,9 @@ public class RechargeSubDialog extends Dialog {
     private Handler mHandler;
     private int pos;
     private RechargeOrder rechargeOrder;
-    private RechargeListener listener;
+    private SDKListener listener;
 
-    public RechargeSubDialog(@NonNull Context context, RechargeOrder rechargeOrder,RechargeListener listener) {
+    public RechargeSubDialog(@NonNull Context context, RechargeOrder rechargeOrder, SDKListener listener) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
@@ -89,11 +89,11 @@ public class RechargeSubDialog extends Dialog {
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
-                            listener.success();
+                            listener.RechargeSuccess();
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
-                            listener.fail(context.getString(R.string.pay_failed) + payResult.getMemo());
+                            listener.RechargeFail(context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:

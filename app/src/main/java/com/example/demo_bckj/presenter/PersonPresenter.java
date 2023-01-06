@@ -114,7 +114,6 @@ public class PersonPresenter extends BasePresenter {
                 bindNewPhoneDialog.dismiss();
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                 SPUtils.getInstance(context, "bcSP").save(data, "");
-                sdkListener.BindNewPhone(data.getData());
             }
 
             @Override

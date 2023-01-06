@@ -10,9 +10,28 @@ import com.example.demo_bckj.model.bean.Account;
  * @updateDes
  */
 public interface SDKListener {
+
+    /**
+     * 登录
+     *
+     * @param account
+     */
     void Login(Account account);
 
+    /**
+     * 退出
+     */
     void SignOut();
 
-    void BindNewPhone(Account account);
+    /**
+     * 充值成功
+     */
+    void RechargeSuccess();
+
+    /**
+     * 充值失败
+     *
+     * @param message
+     */
+    void RechargeFail(String message);
 }

@@ -1,6 +1,5 @@
 package com.example.demo_bckj.model;
 
-import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -25,11 +24,11 @@ public interface ApiService {
     /**=========================================注册登录======================================================================*/
     //数据上报
     @POST("sdk/v1/game/activation")
-    Observable<ResponseBody> getSdk();
+    Call<ResponseBody> getSdk();
 
     //手机号登录(发送验证码)
     @GET("sdk/v1/sms/login")
-    Observable<ResponseBody> getPhoneLoginCode(@Query("tel") String tel);
+    Call<ResponseBody> getPhoneLoginCode(@Query("tel") String tel);
     //手机号登录
     @POST("sdk/v1/login/tel")
     Call<ResponseBody> getPhoneLogin(@Query("tel")String tel,
@@ -47,7 +46,7 @@ public interface ApiService {
 
     //随机账号密码
     @GET("sdk/v1/register/account")
-    Observable<ResponseBody> getDemoAccount();
+    Call<ResponseBody> getDemoAccount();
 
     //刷新token
     @GET("sdk/v1/token/refresh")

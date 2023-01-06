@@ -5,7 +5,7 @@ import android.content.Context;
 import android.widget.Button;
 
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.listener.RechargeListener;
+import com.example.demo_bckj.listener.SDKListener;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 
 import androidx.annotation.NonNull;
@@ -21,7 +21,7 @@ public class RechargeDialog extends Dialog {
 
     private Context context;
 
-    public RechargeDialog(@NonNull Context context, RechargeOrder rechargeOrder, RechargeListener listener) {
+    public RechargeDialog(@NonNull Context context, RechargeOrder rechargeOrder, SDKListener listener) {
         super(context);
         setContentView(R.layout.dialog_recharge);
         this.context=context;

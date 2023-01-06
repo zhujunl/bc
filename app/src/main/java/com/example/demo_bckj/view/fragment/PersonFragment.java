@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
-import com.example.demo_bckj.listener.RechargeListener;
 import com.example.demo_bckj.listener.SDKListener;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.utility.SPUtils;
@@ -172,17 +171,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
                     .money(1)
                     .extend_data("")
                     .build();
-            RechargeDialog rechargeDialog=new RechargeDialog(getActivity(), rechargeOrder, new RechargeListener() {
-                @Override
-                public void success() {
-
-                }
-
-                @Override
-                public void fail(String message) {
-
-                }
-            });
+            RechargeDialog rechargeDialog=new RechargeDialog(getActivity(), rechargeOrder, sdkListener);
             rechargeDialog.show();
         });
     }

@@ -25,10 +25,6 @@ import com.example.demo_bckj.view.round.RoundView;
 import java.io.IOException;
 import java.util.List;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Headers;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -44,7 +40,7 @@ public class HomePresenter extends BasePresenter {
     private SDKListener sdkListener;
     private List<String> accountLists, telLists;
 
-    public void setLists(List<String> accountLists,List<String> telLists) {
+    public void setLists(List<String> accountLists, List<String> telLists) {
         this.accountLists = accountLists;
         this.telLists = telLists;
     }
@@ -57,21 +53,21 @@ public class HomePresenter extends BasePresenter {
         this.sdkListener = listener;
     }
 
-    public boolean init(Context context) throws IOException{
+    public boolean init(Context context) throws IOException {
         Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().init().execute();
         ResponseBody body = execute.body();
         JSONObject json = FileUtil.getResponseBody(body);
         Object code = json.get("code");
         if (code.toString().equals("0")) {
             Object data = json.get("data");
-            JSONObject jsonObject=JSONObject.parseObject(data.toString());
+            JSONObject jsonObject = JSONObject.parseObject(data.toString());
             URLBean urlBean = JSONObject.toJavaObject(jsonObject, URLBean.class);
-            Constants.DEVICE=urlBean.getProtocol_url().getDevice();
-            Constants.REGISTER=urlBean.getProtocol_url().getRegister();
-            Constants.PRIVACY=urlBean.getProtocol_url().getPrivacy();
+            Constants.DEVICE = urlBean.getProtocol_url().getDevice();
+            Constants.REGISTER = urlBean.getProtocol_url().getRegister();
+            Constants.PRIVACY = urlBean.getProtocol_url().getPrivacy();
             return true;
         } else {
-           return false;
+            return false;
         }
     }
 
@@ -80,35 +76,22 @@ public class HomePresenter extends BasePresenter {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getSdk()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .enqueue(new MyCallback<ResponseBody>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody value) {
+                    public void onSuccess(JSONObject jsStr) {
                         if (view != null) {
-                            view.onSuccess(value);
+                            view.onSuccess(jsStr);
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(String message) {
                         if (view != null) {
-                            view.onError(e.getMessage());
+                            view.onError(message);
                         }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
                     }
                 });
 
-//        RetrofitManager.getInstance(context).getApiService().init().enqueue();
     }
 
     //获取手机验证码
@@ -116,17 +99,9 @@ public class HomePresenter extends BasePresenter {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getPhoneLoginCode(tel)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .enqueue(new MyCallback<ResponseBody>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody value) {
-                        JSONObject jsStr = FileUtil.getResponseBody(value);
+                    public void onSuccess(JSONObject jsStr) {
                         DateUpBean object = JSONObject.toJavaObject(jsStr, DateUpBean.class);
                         if (view != null) {
                             if (object.getCode() == 200) {
@@ -138,17 +113,13 @@ public class HomePresenter extends BasePresenter {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(String message) {
                         if (view != null) {
-                            view.onError(e.getMessage());
+                            view.onError(message);
                         }
                     }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
                 });
+
     }
 
     //手机号登录
@@ -193,7 +164,7 @@ public class HomePresenter extends BasePresenter {
                     SPUtils.getInstance(context, "open").put("account", accountLists);
                 }
                 RoundView.getInstance().showRoundView(context, listener);
-               listener.Personal(false, data.getData().getAuthenticated());
+                listener.Personal(false, data.getData().getAuthenticated());
             }
 
             @Override
@@ -220,7 +191,7 @@ public class HomePresenter extends BasePresenter {
                     SPUtils.getInstance(context, "open").put("account", accountLists);
                 }
                 RoundView.getInstance().showRoundView(context, listener);
-               listener.Personal(false, data.getData().getAuthenticated());
+                listener.Personal(false, data.getData().getAuthenticated());
             }
 
             @Override
@@ -235,35 +206,23 @@ public class HomePresenter extends BasePresenter {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getDemoAccount()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+        .enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                PlayBean response = JSONObject.toJavaObject(jsStr, PlayBean.class);
+                if (response.getCode() == 0) {
+                    listener.onSuccess(response.getData().getAccount(), response.getData().getPassword());
+                } else {
+                    listener.onError(response.getMessage());
+                }
+            }
 
-                    }
+            @Override
+            public void onError(String message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        });
 
-                    @Override
-                    public void onNext(ResponseBody value) {
-                        JSONObject jsStr = FileUtil.getResponseBody(value);
-                        PlayBean response = JSONObject.toJavaObject(jsStr, PlayBean.class);
-                        if (response.getCode() == 0) {
-                            listener.onSuccess(response.getData().getAccount(), response.getData().getPassword());
-                        } else {
-                            listener.onError(response.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
 
 
     }

@@ -25,8 +25,13 @@ public class MainActivity extends AppCompatActivity{
         }
 
         @Override
-        public void BindNewPhone(Account account) {
-            Log.d(TAG, "换绑=="+account );
+        public void RechargeSuccess() {
+            Log.d(TAG, "充值成功");
+        }
+
+        @Override
+        public void RechargeFail(String message) {
+            Log.d(TAG, "充值失败=="+message);
         }
     };
 
