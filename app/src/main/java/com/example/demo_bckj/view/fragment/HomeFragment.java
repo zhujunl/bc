@@ -53,7 +53,6 @@ import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.MyWebView;
 import com.example.demo_bckj.view.round.RoundView;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
@@ -130,7 +129,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
+//        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
         Log.d("tag", getDeviceId());        //接口请求
         presenter.getSdk(getActivity());
         new Thread(() -> {
@@ -164,7 +163,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         public void run() {
             //用户协议弹窗
             boolean isFirstRun = deviceSP.getBoolean("isFirst", false);
-            if (!isFirstRun || !checkPermissionAllGranted(Constants.PermissionString)) {
+            if (!isFirstRun) {
                 deviceSP.put("isFirst", true);
                 popupAgreement();
             } else {
@@ -311,6 +310,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     public void onPause() {
         super.onPause();
         RoundView.getInstance().removeSmallWindow(getActivity());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        boolean is_authenticated = bcSP.getBoolean("is_authenticated");
+        if (!is_authenticated)
+            bcSP.clear();
     }
 
     @Override
@@ -534,18 +541,24 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (!popupRb.isChecked()) {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             } else {
-                presenter.getDemoAccount(getActivity(), new PlayInterface() {
-                    @Override
-                    public void onSuccess(String account, String password) {
-                        loginDialog.dismiss();
-                        popupNumberRegister(account, password, true);
-                    }
+                boolean permission = checkPermissionAllGranted(Constants.PermissionString);
+                if (permission) {
+                    presenter.getDemoAccount(getActivity(), new PlayInterface() {
+                        @Override
+                        public void onSuccess(String account, String password) {
+                            loginDialog.dismiss();
+                            popupNumberRegister(account, password, true);
+                        }
 
-                    @Override
-                    public void onError(String msg) {
+                        @Override
+                        public void onError(String msg) {
 
-                    }
-                });
+                        }
+                    });
+                }else {
+                    Toast.makeText(getActivity(), "未授予相关权限", Toast.LENGTH_SHORT).show();
+                    requestPermissions(Constants.PermissionString, 1);
+                }
             }
         });
     }
@@ -1116,12 +1129,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
             CharSequence permissionName = permissionInfo.loadLabel(packageManager);
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                if (i == permissions.length - 1) {
-                    popupLoginCode();
-                }
                 Log.i(TAG, "您同意了【" + permissionName + "】权限");
             } else {
                 Log.i(TAG, "您拒绝了【" + permissionName + "】权限");
+            }
+            if (i == permissions.length - 1) {
+                popupLoginCode();
             }
         }
     }
