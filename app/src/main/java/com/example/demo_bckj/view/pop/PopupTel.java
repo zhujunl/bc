@@ -20,22 +20,33 @@ import androidx.recyclerview.widget.RecyclerView;
  * @updateAuthor
  * @updateDes
  */
-public class PopupTel extends PopupWindow implements TAdapter.telListener{
+public class PopupTel extends PopupWindow implements TAdapter.telListener {
+    private static PopupTel instance;
     private Context context;
     private List<String> list;
     private RecyclerView rv;
     private TAdapter adapter;
     private EditText edit;
+    private int style=0;
 
-    public PopupTel(Context context, List<String> lists,EditText edit,View v, int width, int height, boolean focusable) {
+    public synchronized static PopupTel getInstance(Context context, List<String> lists, EditText edit, View v, int width, int height, boolean focusable,int style) {
+        if (instance == null||instance.style!=style) {
+            instance=null;
+            instance = new PopupTel(context, lists, edit, v, width, height, focusable);
+        }
+        instance.setStyle(style);
+        return instance;
+    }
+
+    public PopupTel(Context context, List<String> lists, EditText edit, View v, int width, int height, boolean focusable) {
         super(v, width, height, focusable);
         this.context = context;
-        this.list=lists;
-        this.edit=edit;
+        this.list = lists;
+        this.edit = edit;
         setFocusable(true);
-        rv=v.findViewById(R.id.tel_rv);
+        rv = v.findViewById(R.id.tel_rv);
         rv.setLayoutManager(new LinearLayoutManager(context));
-        adapter=new TAdapter(context,lists,this);
+        adapter = new TAdapter(context, lists, this);
         rv.setAdapter(adapter);
     }
 
@@ -44,5 +55,9 @@ public class PopupTel extends PopupWindow implements TAdapter.telListener{
         dismiss();
         edit.setText(tel);
         edit.setSelection(tel.length());
+    }
+
+    public void setStyle(int style) {
+        this.style = style;
     }
 }

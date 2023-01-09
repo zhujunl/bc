@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.demo_bckj">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,7 +22,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Demo_bckj">
+        android:theme="@style/Theme.Demo_bckj"
+        tools:replace="android:allowBackup">
         <activity
             android:name=".view.activity.MainActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
@@ -40,11 +42,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".view.activity.SDKActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
-            android:windowSoftInputMode="adjustPan"></activity>
-
         <meta-data
             android:name="design_width_in_dp"
             android:value="360" />

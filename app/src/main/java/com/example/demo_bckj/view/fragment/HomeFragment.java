@@ -53,6 +53,7 @@ import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.MyWebView;
 import com.example.demo_bckj.view.round.RoundView;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
@@ -129,6 +130,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
+        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
         Log.d("tag", getDeviceId());        //接口请求
         presenter.getSdk(getActivity());
         new Thread(() -> {
@@ -390,9 +392,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     //手机号验证码登录
     private void popupLoginCode() {
-//        if (LoginBuilder != null) {
-//            return;
-//        }
+        if (LoginBuilder != null) {
+            return;
+        }
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
@@ -412,7 +414,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         spinnerImg.setOnClickListener(view -> {
             if (telLists.size() == 0)
                 return;
-            PopupTel popupTel = new PopupTel(getActivity(), telLists, popupLogin, v, inflate.getWidth(), 200, true);
+            PopupTel popupTel = PopupTel.getInstance(getActivity(), telLists, popupLogin, v, inflate.getWidth(), 200, true,1);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         LoginBuilder = new AlertDialog.Builder(getActivity());
@@ -582,7 +584,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         spinnerImg.setOnClickListener(view -> {
             if (accountLists.size() == 0)
                 return;
-            PopupTel popupTel = new PopupTel(getActivity(), accountLists, popupLogin, v, inflate.getWidth(), 200, true);
+            PopupTel popupTel = PopupTel.getInstance(getActivity(), accountLists, popupLogin, v, inflate.getWidth(), 200, true,2);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         popupLogin.setText(account);
