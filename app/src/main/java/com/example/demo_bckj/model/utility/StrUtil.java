@@ -185,4 +185,74 @@ public class StrUtil {
         }
         return value;
     }
+
+    public static String httpCode(int code){
+        String style="请求成功";
+        switch (code){
+            case 200:
+                style="请求成功";
+                break;
+            case 201:
+                style="201 Created 请求已经被实现，⽽且有⼀个新的资源已经依据请求的需要⽽建⽴ 通常是在 POST 请求，或是某些 PUT 请求之后创建了内容, 进行的返回的响应";
+                break;
+            case 202:
+                style="202 Accepted 请求服务器已接受，但是尚未处理，不保证完成请求 适合异步任务或者说需要处理时间比较长的请求，避免 HTTP 连接一直占用";
+                break;
+            case 204:
+                style="204 No content 表示请求成功，但响应报⽂不含实体的主体部分";
+                break;
+            case 206:
+                style="206 Partial Content 进⾏的是范围请求, 表示服务器已经成功处理了部分 GET 请求 响应头中会包含获取的内容范围";
+                break;
+            case 301:
+                style="301 Moved Permanently 永久性重定向";
+                break;
+            case 302:
+                style="302 Found 临时性重定向";
+                break;
+            case 303:
+                style="303 See Other";
+                break;
+            case 304:
+                style="304 Not Modified";
+                break;
+            case 307:
+                style="307 Temporary Redirect ";
+                break;
+            case 400:
+                style="400 Bad Request 请求报⽂存在语法错误（传参格式不正确）";
+                break;
+            case 401:
+                style="401 UnAuthorized 权限认证未通过(没有权限)";
+                break;
+            case 403:
+                style="403 Forbidden 表示对请求资源的访问被服务器拒绝";
+                break;
+            case 404:
+                style="404 Not Found 表示在服务器上没有找到请求的资源";
+                break;
+            case 408:
+                style="408 Request Timeout 客户端请求超时";
+                break;
+            case 409:
+                style="409 Confict 请求的资源可能引起冲突";
+                break;
+            case 500:
+                style="500 Internal Sever Error 表示服务器端在执⾏请求时发⽣了错误";
+                break;
+            case 501:
+                style="501 Not Implemented 请求超出服务器能⼒范围，例如服务器不⽀持当前请求所需要的某个功能， 或者请求是服务器不⽀持的某个⽅法";
+                break;
+            case 503:
+                style="503 Service Unavailable 表明服务器暂时处于超负载或正在停机维护，⽆法处理请求";
+                break;
+            case 505:
+                style="505 Http Version Not Supported 服务器不⽀持，或者拒绝⽀持在请求中使⽤的 HTTP 版本";
+                break;
+            default:
+                style="无响应内容";
+                break;
+        }
+        return style;
+    }
 }

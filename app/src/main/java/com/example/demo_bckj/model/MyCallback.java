@@ -15,6 +15,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.model.utility.StrUtil;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -47,7 +48,7 @@ public abstract class MyCallback<ResponseBody extends okhttp3.ResponseBody> impl
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
         if (response == null || response.body() == null) {
-            onFailure(call, new Throwable("无响应内容"));
+            onFailure(call, new Throwable(StrUtil.httpCode(response.code())));
             return;
         }
         Headers headers = response.headers();
