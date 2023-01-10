@@ -61,9 +61,9 @@ public class HttpManager {
     public HttpManager() {
     }
 
-    public void setListener(SDKListener listener,ClickListener clickListener) {
+    public void setListener(SDKListener listener, ClickListener clickListener) {
         this.sdkListener = listener;
-        this.listener=clickListener;
+        this.listener = clickListener;
     }
 
     public void setLists(List<String> accountLists, List<String> telLists) {
@@ -172,7 +172,7 @@ public class HttpManager {
     }
 
     //账号密码注册
-    public void getLoginPwRe(Context context, String number, String pass, String pass2, AlertDialog alertDialog) {
+    public void getLoginPwRe(Context context, String number, String pass, String pass2, AlertDialog alertDialog, Thread thread) {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getLoginPwRe(number, pass, pass2).enqueue(new MyCallback<ResponseBody>(context) {
@@ -188,6 +188,7 @@ public class HttpManager {
                             SPUtils.getInstance(context, "open").put("account", accountLists);
                         }
                         RoundView.getInstance().showRoundView(context, listener);
+                        thread.start();
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
 
@@ -247,7 +248,6 @@ public class HttpManager {
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                     }
                 });
-
 
 
     }
@@ -329,7 +329,7 @@ public class HttpManager {
     }
 
     //绑定手机
-    public void BindPhone(Context context, String tel, String code, BindNewPhoneDialog bindNewPhoneDialog,BasePresenter presenter) {
+    public void BindPhone(Context context, String tel, String code, BindNewPhoneDialog bindNewPhoneDialog, BasePresenter presenter) {
         RetrofitManager.getInstance(context).getApiService().BindPhone(tel, code).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -382,7 +382,7 @@ public class HttpManager {
 
     //换绑手机-换绑手机
     public void modifyBindPhone(Context context, String codeOld, String codeNew, String tel, VerifyPhoneDialog dialog,
-                                BindNewPhoneDialog bindNewPhoneDialog,BasePresenter presenter) {
+                                BindNewPhoneDialog bindNewPhoneDialog, BasePresenter presenter) {
         RetrofitManager.getInstance(context).getApiService().modifyBindPhone(codeOld, codeNew, tel).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -391,7 +391,7 @@ public class HttpManager {
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                 SPUtils.getInstance(context, "bcSP").save(data, "");
                 presenter.getView().onSuccess("");
-                RoundView.getInstance().showSmallwin(context,listener,0);
+                RoundView.getInstance().showSmallwin(context, listener, 0);
             }
 
             @Override
@@ -402,7 +402,7 @@ public class HttpManager {
     }
 
     //是否已完成实名认证
-    public void IsRealName(Context context,BasePresenter presenter) {
+    public void IsRealName(Context context, BasePresenter presenter) {
         RetrofitManager.getInstance(context).getApiService().IsRealName().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -417,7 +417,7 @@ public class HttpManager {
     }
 
     //实名认证
-    public void setRealName(Context context, String idCode, String realname, RealNameDialog realNameDialog,BasePresenter presenter) {
+    public void setRealName(Context context, String idCode, String realname, RealNameDialog realNameDialog, BasePresenter presenter) {
 
     }
 
@@ -427,8 +427,8 @@ public class HttpManager {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 OnlineBean onlineBean = JSONObject.toJavaObject(jsStr, OnlineBean.class);
-                if (onlineBean.getData().getType().equals("off_line")){
-                    UnderAgeDialog underAgeDialog = new UnderAgeDialog(context,onlineBean.getData().getMessage());
+                if (onlineBean.getData().getType().equals("off_line")) {
+                    UnderAgeDialog underAgeDialog = new UnderAgeDialog(context, onlineBean.getData().getMessage());
                     underAgeDialog.show();
                 }
 
