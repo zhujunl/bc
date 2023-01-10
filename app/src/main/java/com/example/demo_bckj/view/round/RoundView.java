@@ -95,7 +95,7 @@ public class RoundView {
             isShow=true;
             if(winStatus==WIN_NONE){
                 //处于未创建状态，请创建
-                showSmallwin(context,click);
+                showSmallwin(context,click,1000);
             }else {
                 //已创建了，直接显示
                 switch (winStatus){
@@ -158,7 +158,7 @@ public class RoundView {
      * 显示小悬浮窗
      * @param context context
      */
-    public void showSmallwin(final Context context,ClickListener click) {
+    public void showSmallwin(final Context context,ClickListener click,long delayMillis) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -166,7 +166,7 @@ public class RoundView {
                 removeBigWindow(context);
                 removeHideWindow(context);
             }
-        }, 1000);
+        }, delayMillis);
     }
 
 

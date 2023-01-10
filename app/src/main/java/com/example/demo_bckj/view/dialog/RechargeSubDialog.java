@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -158,10 +159,14 @@ public class RechargeSubDialog extends Dialog {
                 } else {
                     Toast.makeText(context, aliJson.get("message").toString(), Toast.LENGTH_SHORT).show();
                 }
-            } else {
+            } else if (json.get("code").toString().equals("1")){
+                Looper.prepare();
+                RechargeDialog rechargeDialog=new RechargeDialog(context,json.get("message").toString().replaceAll("\\\\n", "\n") );
+                rechargeDialog.show();
+                Looper.loop();
+            }else {
                 Toast.makeText(context, json.get("message").toString(), Toast.LENGTH_SHORT).show();
             }
-            ;
         } catch (IOException e) {
             e.printStackTrace();
         }

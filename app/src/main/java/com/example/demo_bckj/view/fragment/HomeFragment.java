@@ -41,6 +41,7 @@ import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.model.utility.FileUtil;
@@ -53,6 +54,7 @@ import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.MyWebView;
 import com.example.demo_bckj.view.round.RoundView;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
@@ -129,7 +131,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-//        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
+        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
+        HttpManager.getInstance().setListener(sdkListener,this);
         Log.d("tag", getDeviceId());        //接口请求
         presenter.getSdk(getActivity());
         new Thread(() -> {
@@ -145,7 +148,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         deviceSP = SPUtils.getInstance(getActivity(), "open");
         accountLists = deviceSP.getList("account", "");
         telLists = deviceSP.getList("tel", "");
-        presenter.setLists(accountLists, telLists);
+        HttpManager.getInstance().setLists(accountLists,telLists);
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler = new Handler(mHandlerThread.getLooper());
@@ -174,7 +177,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 } else {
                     boolean refresh = false;
                     try {
-                        refresh = presenter.refreshToken(getActivity(), HomeFragment.this);
+                        refresh = presenter.refreshToken(getActivity());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -525,7 +528,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (popupRb.isChecked()) {
                 String number = popupLogin.getText().toString().trim();
                 String code = popupEtCode.getText().toString().trim();
-                presenter.getPhoneLogin(getActivity(), this, number, code, loginDialog);
+                presenter.getPhoneLogin(getActivity(),  number, code, loginDialog);
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -618,7 +621,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         //账号密码登录
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog, this);
+                presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog);
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -973,7 +976,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             String pass2 = popup_password_pw.getText().toString().trim();
             if (popupRb.isChecked()) {
                 if (TextUtils.equals(pass, pass2)) {
-                    presenter.getLoginPwRe(getActivity(), number, pass, pass2, registerDialog, this);
+                    presenter.getLoginPwRe(getActivity(), number, pass, pass2, registerDialog);
                 } else {
                     Toast.makeText(getActivity(), "两次密码不正确", Toast.LENGTH_SHORT).show();
                 }
@@ -1095,7 +1098,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         autoDialog.getWindow().setAttributes(params);
         autoDialog.show();
         autoDialog.setOnDismissListener(dialogInterface -> AutoBuilder = null);
-        presenter.getLoginPwLo(getActivity(), account, password, autoDialog, this);
+        presenter.getLoginPwLo(getActivity(), account, password, autoDialog);
         btn.setOnClickListener(v -> {
             autoDialog.dismiss();
             Switch();
@@ -1140,34 +1143,40 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     private void changeStyle(int style) {
-        switch (style) {
-            case 0:
-                personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
-                personTxt.setTextColor(getResources().getColor(R.color.selected));
-                cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
-                cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
-                welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
-                welfareTxt.setTextColor(getResources().getColor(R.color.nor));
-                break;
-            case 1:
-                personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
-                personTxt.setTextColor(getResources().getColor(R.color.nor));
-                cServiceBtn.setBackgroundResource(R.mipmap.personal);
-                cServiceTxt.setTextColor(getResources().getColor(R.color.selected));
-                welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
-                welfareTxt.setTextColor(getResources().getColor(R.color.nor));
-                break;
-            case 2:
-                personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
-                personTxt.setTextColor(getResources().getColor(R.color.nor));
-                cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
-                cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
-                welfareBtn.setBackgroundResource(R.mipmap.welfare);
-                welfareTxt.setTextColor(getResources().getColor(R.color.selected));
-                break;
-            default:
-                break;
-        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (style) {
+                    case 0:
+                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
+                        personTxt.setTextColor(getResources().getColor(R.color.selected));
+                        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                        cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
+                        welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
+                        welfareTxt.setTextColor(getResources().getColor(R.color.nor));
+                        break;
+                    case 1:
+                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                        personTxt.setTextColor(getResources().getColor(R.color.nor));
+                        cServiceBtn.setBackgroundResource(R.mipmap.personal);
+                        cServiceTxt.setTextColor(getResources().getColor(R.color.selected));
+                        welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
+                        welfareTxt.setTextColor(getResources().getColor(R.color.nor));
+                        break;
+                    case 2:
+                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                        personTxt.setTextColor(getResources().getColor(R.color.nor));
+                        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                        cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
+                        welfareBtn.setBackgroundResource(R.mipmap.welfare);
+                        welfareTxt.setTextColor(getResources().getColor(R.color.selected));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
     }
 
     /**

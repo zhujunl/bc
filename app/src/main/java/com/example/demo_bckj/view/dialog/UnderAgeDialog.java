@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.model.utility.SPUtils;
@@ -22,11 +23,13 @@ public class UnderAgeDialog extends Dialog {
     private Context context;
     private Button btn;
 
-    public UnderAgeDialog(@NonNull Context context) {
+    public UnderAgeDialog(@NonNull Context context,String t) {
         super(context);
         setContentView(R.layout.dialog_underage);
         this.context=context;
         btn=findViewById(R.id.btn_under_age);
+        TextView txt=findViewById(R.id.txt);
+        txt.setText(t);
         btn.setClickable(false);
         setCancelable(false);
         Count c=new Count(context,btn,10000,1000);

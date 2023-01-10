@@ -3,10 +3,9 @@ package com.example.demo_bckj.view.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.listener.SDKListener;
-import com.example.demo_bckj.model.bean.RechargeOrder;
 
 import androidx.annotation.NonNull;
 
@@ -21,16 +20,16 @@ public class RechargeDialog extends Dialog {
 
     private Context context;
 
-    public RechargeDialog(@NonNull Context context, RechargeOrder rechargeOrder, SDKListener listener) {
+    public RechargeDialog(@NonNull Context context,String text) {
         super(context);
         setContentView(R.layout.dialog_recharge);
         this.context=context;
 
         Button btn=findViewById(R.id.popup_submit);
+        TextView textView=findViewById(R.id.privacyTxt);
+        textView.setText(text);
         btn.setOnClickListener(v->{
             dismiss();
-            RechargeSubDialog rechargeSubDialog=new RechargeSubDialog(context,rechargeOrder,listener);
-            rechargeSubDialog.show();
         });
     }
 }

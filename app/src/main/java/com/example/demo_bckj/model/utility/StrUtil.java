@@ -8,6 +8,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -145,29 +146,29 @@ public class StrUtil {
 
         String json = "";
 
+        AssetManager s = context.getAssets();
         try {
-
-            AssetManager s = context.getAssets();
+            InputStream is =null;
             try {
-                InputStream is = s.open(fileName);
-                byte[] buffer = new byte[is.available()];
-                is.read(buffer);
-                json = new String(buffer, "utf-8");
-                is.close();
-
-                //                JSONObject jsonObject = new JSONObject(json);//json数据
-                //                // 动态获取key值
-                //                Iterator<String> iterator = jsonObject.keys();//使用迭代器
-                //                while (iterator.hasNext()) {
-                //                    String key = iterator.next();//获取key
-                //                    String value = jsonObject.getString(key);//获取value
-                //                    Log.e("key-value","key="+key+" value="+value);
-                //                }
-
-            } catch (IOException e) {
+                is = s.open(fileName);
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-        } catch (Exception e) {
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            json = new String(buffer, "utf-8");
+            is.close();
+
+            //                JSONObject jsonObject = new JSONObject(json);//json数据
+            //                // 动态获取key值
+            //                Iterator<String> iterator = jsonObject.keys();//使用迭代器
+            //                while (iterator.hasNext()) {
+            //                    String key = iterator.next();//获取key
+            //                    String value = jsonObject.getString(key);//获取value
+            //                    Log.e("key-value","key="+key+" value="+value);
+            //                }
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
         Log.d("getJson", "文件：" + fileName + "  json:" + json);

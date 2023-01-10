@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
@@ -115,8 +116,8 @@ public class RealNameDialog extends Dialog {
     }
 
     //实名认证
-    public void setRealName(Context context, String idCode, String realname) {
-        RetrofitManager.getInstance(context).getApiService().setRealName(idCode, realname).enqueue(new MyCallback<ResponseBody>() {
+    public void setRealName(Context context, String idCode, String realName) {
+        RetrofitManager.getInstance(context).getApiService().setRealName(idCode, realName).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
@@ -125,8 +126,7 @@ public class RealNameDialog extends Dialog {
                 dismiss();
                 if (age < 18) {
                     //未成年弹窗
-                    UnderAgeDialog underAgeDialog = new UnderAgeDialog(context);
-                    underAgeDialog.show();
+                    HttpManager.getInstance().isOnline(context);
                 } else {
                     RealNameRegisterDialog r = new RealNameRegisterDialog(context);
                     r.show();

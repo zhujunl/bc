@@ -30,12 +30,7 @@ public class PopupTel extends PopupWindow implements TAdapter.telListener {
     private int style=0;
 
     public synchronized static PopupTel getInstance(Context context, List<String> lists, EditText edit, View v, int width, int height, boolean focusable,int style) {
-        if (instance == null||instance.style!=style) {
-            instance=null;
-            instance = new PopupTel(context, lists, edit, v, width, height, focusable);
-        }
-        instance.setStyle(style);
-        return instance;
+        return new PopupTel(context, lists, edit, v, width, height, focusable);
     }
 
     public PopupTel(Context context, List<String> lists, EditText edit, View v, int width, int height, boolean focusable) {

@@ -103,7 +103,7 @@ public class BindNewPhoneDialog extends Dialog {
         });
     }
 
-    public void set(String trim, String trim1) {
+    public void set(String trim1) {
         codeOld=trim1;
     }
 

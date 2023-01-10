@@ -77,9 +77,8 @@ public class VerifyPhoneDialog extends Dialog {
             }
             if (bindDialog==null){
                 bindDialog = new BindNewPhoneDialog(context, this, presenter);
-            }else {
-                bindDialog.set(phone.getText().toString().trim(),code.getText().toString().trim());
             }
+            bindDialog.set(code.getText().toString().trim());
             hide();
             bindDialog.show();
         });

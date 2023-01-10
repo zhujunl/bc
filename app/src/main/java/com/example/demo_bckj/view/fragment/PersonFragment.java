@@ -16,7 +16,7 @@ import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
-import com.example.demo_bckj.view.dialog.RechargeDialog;
+import com.example.demo_bckj.view.dialog.RechargeSubDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 import com.example.demo_bckj.view.round.MyWebView;
 
@@ -85,6 +85,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     @Override
     public void onSuccess(Object o) {
+        Log.d(TAG, "onSuccess" );
         init();
     }
 
@@ -116,12 +117,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             userMore.setTextColor(0xFF5293FF);
             realName.setClickable(true);
         }
-
     }
-//未成年充值提醒
-//    RechargeDialog rechargeDialog = new RechargeDialog(getActivity());
-//            rechargeDialog.show();
-
     private void click() {
         phoneRe.setOnClickListener(v -> {
             if (TextUtils.isEmpty(tel)) {
@@ -171,8 +167,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
                     .money(1)
                     .extend_data("")
                     .build();
-            RechargeDialog rechargeDialog=new RechargeDialog(getActivity(), rechargeOrder, sdkListener);
-            rechargeDialog.show();
+            RechargeSubDialog rechargeSubDialog=new RechargeSubDialog(getActivity(),rechargeOrder,sdkListener);
+            rechargeSubDialog.show();
         });
     }
 

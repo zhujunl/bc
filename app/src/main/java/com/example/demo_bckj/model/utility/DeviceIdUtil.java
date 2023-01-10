@@ -139,6 +139,7 @@ public class DeviceIdUtil {
      * @return
      */
     public static String getIMEI_1(Context context) {
+        UUID.randomUUID().toString();
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return "";
         }
