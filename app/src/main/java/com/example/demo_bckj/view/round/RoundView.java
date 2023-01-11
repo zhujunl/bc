@@ -30,7 +30,7 @@ public class RoundView {
 
     private static boolean isShow = false;  //判断悬浮球是否已经显示
 
-    private int mWidth,mHeight;   //屏幕的宽高
+    private int mWidth, mHeight;   //屏幕的宽高
 
     public static final int WIN_NONE = 0;// 不展示
     public static final int WIN_SMALL = 1;// 小浮标
@@ -39,7 +39,7 @@ public class RoundView {
     //视图状态
     public static int winStatus;
 
-    public static boolean isMsg=false; //红点消息提示是否显示
+    public static boolean isMsg = false; //红点消息提示是否显示
 
     private ClickListener click;
 
@@ -80,35 +80,36 @@ public class RoundView {
 
     /**
      * 显示悬浮窗
+     *
      * @param context
      */
     public void showRoundView(Context context, ClickListener click) {
-        if(mWindowManager==null){
+        if (mWindowManager == null) {
             mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         }
-        this.click=click;
+        this.click = click;
         //每一次显示浮窗前都重新获取一次宽高，避免横竖屏切换后宽高变化
         getWidthAndHeight(context);
 
-        if(!isShow){
+        if (!isShow) {
             //处于非显示状态，可以显示
-            isShow=true;
-            if(winStatus==WIN_NONE){
+            isShow = true;
+            if (winStatus == WIN_NONE) {
                 //处于未创建状态，请创建
-                showSmallwin(context,click,1000);
-            }else {
+                showSmallwin(context, click, 1000);
+            } else {
                 //已创建了，直接显示
-                switch (winStatus){
+                switch (winStatus) {
                     case WIN_SMALL:
-                        if(smallWindow!=null)
+                        if (smallWindow != null)
                             smallWindow.setVisibilityState(View.VISIBLE);
                         break;
                     case WIN_BIG:
-                        if(bigWindow!=null)
+                        if (bigWindow != null)
                             bigWindow.setVisibilityState(View.VISIBLE);
                         break;
                     case WIN_HIDE:
-                        if(hideWindow!=null)
+                        if (hideWindow != null)
                             hideWindow.setVisibilityState(View.VISIBLE);
                         break;
                 }
@@ -118,24 +119,25 @@ public class RoundView {
 
     /**
      * 隐藏悬浮窗
+     *
      * @param context
      */
     public void hideRoundView(Context context) {
-        if(isShow){
+        if (isShow) {
             //处于显示状态，可以隐藏
-            isShow=false;
-            switch (winStatus){
+            isShow = false;
+            switch (winStatus) {
                 case WIN_SMALL:
-                    if(smallWindow!=null)
-                    smallWindow.setVisibilityState(View.GONE);
+                    if (smallWindow != null)
+                        smallWindow.setVisibilityState(View.GONE);
                     break;
                 case WIN_BIG:
-                    if(bigWindow!=null)
-                    bigWindow.setVisibilityState(View.GONE);
+                    if (bigWindow != null)
+                        bigWindow.setVisibilityState(View.GONE);
                     break;
                 case WIN_HIDE:
-                    if(hideWindow!=null)
-                    hideWindow.setVisibilityState(View.GONE);
+                    if (hideWindow != null)
+                        hideWindow.setVisibilityState(View.GONE);
                     break;
             }
         }
@@ -143,12 +145,13 @@ public class RoundView {
 
     /**
      * 销毁悬浮窗
+     *
      * @param context
      */
     public void closeRoundView(Context context) {
-        isShow=false;
-        isMsg=false;
-        winStatus=WIN_NONE;
+        isShow = false;
+        isMsg = false;
+        winStatus = WIN_NONE;
         removeSmallWindow(context);
         removeBigWindow(context);
         removeHideWindow(context);
@@ -156,13 +159,14 @@ public class RoundView {
 
     /**
      * 显示小悬浮窗
+     *
      * @param context context
      */
-    public void showSmallwin(final Context context,ClickListener click,long delayMillis) {
+    public void showSmallwin(final Context context, ClickListener click, long delayMillis) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                createSmallWindow(context,click);
+                createSmallWindow(context, click);
                 removeBigWindow(context);
                 removeHideWindow(context);
             }
@@ -177,11 +181,11 @@ public class RoundView {
      *
      * @param context 必须为应用程序的Context
      */
-    public void createSmallWindow(Context context,ClickListener click) {
+    public void createSmallWindow(Context context, ClickListener click) {
         //每一次创建前都要重新获取宽高，不然横竖屏切换时会出问题
         getWidthAndHeight(context);
         if (smallWindow == null) {
-            smallWindow = new RoundWindowSmallView(context,click);
+            smallWindow = new RoundWindowSmallView(context, click);
             if (mLayoutParams == null) {
                 mLayoutParams = new WindowManager.LayoutParams();
 
@@ -217,7 +221,7 @@ public class RoundView {
             mWindowManager.addView(smallWindow, mLayoutParams);
         }
 
-        winStatus=WIN_SMALL;
+        winStatus = WIN_SMALL;
 
         smallWindow.timehide();// 小悬浮窗1.5s后隐藏动画
     }
@@ -259,24 +263,26 @@ public class RoundView {
 
             int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
             int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            if (smallWindow == null)
+                smallWindow = new RoundWindowSmallView(context, click);
             smallWindow.measure(w, h);// 测量
 
             int width = smallWindow.getMeasuredWidth();// 获得视图实际宽度（测量宽度）
             if (isNearLeft) {
-                hideWindow = new RoundWindowHideView(context,click);
+                hideWindow = new RoundWindowHideView(context, click);
             } else {
-                hideWindow = new RoundWindowHideView(context,click);
+                hideWindow = new RoundWindowHideView(context, click);
                 mLayoutParams.x = mLayoutParams.x + width / 2;
             }
 
         }
-      try {
-          mWindowManager.addView(hideWindow, mLayoutParams);
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
+        try {
+            mWindowManager.addView(hideWindow, mLayoutParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        winStatus=WIN_HIDE;
+        winStatus = WIN_HIDE;
     }
 
 
@@ -301,7 +307,7 @@ public class RoundView {
      *
      * @param context 必须为应用程序的Context
      */
-    public  void createBigWindow(Context context) {
+    public void createBigWindow(Context context) {
 
         //每一次创建前都要重新获取宽高，不然横竖屏切换时会出问题
         getWidthAndHeight(context);
@@ -314,17 +320,17 @@ public class RoundView {
             } else if (hideWindow != null) {
                 hideWindow.measure(w, h);
             }
-            bigWindow = new RoundWindowBigView(context,click);
+            bigWindow = new RoundWindowBigView(context, click);
         }
-        bigWindow.measure(w,h);
-        if (mLayoutParams.x>(mWidth-bigWindow.getMeasuredWidth())){
+        bigWindow.measure(w, h);
+        if (mLayoutParams.x > (mWidth - bigWindow.getMeasuredWidth())) {
             // 在右边拖动的时候需要减去虚拟按钮
-            mLayoutParams.x = mWidth-bigWindow.getMeasuredWidth();
+            mLayoutParams.x = mWidth - bigWindow.getMeasuredWidth();
         }
-        mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL+1; //设置悬浮窗的层次 数据越大则越下面
+        mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL + 1; //设置悬浮窗的层次 数据越大则越下面
         mWindowManager.addView(bigWindow, mLayoutParams);
 
-        winStatus=WIN_BIG;
+        winStatus = WIN_BIG;
     }
 
 
@@ -345,13 +351,13 @@ public class RoundView {
     }
 
 
-
     /**
      * 获取全屏状态下的宽高
+     *
      * @param context
      */
-    public void getWidthAndHeight(Context context){
-        mWidth=context.getResources().getDisplayMetrics().widthPixels;
+    public void getWidthAndHeight(Context context) {
+        mWidth = context.getResources().getDisplayMetrics().widthPixels;
         mHeight = context.getResources().getDisplayMetrics().heightPixels;
 
         //有的手机是有虚拟导航键的，当横屏且全屏时，悬浮球无法靠到最右边，所以要用包含虚拟导航键的屏幕宽度
@@ -359,7 +365,7 @@ public class RoundView {
         if (mWindowManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mWindowManager.getDefaultDisplay().getRealSize(point);
-                mWidth=point.x;
+                mWidth = point.x;
                 //mHeight =point.y;
             }
         }

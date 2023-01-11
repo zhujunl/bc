@@ -36,21 +36,20 @@ public class RoundWindowBigView extends LinearLayout {
         SPUtils sp = SPUtils.getInstance(context, "bcSP");
         if (RoundView.isNearLeft) {
             LayoutInflater.from(context).inflate(FileUtil.getResIdFromFileName(context, "layout", "pop_left"), this);
-            userAccount=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","userAccount"));
-            String nickName = sp.getString("nick_name", "");
-            String tel = sp.getString("tel", "");
-            account= TextUtils.isEmpty(tel)?nickName:tel;
-            String s = account.substring(0,3)+"****"+account.substring(7,account.length());
-            userAccount.setText(s);
-            accountSwitch=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","account_switch"));
-            accountSwitch.setOnClickListener(v->click.Switch());
         } else {
             LayoutInflater.from(context).inflate(FileUtil.getResIdFromFileName(context, "layout", "pop_right"), this);
         }
         iv_content = (ImageView) findViewById(FileUtil.getResIdFromFileName(context, "id", "iv_content"));
         CService = (Button) findViewById(FileUtil.getResIdFromFileName(context, "id", "iv_kefu"));
         PersonalBtn = (Button) findViewById(FileUtil.getResIdFromFileName(context, "id", "iv_account"));
-
+        userAccount=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","userAccount"));
+        String nickName = sp.getString("nick_name", "");
+        String tel = sp.getString("tel", "");
+        account= TextUtils.isEmpty(tel)?nickName:tel;
+        String s = account.substring(0,3)+"****"+account.substring(7,account.length());
+        userAccount.setText(s);
+        accountSwitch=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","account_switch"));
+        accountSwitch.setOnClickListener(v->click.Switch());
 
 
 
