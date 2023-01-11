@@ -21,6 +21,7 @@ import com.example.demo_bckj.model.bean.URLBean;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.service.TimeService;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
@@ -48,6 +49,7 @@ public class HttpManager {
     private SDKListener sdkListener;
     private ClickListener listener;
     private List<String> accountLists, telLists;
+    private Context context;
 
     private static HttpManager instance;
 
@@ -61,9 +63,10 @@ public class HttpManager {
     public HttpManager() {
     }
 
-    public void setListener(SDKListener listener, ClickListener clickListener) {
+    public void setListener(SDKListener listener, ClickListener clickListener,Context context) {
         this.sdkListener = listener;
         this.listener = clickListener;
+        this.context=context;
     }
 
     public void setLists(List<String> accountLists, List<String> telLists) {
@@ -151,10 +154,11 @@ public class HttpManager {
                 .getPhoneLogin(tel, code).enqueue(new MyCallback<ResponseBody>(context) {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
-                        isOnline(context);
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         SPUtils.getInstance(context, "bcSP").save(data, "");
                         sdkListener.Login(data.getData());
+                        if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                            TimeService.start(context);
                         dialog.dismiss();
                         if (!telLists.contains(tel)) {
                             telLists.add(tel);
@@ -178,9 +182,10 @@ public class HttpManager {
                 .getLoginPwRe(number, pass, pass2).enqueue(new MyCallback<ResponseBody>(context) {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
-                        isOnline(context);
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         SPUtils.getInstance(context, "bcSP").save(data, pass);
+                        if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                            TimeService.start(context);
                         sdkListener.Login(data.getData());
                         alertDialog.dismiss();
                         if (!accountLists.contains(number)) {
@@ -208,9 +213,10 @@ public class HttpManager {
                     public void onSuccess(JSONObject jsStr) {
                         if (dialog != null)
                             dialog.dismiss();
-                        isOnline(context);
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         SPUtils.getInstance(context, "bcSP").save(data, password);
+                        if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                            TimeService.start(context);
                         sdkListener.Login(data.getData());
                         if (!accountLists.contains(name)) {
                             accountLists.add(name);
@@ -300,9 +306,10 @@ public class HttpManager {
             JSONObject json = FileUtil.getResponseBody(execute.body());
             Object code = json.get("code");
             if (code.toString().equals("0")) {
-                isOnline(context);
                 AccountPwBean data = JSONObject.toJavaObject(json, AccountPwBean.class);
                 SPUtils.getInstance(context, "bcSP").save(data, "");
+                if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                    TimeService.start(context);
                 sdkListener.Login(data.getData());
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
@@ -422,8 +429,8 @@ public class HttpManager {
     }
 
     //用户在线
-    public void isOnline(Context context) {
-        RetrofitManager.getInstance(context).getApiService().isOnline().enqueue(new MyCallback<ResponseBody>() {
+    public void isOnline(Context c) {
+        RetrofitManager.getInstance(c).getApiService().isOnline().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 OnlineBean onlineBean = JSONObject.toJavaObject(jsStr, OnlineBean.class);

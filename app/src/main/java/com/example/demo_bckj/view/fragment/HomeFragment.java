@@ -128,7 +128,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     protected void initData() {
         CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
-        HttpManager.getInstance().setListener(sdkListener, this);
+        HttpManager.getInstance().setListener(sdkListener, this,getActivity());
         Log.d("tag", getDeviceId());        //接口请求
         presenter.getSdk(getActivity());
         new Thread(() -> {

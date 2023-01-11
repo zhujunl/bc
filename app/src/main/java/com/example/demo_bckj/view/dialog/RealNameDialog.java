@@ -13,13 +13,13 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.model.utility.StrUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
+import com.example.demo_bckj.service.TimeService;
 import com.example.demo_bckj.view.fragment.PersonFragment;
 
 import androidx.annotation.NonNull;
@@ -126,7 +126,7 @@ public class RealNameDialog extends Dialog {
                 dismiss();
                 if (age < 18) {
                     //未成年弹窗
-                    HttpManager.getInstance().isOnline(context);
+                    TimeService.start(context);
                 } else {
                     RealNameRegisterDialog r = new RealNameRegisterDialog(context);
                     r.show();
