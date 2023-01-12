@@ -4,8 +4,9 @@ import android.content.Context;
 import android.widget.TextView;
 
 import com.example.demo_bckj.base.BasePresenter;
-import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.HttpManager;
+import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
@@ -75,4 +76,13 @@ public class PersonPresenter extends BasePresenter {
         HttpManager.getInstance().loginOut(context);
     }
 
+    //用户创角
+    public void CreateRole(Context context, RoleBean roleBean) {
+        HttpManager.getInstance().CreateRole(context,roleBean);
+    }
+
+    //角色登录区服
+    public void LoginServer(Context context, RoleBean roleBean){
+        HttpManager.getInstance().LoginServer(context,roleBean);
+    }
 }

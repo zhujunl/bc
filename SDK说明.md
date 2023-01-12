@@ -20,7 +20,9 @@ implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     //今日头条适配
     implementation 'me.jessyan:autosize:1.2.1'
+
     implementation 'com.alibaba:fastjson:1.2.48'
+
     // 支付宝 SDK AAR 包所需的配置
     api 'com.alipay.sdk:alipaysdk-android:+@aar'
 ```
@@ -32,7 +34,7 @@ implementation fileTree(dir: 'libs', include: ['*.aar'])
 ```java
 1. 在manifest节点加上：xmlns:tools="http://schemas.android.com/tools"
 2. 在application 节点加上：tools:replace="android:icon, android:theme" 
-3. 修改application节点中theme内容，将style parent属性改为：		                Theme.MaterialComponents.DayNight.NoActionBar.Bridge
+3. 修改application节点中theme内容，将style parent属性改为：Theme.MaterialComponents.DayNight.NoActionBar.Bridge
 ```
 
 
@@ -58,58 +60,62 @@ implementation fileTree(dir: 'libs', include: ['*.aar'])
 在MainActivity中完成初始化：
 
 ```java
-FragmentManager fm = getSupportFragmentManager();
-HomeFragment homeFragment=HomeFragment.getInstance(new SDKListener() {
-    @Override
-    public void Login(Account account) {
-        
-    }
+  FragmentManager fm = getSupportFragmentManager();
+        HomeFragment homeFragment=HomeFragment.getInstance(new SDKListener() {
+            @Override
+            public void Login(User user) {
+                Log.d(TAG, "登录=="+user );
+            }
 
-    @Override
-    public void SignOut() {
+            @Override
+            public void SignOut() {
+                Log.d(TAG, "退出" );
+            }
 
-    }
+            @Override
+            public void RechargeSuccess(String orderNum) {
+                Log.d(TAG, orderNum+"充值成功");
+            }
 
-    @Override
-    public void RechargeSuccess() {
-
-    }
-
-    @Override
-    public void RechargeFail(String s) {
-
-    }
-});
-fm.beginTransaction()
-        .replace(R.id.home,homeFragment)
-        .addToBackStack(null)
-        .commit();
+            @Override
+            public void RechargeFail(String message) {
+                Log.d(TAG, "充值失败=="+message);
+            }
+        });
+        fm.beginTransaction()
+                .replace(R.id.home,homeFragment)
+                .addToBackStack(null)
+                .commit();
 ```
 
 ## 接口说明
 
 ```java
-/**
- * 登录
- *
- * @param account
- */
-void Login(Account account);
+public interface SDKListener {
 
-/**
- * 退出
- */
-void SignOut();
+    /**
+     * 登录
+     *
+     * @param user
+     */
+    void Login(User user);
 
-/**
- * 充值成功
- */
-void RechargeSuccess();
+    /**
+     * 退出
+     */
+    void SignOut();
 
-/**
- * 充值失败
- *
- * @param message
- */
-void RechargeFail(String message);
+    /**
+     * 充值成功
+     */
+    void RechargeSuccess(String orderNum);
+
+    /**
+     * 充值失败
+     *
+     * @param message
+     */
+    void RechargeFail(String message);
+}
+
 ```

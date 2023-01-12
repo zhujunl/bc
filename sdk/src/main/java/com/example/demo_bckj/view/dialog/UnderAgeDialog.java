@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 
 import androidx.annotation.NonNull;
@@ -20,6 +19,7 @@ import androidx.annotation.NonNull;
  * @updateDes
  */
 public class UnderAgeDialog extends Dialog {
+    private String TAG="UnderAgeDialog";
 
     private Context context;
     private Button btn;
@@ -33,7 +33,6 @@ public class UnderAgeDialog extends Dialog {
         txt.setText(t);
         btn.setClickable(false);
         setCancelable(false);
-        HttpManager.getInstance().loginOut(context);
         Count c=new Count(context,btn,10000,1000);
         c.start();
     }
@@ -55,8 +54,7 @@ public class UnderAgeDialog extends Dialog {
 
         @Override
         public void onFinish() {
-            DBManager.getInstance(context).delete();
-            System.exit(0);
+            HttpManager.getInstance().loginOut(context);
         }
     }
 }

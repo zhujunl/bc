@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.ActivityManager;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AliPayBean;
@@ -90,11 +90,11 @@ public class RechargeSubDialog extends Dialog {
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
-                            listener.RechargeSuccess(context.getString(R.string.orderNum)+orderNum);
+                            listener.RechargeSuccess(context.getString(R.string.orderNum) + orderNum);
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
-                            listener.RechargeFail(context.getString(R.string.orderNum)+orderNum+context.getString(R.string.pay_failed) + payResult.getMemo());
+                            listener.RechargeFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:
@@ -155,8 +155,19 @@ public class RechargeSubDialog extends Dialog {
                     msg.obj = result;
                     mHandler.sendMessage(msg);
                     Log.i("msp", result.toString());
+                } else if (aliJson.get("code").toString().equals("1")) {
+                    Object data = aliJson.get("data");
+                    JSONObject jsonObject = JSONObject.parseObject(data.toString());
+                    Object tip = jsonObject.get("tip");
+                    Object link = jsonObject.get("link");
+                    Looper.prepare();
+                    RechargeDialog rechargeDialog = new RechargeDialog(context, aliJson.get("message").toString(), tip.toString(), link.toString());
+                    rechargeDialog.show();
+                    Looper.loop();
                 } else {
+                    Looper.prepare();
                     Toast.makeText(context, aliJson.get("message").toString(), Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             } else if (json.get("code").toString().equals("1")) {
                 Looper.prepare();

@@ -3,7 +3,7 @@ package com.bc.myapplication;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.view.fragment.HomeFragment;
 

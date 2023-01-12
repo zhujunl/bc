@@ -1,4 +1,4 @@
-package com.example.demo_bckj.listener;
+package com.example.demo_bckj.control;
 
 import com.example.demo_bckj.model.bean.User;
 
@@ -25,13 +25,15 @@ public interface SDKListener {
 
     /**
      * 充值成功
+     *
+     * @param orderNum 订单号
      */
     void RechargeSuccess(String orderNum);
 
     /**
      * 充值失败
      *
-     * @param message
+     * @param message 失败信息
      */
     void RechargeFail(String message);
 }

@@ -11,7 +11,7 @@ import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
@@ -189,7 +189,7 @@ public class HttpManager {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         DBManager.getInstance(context).insertAccount(data, "");
                         ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
-                        User user=new User.Builder()
+                        User user = new User.Builder()
                                 .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
@@ -197,8 +197,7 @@ public class HttpManager {
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
-                        if (data.getData().getAge() != null && data.getData().getAge() < 18)
-                            TimeService.start(context);
+                        TimeService.start(context);
                         dialog.dismiss();
                         if (!telLists.contains(tel)) {
                             telLists.add(tel);
@@ -224,14 +223,13 @@ public class HttpManager {
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         DBManager.getInstance(context).insertAccount(data, pass);
-                        if (data.getData().getAge() != null && data.getData().getAge() < 18)
+                        if (data.getData().getAuthenticated())
                             TimeService.start(context);
                         ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
-                        User user=new User.Builder()
+                        User user = new User.Builder()
                                 .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
-                                .age(data.getData().getAge())
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
@@ -263,10 +261,9 @@ public class HttpManager {
                             dialog.dismiss();
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         DBManager.getInstance(context).insertAccount(data, password);
-                        if (data.getData().getAge() != null && data.getData().getAge() < 18)
-                            TimeService.start(context);
+                        TimeService.start(context);
                         ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
-                        User user=new User.Builder()
+                        User user = new User.Builder()
                                 .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
@@ -364,10 +361,9 @@ public class HttpManager {
             if (code.toString().equals("0")) {
                 AccountPwBean data = JSONObject.toJavaObject(json, AccountPwBean.class);
                 DBManager.getInstance(context).insertAccount(data, "");
-                if (data.getData().getAge() != null && data.getData().getAge() < 18)
-                    TimeService.start(context);
+                TimeService.start(context);
                 ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
-                User user=new User.Builder()
+                User user = new User.Builder()
                         .account(data.getData().getAccount())
                         .slug(data.getData().getSlug())
                         .isAuthenticated(data.getData().getAuthenticated())
@@ -502,7 +498,6 @@ public class HttpManager {
                     UnderAgeDialog underAgeDialog = new UnderAgeDialog(context, onlineBean.getData().getMessage());
                     underAgeDialog.show();
                 }
-
             }
 
             @Override
@@ -547,8 +542,8 @@ public class HttpManager {
 
     //用户创角
     public void CreateRole(Context context, RoleBean roleBean) {
-        RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean.getRoleId(),roleBean.getServerName(),
-                roleBean.getRoleId(),roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+        RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean.getRoleId(), roleBean.getServerName(),
+                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
 
@@ -562,9 +557,9 @@ public class HttpManager {
     }
 
     //角色登录区服
-    public void LoginServer(Context context, RoleBean roleBean){
-        RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean.getRoleId(),roleBean.getServerName(),
-                roleBean.getRoleId(),roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+    public void LoginServer(Context context, RoleBean roleBean) {
+        RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean.getRoleId(), roleBean.getServerName(),
+                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
 

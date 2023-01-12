@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.base.BasePresenter;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.FileUtil;
 

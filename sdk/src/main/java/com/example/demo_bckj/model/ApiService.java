@@ -120,6 +120,7 @@ public interface ApiService {
     //支付宝-原生支付
     @POST("sdk/v1/order/pay/ali/app")
     Call<ResponseBody> AliPay(@Query("number") String number);
+
     //微信-扫码支付
     @POST("sdk/v1/order/pay/wc/scan")
     Call<ResponseBody> WeiChatPay(@Query("number") String number);

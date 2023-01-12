@@ -42,11 +42,11 @@ public class RealNameDialog extends Dialog {
     private PersonFragment personFragment;
     private String n, c;
 
-    public RealNameDialog(@NonNull Context context, boolean isCancelable,PersonFragment personFragment) {
+    public RealNameDialog(@NonNull Context context, boolean isCancelable, PersonFragment personFragment) {
         super(context);
         setContentView(R.layout.popup_autonym);
         this.context = context;
-        this.personFragment=personFragment;
+        this.personFragment = personFragment;
         setCancelable(isCancelable);
         initView();
     }
@@ -65,15 +65,15 @@ public class RealNameDialog extends Dialog {
             n = name.getText().toString().trim();
             c = code.getText().toString().trim();
             String s = StrUtil.extractChinese(n);
-            if (TextUtils.isEmpty(s)){
-                Toast.makeText(context,"请输入中文",Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(s)) {
+                Toast.makeText(context, "请输入中文", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!StrUtil.isCard(c)){
-                Toast.makeText(context,"请输入正确身份证号码",Toast.LENGTH_SHORT).show();
+            if (!StrUtil.isCard(c)) {
+                Toast.makeText(context, "请输入正确身份证号码", Toast.LENGTH_SHORT).show();
                 return;
             }
-            setRealName(context,c,n);
+            setRealName(context, c, n);
         });
         name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -88,7 +88,7 @@ public class RealNameDialog extends Dialog {
 
             @Override
             public void afterTextChanged(Editable s) {
-              remove.setVisibility(TextUtils.isEmpty(name.getText().toString())? View.INVISIBLE:View.VISIBLE);
+                remove.setVisibility(TextUtils.isEmpty(name.getText().toString()) ? View.INVISIBLE : View.VISIBLE);
             }
         });
         code.addTextChangedListener(new TextWatcher() {
@@ -104,7 +104,7 @@ public class RealNameDialog extends Dialog {
 
             @Override
             public void afterTextChanged(Editable s) {
-                removeCode.setVisibility(TextUtils.isEmpty(code.getText().toString())? View.INVISIBLE:View.VISIBLE);
+                removeCode.setVisibility(TextUtils.isEmpty(code.getText().toString()) ? View.INVISIBLE : View.VISIBLE);
             }
         });
         remove.setOnClickListener(v -> {
@@ -121,13 +121,11 @@ public class RealNameDialog extends Dialog {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                DBManager.getInstance(context).insertAccount(data,"");
+                DBManager.getInstance(context).insertAccount(data, "");
                 Integer age = data.getData().getAge();
                 dismiss();
-                if (age < 18) {
-                    //未成年弹窗
-                    TimeService.start(context);
-                } else {
+                TimeService.start(context);
+                if (!(age < 18)) {
                     RealNameRegisterDialog r = new RealNameRegisterDialog(context);
                     r.show();
                 }

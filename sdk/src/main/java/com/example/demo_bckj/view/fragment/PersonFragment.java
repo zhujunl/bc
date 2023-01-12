@@ -9,11 +9,13 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.control.SdkControl;
 import com.example.demo_bckj.db.dao.AccountDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
-import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.bean.RechargeOrder;
+import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
@@ -39,7 +41,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private String tel, nickName;
     private ImageView header;
     private SDKListener sdkListener;
-    private MyWebView myWebView,webView;
+    private MyWebView myWebView, webView;
     private privacyListener listener;
     private AccountDao dao;
 
@@ -50,8 +52,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         return instance;
     }
 
-    public PersonFragment(SDKListener sdkListener){
-        this.sdkListener=sdkListener;
+    public PersonFragment(SDKListener sdkListener) {
+        this.sdkListener = sdkListener;
     }
 
     @Override
@@ -70,9 +72,43 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         privacy = v.findViewById(R.id.PrivacyRe);
         quit = v.findViewById(R.id.user_quit_login);
         phoneRe = v.findViewById(R.id.phoneRe);
-        header=v.findViewById(R.id.user_head);
+        header = v.findViewById(R.id.user_head);
 
         click();
+
+        Button p = v.findViewById(R.id.pay);
+        Button l = v.findViewById(R.id.loginServer);
+        Button c = v.findViewById(R.id.createRole);
+
+        p.setOnClickListener(v -> {
+            RechargeOrder rechargeOrder = new RechargeOrder.Builder()
+                    .number_game("游戏订单号")
+                    .props_name("物品名称")
+                    .server_id("区服 ID")
+                    .server_name("区服名称")
+                    .role_id("角色 ID")
+                    .role_name("角色名称")
+                    .callback_url("https://apitest.infinite-game.cn/ping")
+                    .money(1)
+                    .extend_data("")
+                    .build();
+            RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(getActivity(), rechargeOrder, sdkListener);
+            rechargeSubDialog.show();
+        });
+        l.setOnClickListener(v -> {
+            SdkControl.getInstance(getActivity()).CreateRole(getActivity(), new RoleBean.Builder()
+                    .serverID("builder.serverID")
+                    .serverName("builder.serverName")
+                    .roleId("builder.roleId")
+                    .roleName("builder.roleName").bulid());
+        });
+        c.setOnClickListener(v -> {
+            SdkControl.getInstance(getActivity()).LoginServer(getActivity(), new RoleBean.Builder()
+                    .serverID("builder.serverID")
+                    .serverName("builder.serverName")
+                    .roleId("builder.roleId")
+                    .roleName("builder.roleName").bulid());
+        });
     }
 
     @Override
@@ -87,7 +123,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     @Override
     public void onSuccess(Object o) {
-        Log.d(TAG, "onSuccess" );
+        Log.d(TAG, "onSuccess");
         init();
     }
 
@@ -96,8 +132,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     }
 
-    public void init(){
-        dao= DBManager.getInstance(getActivity()).getDao();
+    public void init() {
+        dao = DBManager.getInstance(getActivity()).getDao();
         AccountEntity query = dao.query();
         nickName = query.getNickName();
         tel = query.getTel();
@@ -111,42 +147,43 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             phone.setText(s);
         }
         boolean isAuthenticated = query.getAuthenticated();
-        if (isAuthenticated){
+        if (isAuthenticated) {
             userMore.setText("已认证");
             userMore.setTextColor(0xFF999999);
             realName.setClickable(false);
-        }else {
+        } else {
             userMore.setText("未认证");
             userMore.setTextColor(0xFF5293FF);
             realName.setClickable(true);
         }
     }
+
     private void click() {
         phoneRe.setOnClickListener(v -> {
             if (TextUtils.isEmpty(tel)) {
                 //绑定手机号
-                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(),presenter);
+                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(), presenter);
                 bindNewPhoneDialog.show();
             } else {
                 //验证手机号
-                VerifyPhoneDialog verifyPhoneDialog = new VerifyPhoneDialog(getActivity(),presenter);
+                VerifyPhoneDialog verifyPhoneDialog = new VerifyPhoneDialog(getActivity(), presenter);
                 verifyPhoneDialog.show();
             }
         });
         modifyPw.setOnClickListener(v -> {
             if (TextUtils.isEmpty(tel)) {
                 //绑定手机号
-                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(),presenter);
+                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(), presenter);
                 bindNewPhoneDialog.show();
                 return;
             }
             //修改密码
-            ModifyPWDialog modifyPWDialog = new ModifyPWDialog(getActivity(),presenter);
+            ModifyPWDialog modifyPWDialog = new ModifyPWDialog(getActivity(), presenter);
             modifyPWDialog.show();
         });
         realName.setOnClickListener(v -> {
             //实名认证
-            RealNameDialog realNameDialog = new RealNameDialog(getActivity(),true,this);
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(), true, this);
             realNameDialog.show();
         });
         userAgree.setOnClickListener(v -> {
@@ -158,28 +195,16 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         quit.setOnClickListener(v -> {
             presenter.loginOut(getContext());
         });
-        header.setOnClickListener(v->{
-            RechargeOrder rechargeOrder=new RechargeOrder.Builder()
-                    .number_game("游戏订单号")
-                    .props_name("物品名称")
-                    .server_id("区服 ID")
-                    .server_name("区服名称")
-                    .role_id("角色 ID")
-                    .role_name("角色名称")
-                    .callback_url("https://apitest.infinite-game.cn/ping")
-                    .money(1)
-                    .extend_data("")
-                    .build();
-            RechargeSubDialog rechargeSubDialog=new RechargeSubDialog(getActivity(),rechargeOrder,sdkListener);
-            rechargeSubDialog.show();
+        header.setOnClickListener(v -> {
+
         });
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "fragment  onDestroy" );
-        instance=null;
+        Log.d(TAG, "fragment  onDestroy");
+        instance = null;
     }
 
     public void setListener(privacyListener listener) {
@@ -190,8 +215,9 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         return listener;
     }
 
-    public interface privacyListener{
+    public interface privacyListener {
         void user();
+
         void privacy();
     }
 
