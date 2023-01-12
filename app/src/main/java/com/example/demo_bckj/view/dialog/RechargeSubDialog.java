@@ -66,7 +66,7 @@ public class RechargeSubDialog extends Dialog {
     private Handler mHandler;
     private int pos;
     private RechargeOrder rechargeOrder;
-    private SDKListener listener;
+    private String orderNum;
 
     public RechargeSubDialog(@NonNull Context context, RechargeOrder rechargeOrder, SDKListener listener) {
         super(context);
@@ -90,11 +90,11 @@ public class RechargeSubDialog extends Dialog {
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
-                            listener.RechargeSuccess();
+                            listener.RechargeSuccess(context.getString(R.string.orderNum)+orderNum);
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                             Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
-                            listener.RechargeFail(context.getString(R.string.pay_failed) + payResult.getMemo());
+                            listener.RechargeFail(context.getString(R.string.orderNum)+orderNum+context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:
@@ -102,9 +102,8 @@ public class RechargeSubDialog extends Dialog {
                 }
             }
         };
-        this.rechargeOrder=rechargeOrder;
-        this.listener=listener;
-        Log.d(TAG, "订单信息==" +rechargeOrder.toString() );
+        this.rechargeOrder = rechargeOrder;
+        Log.d(TAG, "订单信息==" + rechargeOrder.toString());
 
         commodity = findViewById(R.id.Commodity);
         comDetails = findViewById(R.id.ComDetails);
@@ -118,7 +117,7 @@ public class RechargeSubDialog extends Dialog {
         rv.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
         rv.setAdapter(adapter);
         commodity.setText(rechargeOrder.getProps_name());
-        comDetails.setText("￥"+ StrUtil.changeF2Y(String.valueOf(rechargeOrder.getMoney())));
+        comDetails.setText("￥" + StrUtil.changeF2Y(String.valueOf(rechargeOrder.getMoney())));
         btn.setOnClickListener(v -> {
             new Thread(() -> {
                 if (pos == 1) {
@@ -142,8 +141,8 @@ public class RechargeSubDialog extends Dialog {
             JSONObject json = FileUtil.getResponseBody(execute.body());
             if (json.get("code").toString().equals("0")) {
                 OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
-                String number = response.getData().getNumber();
-                Response<ResponseBody> aliExecute = RetrofitManager.getInstance(getContext()).getApiService().AliPay(number).execute();
+                orderNum = response.getData().getNumber();
+                Response<ResponseBody> aliExecute = RetrofitManager.getInstance(getContext()).getApiService().AliPay(orderNum).execute();
                 JSONObject aliJson = FileUtil.getResponseBody(aliExecute.body());
                 if (aliJson.get("code").toString().equals("0")) {
                     AliPayBean aliResponse = JSONObject.toJavaObject(aliJson, AliPayBean.class);
@@ -159,12 +158,12 @@ public class RechargeSubDialog extends Dialog {
                 } else {
                     Toast.makeText(context, aliJson.get("message").toString(), Toast.LENGTH_SHORT).show();
                 }
-            } else if (json.get("code").toString().equals("1")){
+            } else if (json.get("code").toString().equals("1")) {
                 Looper.prepare();
-                RechargeDialog rechargeDialog=new RechargeDialog(context,json.get("message").toString().replaceAll("\\\\n", "\n") );
+                RechargeDialog rechargeDialog = new RechargeDialog(context, json.get("message").toString().replaceAll("\\\\n", "\n"));
                 rechargeDialog.show();
                 Looper.loop();
-            }else {
+            } else {
                 Toast.makeText(context, json.get("message").toString(), Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {

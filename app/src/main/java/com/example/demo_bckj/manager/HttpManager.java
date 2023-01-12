@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.base.BasePresenter;
+import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
 import com.example.demo_bckj.listener.PlayInterface;
@@ -19,6 +20,7 @@ import com.example.demo_bckj.model.bean.OnlineBean;
 import com.example.demo_bckj.model.bean.PlayBean;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.URLBean;
+import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
@@ -186,7 +188,15 @@ public class HttpManager {
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         DBManager.getInstance(context).insertAccount(data, "");
-                        sdkListener.Login(data.getData());
+                        ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
+                        User user=new User.Builder()
+                                .account(data.getData().getAccount())
+                                .slug(data.getData().getSlug())
+                                .isAuthenticated(data.getData().getAuthenticated())
+                                .age(data.getData().getAge())
+                                .token(authorization.getAuthorization())
+                                .build();
+                        sdkListener.Login(user);
                         if (data.getData().getAge() != null && data.getData().getAge() < 18)
                             TimeService.start(context);
                         dialog.dismiss();
@@ -216,7 +226,15 @@ public class HttpManager {
                         DBManager.getInstance(context).insertAccount(data, pass);
                         if (data.getData().getAge() != null && data.getData().getAge() < 18)
                             TimeService.start(context);
-                        sdkListener.Login(data.getData());
+                        ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
+                        User user=new User.Builder()
+                                .account(data.getData().getAccount())
+                                .slug(data.getData().getSlug())
+                                .isAuthenticated(data.getData().getAuthenticated())
+                                .age(data.getData().getAge())
+                                .token(authorization.getAuthorization())
+                                .build();
+                        sdkListener.Login(user);
                         alertDialog.dismiss();
                         if (!accountLists.contains(number)) {
                             accountLists.add(number);
@@ -247,7 +265,15 @@ public class HttpManager {
                         DBManager.getInstance(context).insertAccount(data, password);
                         if (data.getData().getAge() != null && data.getData().getAge() < 18)
                             TimeService.start(context);
-                        sdkListener.Login(data.getData());
+                        ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
+                        User user=new User.Builder()
+                                .account(data.getData().getAccount())
+                                .slug(data.getData().getSlug())
+                                .isAuthenticated(data.getData().getAuthenticated())
+                                .age(data.getData().getAge())
+                                .token(authorization.getAuthorization())
+                                .build();
+                        sdkListener.Login(user);
                         if (!accountLists.contains(name)) {
                             accountLists.add(name);
                             SPUtils.getInstance(context, "bcSP").put("account", accountLists);
@@ -340,7 +366,15 @@ public class HttpManager {
                 DBManager.getInstance(context).insertAccount(data, "");
                 if (data.getData().getAge() != null && data.getData().getAge() < 18)
                     TimeService.start(context);
-                sdkListener.Login(data.getData());
+                ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
+                User user=new User.Builder()
+                        .account(data.getData().getAccount())
+                        .slug(data.getData().getSlug())
+                        .isAuthenticated(data.getData().getAuthenticated())
+                        .age(data.getData().getAge())
+                        .token(authorization.getAuthorization())
+                        .build();
+                sdkListener.Login(user);
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
             }

@@ -1,6 +1,6 @@
 package com.example.demo_bckj.listener;
 
-import com.example.demo_bckj.model.bean.Account;
+import com.example.demo_bckj.model.bean.User;
 
 /**
  * @author ZJL
@@ -14,9 +14,9 @@ public interface SDKListener {
     /**
      * 登录
      *
-     * @param account
+     * @param user
      */
-    void Login(Account account);
+    void Login(User user);
 
     /**
      * 退出
@@ -26,7 +26,7 @@ public interface SDKListener {
     /**
      * 充值成功
      */
-    void RechargeSuccess();
+    void RechargeSuccess(String orderNum);
 
     /**
      * 充值失败

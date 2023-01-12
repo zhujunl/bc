@@ -2,10 +2,9 @@ package com.example.demo_bckj.view.activity;
 
 import android.os.Bundle;
 import android.util.Log;
-
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.listener.SDKListener;
-import com.example.demo_bckj.model.bean.Account;
+import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.view.fragment.HomeFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +14,8 @@ public class MainActivity extends AppCompatActivity{
     String TAG="MainActivity";
     SDKListener listener=new SDKListener() {
         @Override
-        public void Login(Account account) {
-            Log.d(TAG, "登录=="+account );
+        public void Login(User user) {
+            Log.d(TAG, "登录=="+user );
         }
 
         @Override
@@ -25,8 +24,8 @@ public class MainActivity extends AppCompatActivity{
         }
 
         @Override
-        public void RechargeSuccess() {
-            Log.d(TAG, "充值成功");
+        public void RechargeSuccess(String orderNum) {
+            Log.d(TAG, orderNum+"充值成功");
         }
 
         @Override
