@@ -4,9 +4,10 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.example.demo_bckj.db.entity.ConfigEntity;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.bean.SignInfoBean;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
-import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.view.Constants;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class RetrofitManager {
     public static RetrofitManager retrofitManager;
     private ApiService apiService;
 
-    private RetrofitManager(Context context){
+    private RetrofitManager(Context context) {
         final X509TrustManager trustManager = new X509TrustManager() {
             @Override
             public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -67,11 +68,12 @@ public class RetrofitManager {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.readTimeout(5000, TimeUnit.MILLISECONDS);
         client.connectTimeout(5000, TimeUnit.MILLISECONDS);
-        if (Build.VERSION.SDK_INT<29){
+        if (Build.VERSION.SDK_INT < 29) {
             client.sslSocketFactory(sslContext.getSocketFactory());
-        }else {
-            client.sslSocketFactory(sslContext.getSocketFactory(),trustManager);
-        };
+        } else {
+            client.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
+        }
+        ;
         client.hostnameVerifier((hostname, session) -> true);
         client.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         client.addInterceptor(new Interceptor() {
@@ -86,14 +88,14 @@ public class RetrofitManager {
                     e.printStackTrace();
                 }
                 Request.Builder requestBuilder = original.newBuilder()
-                            .header("sign", sign.sign)
-                            .header("info", sign.info);
-                    String AUTHORIZATION = SPUtils.getInstance(context, "bcSP").getString("Authorization");
-                    if (!TextUtils.isEmpty(AUTHORIZATION)){
-                        requestBuilder.addHeader("Authorization","Bearer "+AUTHORIZATION);
-                    }
-                    Request request = requestBuilder.build();
-                    return chain.proceed(request);
+                        .header("sign", sign.sign)
+                        .header("info", sign.info);
+                ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
+                if (authorization != null && !TextUtils.isEmpty(authorization.getAuthorization())) {
+                    requestBuilder.addHeader("Authorization", "Bearer " + authorization.getAuthorization());
+                }
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
             }
         });
         OkHttpClient build = client.build();
@@ -103,17 +105,19 @@ public class RetrofitManager {
                 .client(build)
                 .build();
         //关联
-        apiService=retrofit.create(ApiService.class);
+        apiService = retrofit.create(ApiService.class);
     }
+
     //单例
-    public static RetrofitManager getInstance(Context context){
-        if (retrofitManager==null){
-            synchronized (RetrofitManager.class){
-                retrofitManager=new RetrofitManager(context);
+    public static RetrofitManager getInstance(Context context) {
+        if (retrofitManager == null) {
+            synchronized (RetrofitManager.class) {
+                retrofitManager = new RetrofitManager(context);
             }
         }
         return retrofitManager;
     }
+
     public ApiService getApiService() {
         return apiService;
     }

@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.manager.DBManager;
 
 import androidx.annotation.NonNull;
 
@@ -53,7 +53,7 @@ public class UnderAgeDialog extends Dialog {
 
         @Override
         public void onFinish() {
-            SPUtils.getInstance(getContext(),"bcSP").clear();
+            DBManager.getInstance(context).delete();
             System.exit(0);
         }
     }

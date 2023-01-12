@@ -13,8 +13,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.utility.FileUtil;
-import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.model.utility.StrUtil;
 
 import okhttp3.Headers;
@@ -55,7 +55,7 @@ public abstract class MyCallback<ResponseBody extends okhttp3.ResponseBody> impl
         String Authorization = headers.get("Authorization");
         Log.d(TAG, "Authorization====" + Authorization);
         if (mContext != null && !TextUtils.isEmpty(Authorization)) {
-            SPUtils.getInstance(mContext, "bcSP").put("Authorization", Authorization);
+            DBManager.getInstance(mContext).insertAuthorization(Authorization);
         }
         JSONObject json = FileUtil.getResponseBody(response.body());
         Object code = json.get("code");

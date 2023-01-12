@@ -155,14 +155,14 @@ public class HttpManager {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        SPUtils.getInstance(context, "bcSP").save(data, "");
+                        DBManager.getInstance(context).insertAccount(data,"");
                         sdkListener.Login(data.getData());
                         if (data.getData().getAge()!=null&&data.getData().getAge()<18)
                             TimeService.start(context);
                         dialog.dismiss();
                         if (!telLists.contains(tel)) {
                             telLists.add(tel);
-                            SPUtils.getInstance(context, "open").put("tel", telLists);
+                            SPUtils.getInstance(context, "bcSP").put("tel", telLists);
                         }
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
@@ -183,14 +183,14 @@ public class HttpManager {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        SPUtils.getInstance(context, "bcSP").save(data, pass);
+                        DBManager.getInstance(context).insertAccount(data,pass);
                         if (data.getData().getAge()!=null&&data.getData().getAge()<18)
                             TimeService.start(context);
                         sdkListener.Login(data.getData());
                         alertDialog.dismiss();
                         if (!accountLists.contains(number)) {
                             accountLists.add(number);
-                            SPUtils.getInstance(context, "open").put("account", accountLists);
+                            SPUtils.getInstance(context, "bcSP").put("account", accountLists);
                         }
                         RoundView.getInstance().showRoundView(context, listener);
                         thread.start();
@@ -214,13 +214,13 @@ public class HttpManager {
                         if (dialog != null)
                             dialog.dismiss();
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        SPUtils.getInstance(context, "bcSP").save(data, password);
+                        DBManager.getInstance(context).insertAccount(data,password);
                         if (data.getData().getAge()!=null&&data.getData().getAge()<18)
                             TimeService.start(context);
                         sdkListener.Login(data.getData());
                         if (!accountLists.contains(name)) {
                             accountLists.add(name);
-                            SPUtils.getInstance(context, "open").put("account", accountLists);
+                            SPUtils.getInstance(context, "bcSP").put("account", accountLists);
                         }
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
@@ -302,12 +302,12 @@ public class HttpManager {
         if (execute.code() == 200) {
             Headers headers = execute.headers();
             String Authorization = headers.get("Authorization");
-            SPUtils.getInstance(context, "bcSP").put("Authorization", Authorization);
+            DBManager.getInstance(context).updateAuthorization(Authorization);
             JSONObject json = FileUtil.getResponseBody(execute.body());
             Object code = json.get("code");
             if (code.toString().equals("0")) {
                 AccountPwBean data = JSONObject.toJavaObject(json, AccountPwBean.class);
-                SPUtils.getInstance(context, "bcSP").save(data, "");
+                DBManager.getInstance(context).insertAccount(data,"");
                 if (data.getData().getAge()!=null&&data.getData().getAge()<18)
                     TimeService.start(context);
                 sdkListener.Login(data.getData());
@@ -341,7 +341,7 @@ public class HttpManager {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 bindNewPhoneDialog.dismiss();
-                SPUtils.getInstance(context, "bcSP").put("tel", tel);
+                DBManager.getInstance(context).BindPhone(tel);
                 Toast.makeText(context, "绑定成功", Toast.LENGTH_SHORT).show();
                 presenter.getView().onSuccess("");
             }
@@ -396,7 +396,7 @@ public class HttpManager {
                 dialog.dismiss();
                 bindNewPhoneDialog.dismiss();
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                SPUtils.getInstance(context, "bcSP").save(data, "");
+                DBManager.getInstance(context).insertAccount(data,"");
                 presenter.getView().onSuccess("");
                 RoundView.getInstance().showSmallwin(context, listener, 0);
             }
@@ -470,7 +470,7 @@ public class HttpManager {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 sdkListener.SignOut();
-                SPUtils.getInstance(context, "bcSP").clear();
+                DBManager.getInstance(context).delete();
                 System.exit(0);
             }
 

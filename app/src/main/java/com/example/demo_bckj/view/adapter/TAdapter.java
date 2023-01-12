@@ -48,7 +48,7 @@ public class TAdapter extends RecyclerView.Adapter<TAdapter.MyHolder> {
         holder.btn.setOnClickListener(v->{
             lists.remove(position);
             notifyDataSetChanged();
-            SPUtils.getInstance(context,"open").put("tel",lists);
+            SPUtils.getInstance(context,"bcSP").put("tel",lists);
         });
         holder.itemView.setOnClickListener(v->{
             listener.itemClick(lists.get(position));

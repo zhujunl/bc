@@ -13,10 +13,10 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
-import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.model.utility.StrUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.service.TimeService;
@@ -121,7 +121,7 @@ public class RealNameDialog extends Dialog {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                SPUtils.getInstance(context, "bcSP").save(data, "");
+                DBManager.getInstance(context).insertAccount(data,"");
                 Integer age = data.getData().getAge();
                 dismiss();
                 if (age < 18) {

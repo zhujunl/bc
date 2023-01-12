@@ -9,9 +9,11 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.db.dao.AccountDao;
+import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.bean.RechargeOrder;
-import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
@@ -34,12 +36,12 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private TextView account, phone, userMore;
     private RelativeLayout modifyPw, phoneRe, realName, userAgree, privacy;
     private Button quit;
-    private SPUtils sp;
     private String tel, nickName;
     private ImageView header;
     private SDKListener sdkListener;
     private MyWebView myWebView,webView;
     private privacyListener listener;
+    private AccountDao dao;
 
     public static PersonFragment getInstance(SDKListener sdkListener) {
         if (instance == null) {
@@ -95,9 +97,10 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     }
 
     public void init(){
-        sp = SPUtils.getInstance(getContext(), "bcSP");
-        nickName = sp.getString("nick_name", "");
-        tel = sp.getString("tel", "");
+        dao= DBManager.getInstance(getActivity()).getDao();
+        AccountEntity query = dao.query();
+        nickName = query.getNickName();
+        tel = query.getTel();
         if (TextUtils.isEmpty(tel)) {
             account.setText(nickName);
             phone.setText("绑定");
@@ -107,7 +110,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             account.setText(s);
             phone.setText(s);
         }
-        boolean isAuthenticated = sp.getBoolean("is_authenticated", false);
+        boolean isAuthenticated = query.getAuthenticated();
         if (isAuthenticated){
             userMore.setText("已认证");
             userMore.setTextColor(0xFF999999);

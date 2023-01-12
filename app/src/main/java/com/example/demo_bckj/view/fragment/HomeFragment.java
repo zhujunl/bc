@@ -35,9 +35,11 @@ import android.widget.Toast;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.listener.SDKListener;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
@@ -117,7 +119,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private Handler handler;
 
     private String tel = null;
-    SPUtils bcSP, deviceSP;
+    SPUtils bcSP;
     private SDKListener sdkListener;
     private List<String> accountLists, telLists;
 
@@ -126,10 +128,20 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
+        if (account!=null&&!account.getAuthenticated()) {
+            DBManager.getInstance(getActivity()).delete();
+        }
+    }
+
+
+    @Override
     protected void initData() {
         CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
         HttpManager.getInstance().setListener(sdkListener, this,getActivity());
-        Log.d("tag", getDeviceId());        //接口请求
+        Log.d("tag==", getDeviceId());
         presenter.getSdk(getActivity());
         new Thread(() -> {
             try {
@@ -141,9 +153,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         }).start();
 
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
-        deviceSP = SPUtils.getInstance(getActivity(), "open");
-        accountLists = deviceSP.getList("account", "");
-        telLists = deviceSP.getList("tel", "");
+        accountLists = bcSP.getList("account", "");
+        telLists = bcSP.getList("tel", "");
         HttpManager.getInstance().setLists(accountLists, telLists);
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
@@ -162,15 +173,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         @Override
         public void run() {
             //用户协议弹窗
-            boolean isFirstRun = deviceSP.getBoolean("isFirst", false);
+            boolean isFirstRun = bcSP.getBoolean("isFirst", false);
             if (!isFirstRun || !checkPermissionAllGranted(Constants.PermissionString)) {
-                deviceSP.put("isFirst", true);
+                bcSP.put("isFirst", true);
                 getActivity().runOnUiThread(() -> popupAgreement());
             } else {
-                String password = bcSP.getString("password", "");
-                String account = bcSP.getString("account", "");
-                if (!TextUtils.isEmpty(password) && !TextUtils.isEmpty(account)) {
-                    getActivity().runOnUiThread(() -> popupLoginAuto(account, password));
+                AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
+                if (account!=null&&!TextUtils.isEmpty(account.getAccount()) && !TextUtils.isEmpty(account.getPassword())) {
+                    getActivity().runOnUiThread(() -> popupLoginAuto(account.getAccount(), account.getPassword()));
                 } else {
                     boolean refresh = false;
                     try {
@@ -296,7 +306,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Log.d(TAG, "Switch");
         DrawerLayout.closeDrawers();
         RoundView.getInstance().closeRoundView(getActivity());
-        bcSP.clear();
+        DBManager.getInstance(getActivity()).delete();
         popupLoginCode();
         if (pf != null)
             pf.onDestroy();
@@ -309,20 +319,20 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause" );
         RoundView.getInstance().removeSmallWindow(getActivity());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        boolean is_authenticated = bcSP.getBoolean("is_authenticated");
-        if (!is_authenticated)
-            bcSP.clear();
+        Log.d(TAG, "onStop" );
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy" );
         RoundView.getInstance().closeRoundView(getActivity());
         if (loginDialog != null)
             loginDialog.dismiss();
@@ -442,7 +452,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popup_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginDialog.dismiss();
                 popupNumberRegister("", "", false);
             }
         });
@@ -947,7 +956,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //返回
         popup_back.setOnClickListener(view -> {
-            popupLoginCode();
             registerDialog.dismiss();
         });
         popupSubmit.setOnClickListener(view -> {
@@ -1062,7 +1070,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.pop_login_tittle, null);
         TextView txt = inflate.findViewById(R.id.login_account);
         TextView btn = inflate.findViewById(R.id.login_switch);
-        String tel = bcSP.getString("tel", "");
+        String tel = DBManager.getInstance(getActivity()).getAccount().getTel();
         txt.setText(TextUtils.isEmpty(tel) ? account.substring(0, 3) + "****" + account.substring(7, account.length()) :
                 tel.substring(0, 3) + "****" + tel.substring(7, tel.length()));
         AutoBuilder.setView(inflate);

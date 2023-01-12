@@ -10,9 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.listener.ClickListener;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.utility.FileUtil;
-import com.example.demo_bckj.model.utility.SPUtils;
 
 /**
  * @author WangKun
@@ -33,7 +34,7 @@ public class RoundWindowBigView extends LinearLayout {
         super(context);
         this.context = context;
         this.click=click;
-        SPUtils sp = SPUtils.getInstance(context, "bcSP");
+        AccountEntity account = DBManager.getInstance(context).getAccount();
         if (RoundView.isNearLeft) {
             LayoutInflater.from(context).inflate(FileUtil.getResIdFromFileName(context, "layout", "pop_left"), this);
         } else {
@@ -43,10 +44,10 @@ public class RoundWindowBigView extends LinearLayout {
         CService = (Button) findViewById(FileUtil.getResIdFromFileName(context, "id", "iv_kefu"));
         PersonalBtn = (Button) findViewById(FileUtil.getResIdFromFileName(context, "id", "iv_account"));
         userAccount=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","userAccount"));
-        String nickName = sp.getString("nick_name", "");
-        String tel = sp.getString("tel", "");
-        account= TextUtils.isEmpty(tel)?nickName:tel;
-        String s = account.substring(0,3)+"****"+account.substring(7,account.length());
+        String nickName = account.getNickName();
+        String tel = account.getTel();
+        this.account = TextUtils.isEmpty(tel)?nickName:tel;
+        String s = this.account.substring(0,3)+"****"+ this.account.substring(7, this.account.length());
         userAccount.setText(s);
         accountSwitch=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","account_switch"));
         accountSwitch.setOnClickListener(v->click.Switch());
