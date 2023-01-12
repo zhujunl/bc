@@ -17,6 +17,7 @@ import com.example.demo_bckj.model.bean.AccountPwBean;
 import com.example.demo_bckj.model.bean.DateUpBean;
 import com.example.demo_bckj.model.bean.OnlineBean;
 import com.example.demo_bckj.model.bean.PlayBean;
+import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.URLBean;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
@@ -129,10 +130,6 @@ public class HttpManager {
                 .enqueue(new MyCallback<ResponseBody>() {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
-                        Object data = jsStr.get("data");
-                        JSONObject jsonObject = JSONObject.parseObject(data.toString());
-                        String id = jsonObject.get("id").toString();
-                        SPUtils.getInstance(context, "bcSP").put("id", Integer.valueOf(id));
                         IBaseView view = presenter.getView();
                         if (view != null) {
                             view.onSuccess(jsStr);
@@ -497,7 +494,7 @@ public class HttpManager {
         });
     }
 
-
+    //退出
     public void loginOut(Context context) {
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
             @Override
@@ -510,6 +507,38 @@ public class HttpManager {
             @Override
             public void onError(String message) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    //用户创角
+    public void CreateRole(Context context, RoleBean roleBean) {
+        RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean.getRoleId(),roleBean.getServerName(),
+                roleBean.getRoleId(),roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+    }
+
+    //角色登录区服
+    public void LoginServer(Context context, RoleBean roleBean){
+        RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean.getRoleId(),roleBean.getServerName(),
+                roleBean.getRoleId(),roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
             }
         });
     }

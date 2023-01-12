@@ -128,4 +128,18 @@ public interface ApiService {
     Call<ResponseBody> AliH5Pay(@Query("number") String number,
                                 @Query("type") String type);
 
+
+    /****************************************游戏角色*******************************************************/
+    //用户创角
+    @POST("sdk/v1/role")
+    Call<ResponseBody> CreateRole(@Query("server_id") String server_id,
+                                  @Query("server_name") String server_name,
+                                  @Query("role_id") String role_id,
+                                  @Query("role_name") String role_name);
+    //角色登录区服
+    @POST("sdk/v1/role/login")
+    Call<ResponseBody> LoginServer(@Query("server_id") String server_id,
+                                   @Query("server_name") String server_name,
+                                   @Query("role_id") String role_id,
+                                   @Query("role_name") String role_name);
 }

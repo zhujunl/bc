@@ -52,7 +52,6 @@ import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.MyWebView;
 import com.example.demo_bckj.view.round.RoundView;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
@@ -139,7 +138,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
+//        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
         HttpManager.getInstance().setListener(sdkListener, this,getActivity());
         Log.d("tag==", getDeviceId());
         new Thread(() -> {
@@ -178,7 +177,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 getActivity().runOnUiThread(() -> popupAgreement());
                 presenter.getSdk(getActivity());
             } else {
-                presenter.getSdk(getActivity(),SPUtils.getInstance(getActivity(),"bcsp").getInt("id"));
+                presenter.getSdk(getActivity(),bcSP.getInt("id"));
                 AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
                 if (account!=null&&!TextUtils.isEmpty(account.getAccount()) && !TextUtils.isEmpty(account.getPassword())) {
                     getActivity().runOnUiThread(() -> popupLoginAuto(account.getAccount(), account.getPassword()));
