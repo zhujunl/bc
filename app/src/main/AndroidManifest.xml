@@ -1,56 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.demo_bckj">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permossion.READ_PRIVILEGED_PHONE_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    package="com.bc.myapplication">
 
     <application
-        android:name=".view.activity.MyApplication"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Demo_bckj"
-        tools:replace="android:allowBackup">
+        android:theme="@style/Theme.MyApplication"
+        tools:replace="android:icon, android:theme"
+        tools:targetApi="31">
         <activity
-            android:name=".view.activity.MainActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
-            android:exported="true"
-            android:windowSoftInputMode="adjustPan">
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.activity.WebActivity"
-            android:exported="false">
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <service android:name=".service.TimeService"
-            android:enabled="true">
-        </service>
-        <meta-data
-            android:name="design_width_in_dp"
-            android:value="360" />
-        <meta-data
-            android:name="design_height_in_dp"
-            android:value="640" />
     </application>
 
 </manifest>
