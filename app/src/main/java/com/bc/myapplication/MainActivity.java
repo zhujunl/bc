@@ -1,8 +1,8 @@
-package com.example.demo_bckj.view.activity;
+package com.bc.myapplication;
 
 import android.os.Bundle;
 import android.util.Log;
-import com.example.demo_bckj.R;
+
 import com.example.demo_bckj.listener.SDKListener;
 import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.view.fragment.HomeFragment;
