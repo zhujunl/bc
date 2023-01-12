@@ -63,10 +63,10 @@ public class HttpManager {
     public HttpManager() {
     }
 
-    public void setListener(SDKListener listener, ClickListener clickListener,Context context) {
+    public void setListener(SDKListener listener, ClickListener clickListener, Context context) {
         this.sdkListener = listener;
         this.listener = clickListener;
-        this.context=context;
+        this.context = context;
     }
 
     public void setLists(List<String> accountLists, List<String> telLists) {
@@ -100,6 +100,39 @@ public class HttpManager {
                 .enqueue(new MyCallback<ResponseBody>() {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
+                        Object data = jsStr.get("data");
+                        JSONObject jsonObject = JSONObject.parseObject(data.toString());
+                        String id = jsonObject.get("id").toString();
+                        SPUtils.getInstance(context, "bcSP").put("id", Integer.valueOf(id));
+                        IBaseView view = presenter.getView();
+                        if (view != null) {
+                            view.onSuccess(jsStr);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        IBaseView view = presenter.getView();
+                        if (view != null) {
+                            view.onError(message);
+                        }
+                    }
+                });
+
+    }
+
+    //数据上报
+    public void getSdk(Context context, BasePresenter presenter, int id) {
+        RetrofitManager.getInstance(context)
+                .getApiService()
+                .getSdk(id)
+                .enqueue(new MyCallback<ResponseBody>() {
+                    @Override
+                    public void onSuccess(JSONObject jsStr) {
+                        Object data = jsStr.get("data");
+                        JSONObject jsonObject = JSONObject.parseObject(data.toString());
+                        String id = jsonObject.get("id").toString();
+                        SPUtils.getInstance(context, "bcSP").put("id", Integer.valueOf(id));
                         IBaseView view = presenter.getView();
                         if (view != null) {
                             view.onSuccess(jsStr);
@@ -155,9 +188,9 @@ public class HttpManager {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        DBManager.getInstance(context).insertAccount(data,"");
+                        DBManager.getInstance(context).insertAccount(data, "");
                         sdkListener.Login(data.getData());
-                        if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                        if (data.getData().getAge() != null && data.getData().getAge() < 18)
                             TimeService.start(context);
                         dialog.dismiss();
                         if (!telLists.contains(tel)) {
@@ -183,8 +216,8 @@ public class HttpManager {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        DBManager.getInstance(context).insertAccount(data,pass);
-                        if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                        DBManager.getInstance(context).insertAccount(data, pass);
+                        if (data.getData().getAge() != null && data.getData().getAge() < 18)
                             TimeService.start(context);
                         sdkListener.Login(data.getData());
                         alertDialog.dismiss();
@@ -214,8 +247,8 @@ public class HttpManager {
                         if (dialog != null)
                             dialog.dismiss();
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                        DBManager.getInstance(context).insertAccount(data,password);
-                        if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                        DBManager.getInstance(context).insertAccount(data, password);
+                        if (data.getData().getAge() != null && data.getData().getAge() < 18)
                             TimeService.start(context);
                         sdkListener.Login(data.getData());
                         if (!accountLists.contains(name)) {
@@ -307,8 +340,8 @@ public class HttpManager {
             Object code = json.get("code");
             if (code.toString().equals("0")) {
                 AccountPwBean data = JSONObject.toJavaObject(json, AccountPwBean.class);
-                DBManager.getInstance(context).insertAccount(data,"");
-                if (data.getData().getAge()!=null&&data.getData().getAge()<18)
+                DBManager.getInstance(context).insertAccount(data, "");
+                if (data.getData().getAge() != null && data.getData().getAge() < 18)
                     TimeService.start(context);
                 sdkListener.Login(data.getData());
                 RoundView.getInstance().showRoundView(context, listener);
@@ -396,7 +429,7 @@ public class HttpManager {
                 dialog.dismiss();
                 bindNewPhoneDialog.dismiss();
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                DBManager.getInstance(context).insertAccount(data,"");
+                DBManager.getInstance(context).insertAccount(data, "");
                 presenter.getView().onSuccess("");
                 RoundView.getInstance().showSmallwin(context, listener, 0);
             }

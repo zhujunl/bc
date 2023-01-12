@@ -142,7 +142,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
         HttpManager.getInstance().setListener(sdkListener, this,getActivity());
         Log.d("tag==", getDeviceId());
-        presenter.getSdk(getActivity());
         new Thread(() -> {
             try {
                 boolean init = presenter.init(getActivity());
@@ -177,7 +176,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (!isFirstRun || !checkPermissionAllGranted(Constants.PermissionString)) {
                 bcSP.put("isFirst", true);
                 getActivity().runOnUiThread(() -> popupAgreement());
+                presenter.getSdk(getActivity());
             } else {
+                presenter.getSdk(getActivity(),SPUtils.getInstance(getActivity(),"bcsp").getInt("id"));
                 AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
                 if (account!=null&&!TextUtils.isEmpty(account.getAccount()) && !TextUtils.isEmpty(account.getPassword())) {
                     getActivity().runOnUiThread(() -> popupLoginAuto(account.getAccount(), account.getPassword()));

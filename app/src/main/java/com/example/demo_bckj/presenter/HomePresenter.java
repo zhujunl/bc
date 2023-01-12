@@ -51,6 +51,10 @@ public class HomePresenter extends BasePresenter {
         HttpManager.getInstance().getSdk(context, this);
     }
 
+    public void getSdk(Context context, int id) {
+        HttpManager.getInstance().getSdk(context, this, id);
+    }
+
     //获取手机验证码
     public void getPhoneLoginCode(Context context, String tel) {
         HttpManager.getInstance().getPhoneLoginCode(context, tel, this);

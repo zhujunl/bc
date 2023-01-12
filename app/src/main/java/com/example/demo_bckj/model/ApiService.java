@@ -26,6 +26,9 @@ public interface ApiService {
     @POST("sdk/v1/game/activation")
     Call<ResponseBody> getSdk();
 
+    @POST("sdk/v1/game/activation")
+    Call<ResponseBody> getSdk(@Query("id") int id);
+
     //手机号登录(发送验证码)
     @GET("sdk/v1/sms/login")
     Call<ResponseBody> getPhoneLoginCode(@Query("tel") String tel);
