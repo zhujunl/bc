@@ -7,6 +7,8 @@ import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.view.dialog.RechargeSubDialog;
 
+import androidx.annotation.NonNull;
+
 /**
  * @author ZJL
  * @date 2023/1/12 17:10
@@ -39,29 +41,30 @@ public class SdkControl {
         this.pack = pack;
     }
 
-    public String  getValue(String key){
-        String value="";
-        switch (key){
+    public String getValue(@NonNull String key) {
+        String value = "";
+        switch (key) {
             case "type":
-                value=type;
+                value = type;
                 break;
             case "game":
-                value=game;
+                value = game;
                 break;
             case "channel":
-                value=channel;
+                value = channel;
                 break;
             case "plan":
-                value=plan;
+                value = plan;
                 break;
             case "pack":
-                value=pack;
+                value = pack;
                 break;
             default:
                 break;
         }
         return value;
     }
+
     //用户创角
     public void CreateRole(Context context, RoleBean roleBean) {
         HttpManager.getInstance().CreateRole(context, roleBean);
@@ -73,7 +76,7 @@ public class SdkControl {
     }
 
     //充值订单
-    public void Recharge(Context context, SDKListener sdkListener,RechargeOrder rechargeOrder) {
+    public void Recharge(Context context, SDKListener sdkListener, RechargeOrder rechargeOrder) {
         RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, sdkListener);
         rechargeSubDialog.show();
     }

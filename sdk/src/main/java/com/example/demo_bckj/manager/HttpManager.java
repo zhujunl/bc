@@ -72,7 +72,7 @@ public class HttpManager {
         this.context = context;
     }
 
-    public void setLists(List<String> accountLists, List<String> telLists) {
+    public void setData(List<String> accountLists, List<String> telLists) {
         this.accountLists = accountLists;
         this.telLists = telLists;
     }
@@ -180,7 +180,7 @@ public class HttpManager {
     }
 
     //手机号登录
-    public void getPhoneLogin(Context context, String tel, String code, AlertDialog dialog) {
+    public void getPhoneLogin(Context context, String tel, String code) {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getPhoneLogin(tel, code).enqueue(new MyCallback<ResponseBody>(context) {
@@ -198,7 +198,6 @@ public class HttpManager {
                                 .build();
                         sdkListener.Login(user);
                         TimeService.start(context);
-                        dialog.dismiss();
                         if (!telLists.contains(tel)) {
                             telLists.add(tel);
                             SPUtils.getInstance(context, "bcSP").put("tel", telLists);
@@ -230,6 +229,7 @@ public class HttpManager {
                                 .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
+                                .age(data.getData().getAge())
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
@@ -251,14 +251,12 @@ public class HttpManager {
     }
 
     //账号密码登录
-    public void getLoginPwLo(Context context, String name, String password, AlertDialog dialog) {
+    public void getLoginPwLo(Context context, String name, String password) {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getLoginPwLo(name, password).enqueue(new MyCallback<ResponseBody>(context) {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
-                        if (dialog != null)
-                            dialog.dismiss();
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                         DBManager.getInstance(context).insertAccount(data, password);
                         TimeService.start(context);
@@ -330,15 +328,12 @@ public class HttpManager {
     }
 
     //重置密码
-    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation, AlertDialog resetDialog, AlertDialog forgetDialog, AlertDialog dialog) {
+    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation) {
         RetrofitManager.getInstance(context).getApiService().resetPwd(tel, code, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 Object message = jsStr.get("message");
                 Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
-                resetDialog.dismiss();
-                forgetDialog.dismiss();
-                dialog.show();
             }
 
             @Override
@@ -355,7 +350,7 @@ public class HttpManager {
         if (execute.code() == 200) {
             Headers headers = execute.headers();
             String Authorization = headers.get("Authorization");
-            DBManager.getInstance(context).updateAuthorization(Authorization);
+            DBManager.getInstance(context).insertAuthorization(Authorization);
             JSONObject json = FileUtil.getResponseBody(execute.body());
             Object code = json.get("code");
             if (code.toString().equals("0")) {
@@ -493,6 +488,9 @@ public class HttpManager {
         RetrofitManager.getInstance(c).getApiService().isOnline().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
+                if (!TimeService.isRun()){
+                    return;
+                }
                 OnlineBean onlineBean = JSONObject.toJavaObject(jsStr, OnlineBean.class);
                 if (onlineBean.getData().getType().equals("off_line")) {
                     UnderAgeDialog underAgeDialog = new UnderAgeDialog(context, onlineBean.getData().getMessage());
@@ -502,7 +500,10 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                if (!TimeService.isRun()){
+                    return;
+                }
+//                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -524,13 +525,15 @@ public class HttpManager {
     }
 
     //退出
-    public void loginOut(Context context) {
+    public void loginOut(Context context,boolean isDestroy) {
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
+                TimeService.stop(context);
                 sdkListener.SignOut();
                 DBManager.getInstance(context).delete();
-                System.exit(0);
+                if (isDestroy)
+                    System.exit(0);
             }
 
             @Override
@@ -551,7 +554,7 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, "失败"+message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "失败" + message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -567,7 +570,7 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, "失败"+message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "失败" + message, Toast.LENGTH_SHORT).show();
             }
         });
     }

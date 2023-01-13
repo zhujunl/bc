@@ -27,6 +27,20 @@ android {
                 outputFileName = "${releaseTime()}.apk"
             }
     }
+    signingConfigs {
+        debug {
+            keyAlias 'bcsdk'
+            keyPassword 'ytNjxjHCHBgx'
+            storeFile file('../bcSdk.jks')
+            storePassword 'ytNjxjHCHBgx'
+        }
+        release {
+            keyAlias 'bcsdk'
+            keyPassword 'ytNjxjHCHBgx'
+            storeFile file('../bcSdk.jks')
+            storePassword 'ytNjxjHCHBgx'
+        }
+    }
     buildTypes {
         debug {
             minifyEnabled false

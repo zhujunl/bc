@@ -30,15 +30,15 @@ public class DBManager {
     }
 
     public DBManager(Context context) {
-        dao=AccountDao.getInstance(context);
-        configDao=ConfigDao.getInstance(context);
+        dao = AccountDao.getInstance(context);
+        configDao = ConfigDao.getInstance(context);
     }
 
     public AccountDao getDao() {
         return dao;
     }
 
-    public void insertAccount(AccountPwBean data, String password){
+    public void insertAccount(AccountPwBean data, String password) {
         AccountEntity account = new AccountEntity.Builder()
                 .account(data.getData().getAccount())
                 .tel(data.getData().getTel())
@@ -48,28 +48,28 @@ public class DBManager {
                 .realName(data.getData().getRealname())
                 .birthday(data.getData().getBirthday())
                 .build();
-        if(data.getData().getAge()!=null)
+        if (data.getData().getAge() != null)
             account.setAge(data.getData().getAge());
         if (!TextUtils.isEmpty(password))
             account.setPassword(password);
         dao.insertData(account);
     }
 
-    public void deleteAccount(){
-       dao.delete();
+    public void deleteAccount() {
+        dao.delete();
     }
 
-    public AccountEntity getAccount(){
+    public AccountEntity getAccount() {
         return dao.query();
     }
 
-    public void BindPhone(String tel){
+    public void BindPhone(String tel) {
         AccountEntity account = dao.query();
         account.setTel(tel);
         dao.insertData(account);
     }
 
-    public void update(AccountEntity val){
+    public void update(AccountEntity val) {
         AccountEntity account = getAccount();
         account.setAccount(val.getAccount());
         account.setTel(val.getTel());
@@ -84,25 +84,20 @@ public class DBManager {
         dao.insertData(account);
     }
 
-    public void insertAuthorization(String authorization){
+    public void insertAuthorization(String authorization) {
         configDao.insertAuthorization(authorization);
     }
 
-    public void deleteAuthorization(){
+    public void deleteAuthorization() {
         configDao.deleteAuthorization();
     }
 
-    public void updateAuthorization(String authorization){
-        ConfigEntity configEntity = configDao.queryAuthorization();
-        configEntity.setAuthorization(authorization);
-        configDao.updateAuthorization(authorization);
-    }
 
-    public ConfigEntity getAuthorization(){
+    public ConfigEntity getAuthorization() {
         return configDao.queryAuthorization();
     }
 
-    public void delete(){
+    public void delete() {
         dao.delete();
         configDao.deleteAuthorization();
     }

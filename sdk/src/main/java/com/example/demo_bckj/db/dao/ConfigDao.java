@@ -34,17 +34,18 @@ public class ConfigDao {
         mDatabase = mHelper.getWritableDatabase();
     }
 
-    public void insertAuthorization(String authorization){
+    public void insertAuthorization(String authorization) {
+        deleteAuthorization();
         ContentValues values = new ContentValues();
-        values.put("authorization",authorization);
+        values.put("authorization", authorization);
         mDatabase.insert("config", null, values);
     }
 
-    public void deleteAuthorization(){
+    public void deleteAuthorization() {
         mDatabase.delete("config", "id > 0", new String[]{});
     }
 
-    public ConfigEntity queryAuthorization(){
+    public ConfigEntity queryAuthorization() {
         String sql = "select * from config";
         Cursor cursor = mDatabase.rawQuery(sql, null);
         if (cursor == null) {
@@ -55,9 +56,5 @@ public class ConfigDao {
             return config;
         }
         return null;
-    }
-
-    public void updateAuthorization(String authorization){
-        mDatabase.update("config", null, " authorization = '" + authorization , null);
     }
 }

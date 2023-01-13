@@ -11,7 +11,7 @@ public class User {
     private String account;//账号
     private String slug;//账号唯一标识
     private boolean isAuthenticated;//是否实名
-    private int age;//年龄
+    private Integer age;//年龄
     private String token;//token
 
     public User(Builder builder) {
@@ -34,7 +34,7 @@ public class User {
         isAuthenticated = authenticated;
     }
 
-    private void setAge(int age) {
+    private void setAge(Integer age) {
         this.age = age;
     }
 
@@ -66,7 +66,7 @@ public class User {
         private String account;
         private String slug;
         private boolean isAuthenticated;
-        private int age;
+        private Integer age;
         private String token;
 
         public Builder() {
@@ -84,7 +84,7 @@ public class User {
             isAuthenticated=var;
             return this;
         }
-        public Builder age(int var){
+        public Builder age(Integer var){
             age=var;
             return this;
         }

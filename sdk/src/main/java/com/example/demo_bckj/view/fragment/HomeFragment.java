@@ -2,7 +2,6 @@ package com.example.demo_bckj.view.fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.os.Build;
@@ -35,10 +34,10 @@ import android.widget.Toast;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
@@ -96,13 +95,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private MyWebView myWebView, webView;
     private String string;
     private JSONObject jsonObject;
-    private AlertDialog.Builder LoginBuilder = null;
-    private AlertDialog.Builder RegisterBuilder = null;
-    private AlertDialog.Builder LoginPwBuilder = null;
-    private AlertDialog.Builder ForgetPwBuilder = null;
-    private AlertDialog.Builder ResetPwBuilder = null;
-    private AlertDialog.Builder AutoBuilder = null;
-    private AlertDialog loginDialog, registerDialog, loginPwDialog, forgetDialog, resetDialog, autoDialog;
+    private AlertDialog alertDialog, AgreementDialog;
+    AlertDialog.Builder AutoBuilder;
     private PrivacyDialog mPrivacyDialog;
     private UserAgreeDialog mUserAgreeDialog;
 
@@ -153,7 +147,20 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
         accountLists = bcSP.getList("account", "");
         telLists = bcSP.getList("tel", "");
-        HttpManager.getInstance().setLists(accountLists, telLists);
+        AutoBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) alertDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(alertDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
+                return true;
+            }
+        });
+        HttpManager.getInstance().setData(accountLists, telLists);
+
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler = new Handler(mHandlerThread.getLooper());
@@ -180,7 +187,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 presenter.getSdk(getActivity(), bcSP.getInt("id"));
                 AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
                 if (account != null && !TextUtils.isEmpty(account.getAccount()) && !TextUtils.isEmpty(account.getPassword())) {
-                    getActivity().runOnUiThread(() -> popupLoginAuto(account.getAccount(), account.getPassword()));
+                   getActivity().runOnUiThread(()-> presenter.getLoginPwLo(getActivity(), account.getAccount(), account.getPassword()));
                 } else {
                     boolean refresh = false;
                     try {
@@ -273,13 +280,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 @Override
                 public void user() {
                     DrawerLayout.closeDrawers();
-                    UserAgreement(null);
+                    UserAgreement(alertDialog, false);
                 }
 
                 @Override
                 public void privacy() {
                     DrawerLayout.closeDrawers();
-                    PrivacyAgreement(null);
+                    PrivacyAgreement(alertDialog, false);
                 }
             });
         }
@@ -289,6 +296,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             RealNameDialog realNameDialog = new RealNameDialog(getActivity(), false, pf);
             realNameDialog.show();
         }
+        if (alertDialog.isShowing())
+            alertDialog.dismiss();
         changeStyle(0);
         nvTo(pf);
     }
@@ -306,7 +315,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Log.d(TAG, "Switch");
         DrawerLayout.closeDrawers();
         RoundView.getInstance().closeRoundView(getActivity());
-        DBManager.getInstance(getActivity()).delete();
+        HttpManager.getInstance().loginOut(getActivity(), false);
         popupLoginCode();
         if (pf != null)
             pf.onDestroy();
@@ -334,18 +343,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         RoundView.getInstance().closeRoundView(getActivity());
-        if (loginDialog != null)
-            loginDialog.dismiss();
-        if (registerDialog != null)
-            registerDialog.dismiss();
-        if (loginPwDialog != null)
-            loginPwDialog.dismiss();
-        if (forgetDialog != null)
-            forgetDialog.dismiss();
-        if (resetDialog != null)
-            resetDialog.dismiss();
-        if (autoDialog != null)
-            autoDialog.dismiss();
+        if (alertDialog != null)
+            alertDialog.dismiss();
     }
 
     //用户协议弹窗
@@ -357,7 +356,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(inflate);
         builder.setCancelable(false);
-        AlertDialog alertDialog = builder.create();
+        AgreementDialog = builder.create();
         privacyTxt.setMovementMethod(LinkMovementMethod.getInstance());
         privacyTxt.setText("我们希望通过 ");
         SpannableString agreeTxt = new SpannableString("《用户协议》");
@@ -365,7 +364,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         agreeTxt.setSpan(new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                UserAgreement(alertDialog);
+                UserAgreement(AgreementDialog, true);
             }
 
             @Override
@@ -377,7 +376,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         privacy.setSpan(new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                PrivacyAgreement(alertDialog);
+                PrivacyAgreement(AgreementDialog, true);
             }
 
             @Override
@@ -392,10 +391,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         privacyTxt.append("来帮助您了解我们为您提供的服务，及收集、处理您个人信息的相应规则。为向您提供特定服务或功能，我们会以弹窗形式、在征得您同意后获取特定权限和信息。拒绝授权仅会使得您无法使用其对应的特定服务或功能，但不影响您使用我们的其他服务。");
         //显示popupWindow
 
-        alertDialog.show();
+        AgreementDialog.show();
         //同意
         popup_agree.setOnClickListener(v -> {
-            alertDialog.dismiss();
+            AgreementDialog.dismiss();
             requestPermissions(Constants.PermissionString, 1);
         });
         //不同意协议
@@ -404,9 +403,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     //手机号验证码登录
     private void popupLoginCode() {
-        if (LoginBuilder != null) {
-            return;
-        }
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
@@ -429,30 +425,16 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             PopupTel popupTel = PopupTel.getInstance(getActivity(), telLists, popupLogin, v, inflate.getWidth(), 200, true, 1);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
-        LoginBuilder = new AlertDialog.Builder(getActivity());
-        LoginBuilder.setView(inflate);
-        LoginBuilder.setCancelable(false);
-        loginDialog = LoginBuilder.create();
-        loginDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) loginDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(loginDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
-                return true;
-            }
-        });
-        loginDialog.show();
-        loginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                LoginBuilder = null;
-            }
-        });
+        alertDialog.setContentView(inflate);
+        if (!alertDialog.isShowing()) {
+            alertDialog.setView(inflate);
+            alertDialog.show();
+        }
         //跳转注册
         popup_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popupNumberRegister("", "", loginDialog, false);
+                popupNumberRegister("", "", false);
             }
         });
         //输入框监听
@@ -522,14 +504,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
         //用户协议
-        popupUser.setOnClickListener(view -> UserAgreement(loginDialog));
+        popupUser.setOnClickListener(view -> UserAgreement(alertDialog, true));
         //隐私协议
-        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(loginDialog));
+        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
                 String number = popupLogin.getText().toString().trim();
                 String code = popupEtCode.getText().toString().trim();
-                presenter.getPhoneLogin(getActivity(), number, code, loginDialog);
+                presenter.getPhoneLogin(getActivity(), number, code);
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -537,7 +519,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //跳转
         popupLoginPw.setOnClickListener(view -> {
-            loginDialog.dismiss();
             popupLoginPw("", "", false);
         });
 
@@ -550,7 +531,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                     presenter.getDemoAccount(getActivity(), new PlayInterface() {
                         @Override
                         public void onSuccess(String account, String password) {
-                            popupNumberRegister(account, password, loginDialog, true);
+                            popupNumberRegister(account, password, true);
                         }
 
                         @Override
@@ -568,9 +549,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     //账号密码登录弹窗
     private void popupLoginPw(String account, String password, boolean isChecked) {
-        if (LoginPwBuilder != null) {
-            return;
-        }
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
@@ -584,18 +562,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
         TextView popup_forget_pw = inflate.findViewById(R.id.popup_forget_pw);
-        LoginPwBuilder = new AlertDialog.Builder(getActivity());
-        LoginPwBuilder.setView(inflate);
-        LoginPwBuilder.setCancelable(false);
-        loginPwDialog = LoginPwBuilder.create();
-        // dialog 外部监听
-        loginPwDialog.getWindow().getDecorView().setOnTouchListener((v, event) -> {
-            InputMethodManager imm = (InputMethodManager) loginPwDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(loginPwDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
-            return true;
-        });
-        loginPwDialog.show();
-        loginPwDialog.setOnDismissListener(dialogInterface -> LoginPwBuilder = null);
+        alertDialog.setContentView(inflate);
+
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
             if (accountLists.size() == 0)
@@ -608,20 +576,18 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popupRb.setChecked(isChecked);
         //返回
         popup_back.setOnClickListener(view -> {
-            loginPwDialog.dismiss();
             popupLoginCode();
         });
         //立即注册
-        popupRegister.setOnClickListener(view -> popupNumberRegister("", "", loginPwDialog, false));
+        popupRegister.setOnClickListener(view -> popupNumberRegister("", "", false));
         //忘记密码
         popup_forget_pw.setOnClickListener(view -> {
-            loginPwDialog.hide();
             popupForgetPassword();
         });
         //账号密码登录
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
-                presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim(), loginPwDialog);
+                presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim());
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
             }
@@ -682,16 +648,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
         //用户协议
-        popupUser.setOnClickListener(view -> UserAgreement(loginPwDialog));
+        popupUser.setOnClickListener(view -> UserAgreement(alertDialog, true));
         //隐私协议
-        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(loginPwDialog));
+        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
     //验证手机号
     private void popupForgetPassword() {
-        if (ForgetPwBuilder != null) {
-            return;
-        }
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code_phone, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
@@ -706,20 +669,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
-        ForgetPwBuilder = new AlertDialog.Builder(getActivity());
-        ForgetPwBuilder.setView(inflate);
-        ForgetPwBuilder.setCancelable(false);
-        forgetDialog = ForgetPwBuilder.create();
-        forgetDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) forgetDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(forgetDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
-                return true;
-            }
-        });
-        forgetDialog.show();
-        forgetDialog.setOnDismissListener(dialogInterface -> ForgetPwBuilder = null);
+        alertDialog.setContentView(inflate);
         //验证
         popupSubmit.setOnClickListener(view -> {
             if (popupRb.isChecked()) {
@@ -733,7 +683,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                     Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                forgetDialog.hide();
                 popupResetPassword(trim1, trim2);
             } else {
                 Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
@@ -741,8 +690,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-            loginPwDialog.show();
-            forgetDialog.dismiss();
+            popupLoginPw("", "", false);
         });
         //跳转联系客服
         popup_service.setOnClickListener(view -> Toast.makeText(getActivity(), "尽请期待", Toast.LENGTH_SHORT).show());
@@ -819,9 +767,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     //重置密码
     private void popupResetPassword(String n, String c) {
-        if (ResetPwBuilder != null) {
-            return;
-        }
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_reset_password, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_new_password = inflate.findViewById(R.id.popup_new_password);
@@ -830,30 +775,17 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         ImageView popup_remove_pw_pw = inflate.findViewById(R.id.popup_remove_pw_pw);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
-        ResetPwBuilder = new AlertDialog.Builder(getActivity());
-        ResetPwBuilder.setView(inflate);
-        ResetPwBuilder.setCancelable(false);
-        resetDialog = ResetPwBuilder.create();
-        // dialog 外部监听
-        resetDialog.getWindow().getDecorView().setOnTouchListener((v, event) -> {
-            InputMethodManager imm = (InputMethodManager) resetDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(resetDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
-            return true;
-        });
-        resetDialog.show();
-        resetDialog.setOnDismissListener(dialog -> {
-            ResetPwBuilder = null;
-        });
+        alertDialog.setContentView(inflate);
+
         //确认重置密码
         popupSubmit.setOnClickListener(view -> {
             String trim1 = popup_new_password.getText().toString().trim();
             String trim2 = popup_password_pw.getText().toString().trim();
-            presenter.resetPwd(getActivity(), n, c, trim1, trim2, resetDialog, forgetDialog, loginPwDialog);
+            presenter.resetPwd(getActivity(), n, c, trim1, trim2);
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-            forgetDialog.show();
-            resetDialog.dismiss();
+
         });
         //输入框监听
         popup_new_password.addTextChangedListener(new TextWatcher() {
@@ -912,18 +844,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
         popup_loginPw.setOnClickListener(view -> {
-            resetDialog.dismiss();
             popupLoginCode();
         });
     }
 
     //账号密码注册弹窗
-    private void popupNumberRegister(String user, String password, AlertDialog dialog, boolean isChecked) {
-        if (RegisterBuilder != null) {
-            return;
-        }
-        if (dialog != null)
-            dialog.dismiss();
+    private void popupNumberRegister(String user, String password, boolean isChecked) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_number_register, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_number = inflate.findViewById(R.id.popup_number);
@@ -936,20 +862,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         TextView popupUser = inflate.findViewById(R.id.popup_user);
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
-        RegisterBuilder = new AlertDialog.Builder(getActivity());
-        RegisterBuilder.setView(inflate);
-        RegisterBuilder.setCancelable(false);
-        registerDialog = RegisterBuilder.create();
-        registerDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) registerDialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(registerDialog.getWindow().getDecorView().getWindowToken(), 0); // 解决键盘无法关闭问题
-                return true;
-            }
-        });
-        registerDialog.show();
-        registerDialog.setOnDismissListener(dialogInterface -> RegisterBuilder = null);
+        alertDialog.setContentView(inflate);
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
@@ -957,9 +870,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //返回
         popup_back.setOnClickListener(view -> {
-            if (dialog != null)
-                dialog.show();
-            registerDialog.dismiss();
+            popupLoginCode();
         });
         popupSubmit.setOnClickListener(view -> {
             String number = popup_number.getText().toString().trim();
@@ -967,7 +878,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             String pass2 = popup_password_pw.getText().toString().trim();
             if (popupRb.isChecked()) {
                 if (TextUtils.equals(pass, pass2)) {
-                    presenter.getLoginPwRe(getActivity(), number, pass, pass2, registerDialog, getActivity());
+                    presenter.getLoginPwRe(getActivity(), number, pass, pass2, alertDialog, getActivity());
                 } else {
                     Toast.makeText(getActivity(), "两次密码不正确", Toast.LENGTH_SHORT).show();
                 }
@@ -1059,17 +970,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
         //用户协议
-        popupUser.setOnClickListener(view -> UserAgreement(registerDialog));
+        popupUser.setOnClickListener(view -> UserAgreement(alertDialog, true));
         //隐私协议
-        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(registerDialog));
+        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
     //自动登录弹窗
     private void popupLoginAuto(String account, String password) {
-        if (AutoBuilder != null) {
-            return;
-        }
-        AutoBuilder = new AlertDialog.Builder(getActivity());
+
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.pop_login_tittle, null);
         TextView txt = inflate.findViewById(R.id.login_account);
         TextView btn = inflate.findViewById(R.id.login_switch);
@@ -1077,7 +985,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         txt.setText(TextUtils.isEmpty(tel) ? account.substring(0, 3) + "****" + account.substring(7, account.length()) :
                 tel.substring(0, 3) + "****" + tel.substring(7, tel.length()));
         AutoBuilder.setView(inflate);
-        autoDialog = AutoBuilder.create();
+        AlertDialog autoDialog = AutoBuilder.create();
         Window window = autoDialog.getWindow();
         WindowManager.LayoutParams params = window.getAttributes();
         window.setGravity(Gravity.TOP | Gravity.CENTER);
@@ -1089,7 +997,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         autoDialog.getWindow().setAttributes(params);
         autoDialog.show();
         autoDialog.setOnDismissListener(dialogInterface -> AutoBuilder = null);
-        presenter.getLoginPwLo(getActivity(), account, password, autoDialog);
+        presenter.getLoginPwLo(getActivity(), account, password);
         btn.setOnClickListener(v -> {
             autoDialog.dismiss();
             Switch();
@@ -1174,21 +1082,22 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     /**
      * 弹出用户协议
      */
-    public void UserAgreement(AlertDialog dialog) {
-        if (dialog != null)
+    public void UserAgreement(AlertDialog dialog, boolean isShow) {
+        if (dialog.isShowing()) {
             dialog.dismiss();
+        }
         webView.setTittle("无限游戏用户协议");
         webView.setVisibility(View.VISIBLE);
         webView.btnListener(view -> {
             webView.setVisibility(View.INVISIBLE);
-            if (dialog != null)
+            if (isShow && !dialog.isShowing())
                 dialog.show();
         });
         webView.setOnKey((view, i, keyEvent) -> {
             if (i == KeyEvent.KEYCODE_BACK) {
                 webView.setVisibility(View.INVISIBLE);
-                if (dialog != null)
-                    dialog.dismiss();
+                if (isShow && !dialog.isShowing())
+                    dialog.show();
                 return true;
             }
             return false;
@@ -1199,20 +1108,21 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     /**
      * 弹出隐私协议
      */
-    public void PrivacyAgreement(AlertDialog dialog) {
-        if (dialog != null)
+    public void PrivacyAgreement(AlertDialog dialog, boolean isShow) {
+        if (dialog.isShowing()) {
             dialog.dismiss();
+        }
         myWebView.setTittle("无限游戏用户隐私政策");
         myWebView.setVisibility(View.VISIBLE);
         myWebView.btnListener(view -> {
             myWebView.setVisibility(View.INVISIBLE);
-            if (dialog != null)
+            if (isShow && !dialog.isShowing())
                 dialog.show();
         });
         myWebView.setOnKey((view, i, keyEvent) -> {
             if (i == KeyEvent.KEYCODE_BACK) {
                 myWebView.setVisibility(View.INVISIBLE);
-                if (dialog != null)
+                if (isShow && !dialog.isShowing())
                     dialog.show();
                 return true;
             }

@@ -22,6 +22,7 @@ public class TimeService extends IntentService {
     private final String TAG = "TimeService";
     private static final String ACTION_TIME = "com.example.demo_bckj.service.action.time";
     private Context context;
+    private static boolean run;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -33,9 +34,19 @@ public class TimeService extends IntentService {
     }
 
     public static void start(Context context) {
+        run=true;
         Intent intent = new Intent(context, TimeService.class);
         context.startService(intent);
         Log.d("TimeService", "startService");
+    }
+
+    public static void stop(Context context){
+        run=false;
+        Log.d("TimeService", "stopService");
+    }
+
+    public static boolean isRun() {
+        return run;
     }
 
     public void setContext(Context context) {
@@ -46,7 +57,7 @@ public class TimeService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent == null)
             return;
-        while (true) {
+        while (run) {
             Log.d(TAG, "Service  onHandlerIntent");
             HttpManager.getInstance().isOnline(this);
             SystemClock.sleep(60000);

@@ -80,7 +80,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         Button c = v.findViewById(R.id.createRole);
 
         p.setOnClickListener(v -> {
-            SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener,new RechargeOrder.Builder()
+            SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener, new RechargeOrder.Builder()
                     .number_game("游戏订单号")
                     .props_name("物品名称")
                     .server_id("区服 ID")
@@ -194,7 +194,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             listener.privacy();
         });
         quit.setOnClickListener(v -> {
-            presenter.loginOut(getContext());
+            presenter.loginOut(getContext(), true);
         });
         header.setOnClickListener(v -> {
 

@@ -3,7 +3,6 @@ package com.example.demo_bckj.model.utility;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.demo_bckj.control.SdkControl;
 import com.example.demo_bckj.view.Constants;
@@ -173,7 +172,6 @@ public class StrUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("getJson", "文件：" + fileName + "  json:" + json);
         return json;
 
     }

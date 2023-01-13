@@ -61,8 +61,8 @@ public class HomePresenter extends BasePresenter {
     }
 
     //手机号登录
-    public void getPhoneLogin(Context context, String tel, String code, AlertDialog dialog) {
-        HttpManager.getInstance().getPhoneLogin(context, tel, code, dialog);
+    public void getPhoneLogin(Context context, String tel, String code) {
+        HttpManager.getInstance().getPhoneLogin(context, tel, code);
     }
 
     //账号密码注册
@@ -77,8 +77,8 @@ public class HomePresenter extends BasePresenter {
     }
 
     //账号密码登录
-    public void getLoginPwLo(Context context, String name, String password, AlertDialog dialog) {
-        HttpManager.getInstance().getLoginPwLo(context, name, password, dialog);
+    public void getLoginPwLo(Context context, String name, String password) {
+        HttpManager.getInstance().getLoginPwLo(context, name, password);
     }
 
     //快速试玩
@@ -93,9 +93,8 @@ public class HomePresenter extends BasePresenter {
     }
 
     //重置密码
-    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation,
-                         AlertDialog resetDialog, AlertDialog forgetDialog, AlertDialog dialog) {
-        HttpManager.getInstance().resetPwd(context, tel, code, password, passwordConfirmation, resetDialog, forgetDialog, dialog);
+    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation) {
+        HttpManager.getInstance().resetPwd(context, tel, code, password, passwordConfirmation);
     }
 
 

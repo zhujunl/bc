@@ -19,32 +19,32 @@ import androidx.annotation.NonNull;
  * @updateDes
  */
 public class UnderAgeDialog extends Dialog {
-    private String TAG="UnderAgeDialog";
+    private String TAG = "UnderAgeDialog";
 
     private Context context;
     private Button btn;
 
-    public UnderAgeDialog(@NonNull Context context,String t) {
+    public UnderAgeDialog(@NonNull Context context, String t) {
         super(context);
         setContentView(R.layout.dialog_underage);
-        this.context=context;
-        btn=findViewById(R.id.btn_under_age);
-        TextView txt=findViewById(R.id.txt);
+        this.context = context;
+        btn = findViewById(R.id.btn_under_age);
+        TextView txt = findViewById(R.id.txt);
         txt.setText(t);
         btn.setClickable(false);
         setCancelable(false);
-        Count c=new Count(context,btn,10000,1000);
+        Count c = new Count(context, btn, 10000, 1000);
         c.start();
     }
 
-    class Count extends CountDownTimer{
+    class Count extends CountDownTimer {
         private Context context;
         private Button btn;
 
-        public Count( Context context,Button btn,long millisInFuture, long countDownInterval) {
+        public Count(Context context, Button btn, long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
-            this.context=context;
-            this.btn=btn;
+            this.context = context;
+            this.btn = btn;
         }
 
         @Override
@@ -54,7 +54,7 @@ public class UnderAgeDialog extends Dialog {
 
         @Override
         public void onFinish() {
-            HttpManager.getInstance().loginOut(context);
+            HttpManager.getInstance().loginOut(context, true);
         }
     }
 }

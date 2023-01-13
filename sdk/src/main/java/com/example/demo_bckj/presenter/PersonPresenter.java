@@ -62,9 +62,9 @@ public class PersonPresenter extends BasePresenter {
     }
 
     //用户在线
-    public void isOnline(Context context) {
-        HttpManager.getInstance().isOnline(context);
-    }
+//    public void isOnline(Context context) {
+//        HttpManager.getInstance().isOnline(context);
+//    }
 
     //修改密码
     public void modifyPwd(Context context, String passwordOld, String password, String passwordConfirmation, ModifyPWDialog modifyPWDialog) {
@@ -72,8 +72,8 @@ public class PersonPresenter extends BasePresenter {
     }
 
 
-    public void loginOut(Context context) {
-        HttpManager.getInstance().loginOut(context);
+    public void loginOut(Context context,boolean isDestroy) {
+        HttpManager.getInstance().loginOut(context,isDestroy);
     }
 
     //用户创角
