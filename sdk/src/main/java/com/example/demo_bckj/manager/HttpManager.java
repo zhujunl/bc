@@ -546,12 +546,12 @@ public class HttpManager {
                 roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-
+                Toast.makeText(context, jsStr.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(String message) {
-
+                Toast.makeText(context, "失败"+message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -562,12 +562,12 @@ public class HttpManager {
                 roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-
+                Toast.makeText(context, jsStr.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(String message) {
-
+                Toast.makeText(context, "失败"+message, Toast.LENGTH_SHORT).show();
             }
         });
     }

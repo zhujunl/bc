@@ -434,12 +434,13 @@ public class DeviceIdUtil {
 
         String sign = Base64.encodeToString(string.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         Log.d("tag", "Base64编码sign为：" + sign);
-        JSONObject jsonConfig = new JSONObject(StrUtil.getJson(context, "bc_sdk_config.json"));//json数据
-        String type = StrUtil.getValue(jsonConfig, "type");
-        String game = StrUtil.getValue(jsonConfig, "game");
-        String channel = StrUtil.getValue(jsonConfig, "channel");
-        String plan = StrUtil.getValue(jsonConfig, "plan");
-        String pack = StrUtil.getValue(jsonConfig, "package");
+        String json1 = StrUtil.getJson(context, "bc_sdk_config.json");
+        JSONObject jsonConfig = json1!=null?new JSONObject(json1):new JSONObject();;//json数据
+        String type = StrUtil.getValue(jsonConfig, context,"type");
+        String game = StrUtil.getValue(jsonConfig, context,"game");
+        String channel = StrUtil.getValue(jsonConfig, context,"channel");
+        String plan = StrUtil.getValue(jsonConfig, context,"plan");
+        String pack = StrUtil.getValue(jsonConfig, context,"package");
         //        String j="{\n" +
         //                "    \"type\": \"ML\",\n" +
         //                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +

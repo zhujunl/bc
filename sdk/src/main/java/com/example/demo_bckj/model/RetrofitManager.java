@@ -82,14 +82,16 @@ public class RetrofitManager {
             public Response intercept(@NonNull Chain chain) throws IOException {
                 Request original = chain.request();
                 SignInfoBean sign = new SignInfoBean();
+
+                Request.Builder requestBuilder = original.newBuilder();
                 try {
                     sign = DeviceIdUtil.getSign(context);
+                    requestBuilder.header("sign", sign.sign);
+                    requestBuilder.header("info", sign.info);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Request.Builder requestBuilder = original.newBuilder()
-                        .header("sign", sign.sign)
-                        .header("info", sign.info);
+
                 ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
                 if (authorization != null && !TextUtils.isEmpty(authorization.getAuthorization())) {
                     requestBuilder.addHeader("Authorization", "Bearer " + authorization.getAuthorization());

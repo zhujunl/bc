@@ -9,10 +9,10 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.control.SdkControl;
 import com.example.demo_bckj.db.dao.AccountDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
@@ -20,7 +20,6 @@ import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
-import com.example.demo_bckj.view.dialog.RechargeSubDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 import com.example.demo_bckj.view.round.MyWebView;
 
@@ -81,7 +80,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         Button c = v.findViewById(R.id.createRole);
 
         p.setOnClickListener(v -> {
-            RechargeOrder rechargeOrder = new RechargeOrder.Builder()
+            SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener,new RechargeOrder.Builder()
                     .number_game("游戏订单号")
                     .props_name("物品名称")
                     .server_id("区服 ID")
@@ -91,9 +90,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
                     .callback_url("https://apitest.infinite-game.cn/ping")
                     .money(1)
                     .extend_data("")
-                    .build();
-            RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(getActivity(), rechargeOrder, sdkListener);
-            rechargeSubDialog.show();
+                    .build());
         });
         l.setOnClickListener(v -> {
             SdkControl.getInstance(getActivity()).CreateRole(getActivity(), new RoleBean.Builder()
@@ -108,6 +105,10 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
                     .roleName("builder.roleName").bulid());
+        });
+        Button b = v.findViewById(R.id.payException);
+        b.setOnClickListener(v -> {
+            SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener, true);
         });
     }
 

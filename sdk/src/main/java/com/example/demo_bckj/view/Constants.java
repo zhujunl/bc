@@ -24,4 +24,11 @@ public class Constants {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA
     };
+
+    public static String TYPE="ML";
+    public static String GAME="f60e429f71e147eb817f233f9fca4cce";
+    public static String CHANNEL="7cd0b27069248f109480e7358e058a78";
+    public static String PLAN="a5cfce740f5f48168bb08140ba2dfdd4";
+    public static String PACKAGE="65767249bd2a4fb2a4e195fe59aa54aa";
+
 }
