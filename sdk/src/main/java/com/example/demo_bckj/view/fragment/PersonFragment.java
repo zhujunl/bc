@@ -2,11 +2,14 @@ package com.example.demo_bckj.view.fragment;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.demo_bckj.BuildConfig;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.control.SDKListener;
@@ -75,6 +78,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
         click();
 
+        LinearLayout testLinear=v.findViewById(R.id.testLinear);
+        testLinear.setVisibility(BuildConfig.DEBUG? View.VISIBLE:View.INVISIBLE);
         Button p = v.findViewById(R.id.pay);
         Button l = v.findViewById(R.id.loginServer);
         Button c = v.findViewById(R.id.createRole);

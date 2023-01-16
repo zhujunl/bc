@@ -44,21 +44,21 @@ public class RechargeAdapter extends RecyclerView.Adapter<RechargeAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.txt.setText(lists.get(position));
         holder.itemView.setOnClickListener(v->{
-            p=position+1;
+            p= position;
             listener.click(p);
             notifyDataSetChanged();
         });
-        if (p==position+1){
+        if (p==position){
             holder.select.setImageResource(R.mipmap.selected);
         }else {
             holder.select.setImageResource(R.mipmap.unselect);
         }
         switch (position) {
             case 0:
-                holder.log.setImageResource(R.mipmap.alipay);
+                holder.log.setImageResource(R.mipmap.wechatpay);
                 break;
             case 1:
-                holder.log.setImageResource(R.mipmap.wechatpay);
+                holder.log.setImageResource(R.mipmap.alipay);
                 break;
 
             default:

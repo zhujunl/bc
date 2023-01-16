@@ -20,7 +20,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.control.SDKListener;
-import com.example.demo_bckj.manager.ActivityManager;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AliPayBean;
 import com.example.demo_bckj.model.bean.OrderBean;
@@ -53,12 +52,12 @@ public class RechargeSubDialog extends Dialog {
 
     private final String TAG = "RechargeSubDialog";
 
-    private Context context;
+    private Activity context;
     private TextView commodity, comDetails;
     private RecyclerView rv;
     private RechargeAdapter adapter;
     private Button btn;
-    private List<String> lists = Arrays.asList("支付宝", "微信");
+    private List<String> lists = Arrays.asList("微信", "支付宝");
     private String number_game = "游戏订单号", props_name = "64 位以内字符串", server_id = "32 位以内字符串", server_name = "32 位以内字符串",
             role_id = "32 位以内字符串", role_name = "32 位以内字符串", callback_url = "https://apitest.infinite-game.cn/ping", extend_data = "";
     private int money = 1;
@@ -68,7 +67,7 @@ public class RechargeSubDialog extends Dialog {
     private RechargeOrder rechargeOrder;
     private String orderNum;
 
-    public RechargeSubDialog(@NonNull Context context, RechargeOrder rechargeOrder, SDKListener listener) {
+    public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, SDKListener listener) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
@@ -111,7 +110,6 @@ public class RechargeSubDialog extends Dialog {
         btn = findViewById(R.id.popup_submit);
         adapter = new RechargeAdapter(context, lists, position -> {
             pos = position;
-            btn.setEnabled(true);
         });
         rv.setLayoutManager(new LinearLayoutManager(context));
         rv.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
@@ -130,7 +128,7 @@ public class RechargeSubDialog extends Dialog {
         });
     }
 
-    public RechargeSubDialog(@NonNull Context context, RechargeOrder rechargeOrder, SDKListener listener,boolean exception) {
+    public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, SDKListener listener,boolean exception) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
@@ -209,8 +207,7 @@ public class RechargeSubDialog extends Dialog {
                 if (aliJson.get("code").toString().equals("0")) {
                     AliPayBean aliResponse = JSONObject.toJavaObject(aliJson, AliPayBean.class);
                     String content = aliResponse.getData().getContent();
-                    Activity activity = ActivityManager.getInstance().getCurrentActivity();
-                    PayTask alipay = new PayTask(activity);
+                    PayTask alipay = new PayTask(context);
                     Map<String, String> result = alipay.payV2(content, true);
                     Message msg = new Message();
                     msg.what = 1;
@@ -260,8 +257,7 @@ public class RechargeSubDialog extends Dialog {
                 if (aliJson.get("code").toString().equals("0")) {
                     AliPayBean aliResponse = JSONObject.toJavaObject(aliJson, AliPayBean.class);
                     String content = aliResponse.getData().getContent();
-                    Activity activity = ActivityManager.getInstance().getCurrentActivity();
-                    PayTask alipay = new PayTask(activity);
+                    PayTask alipay = new PayTask(context);
                     Map<String, String> result = alipay.payV2(content, true);
                     Message msg = new Message();
                     msg.what = 1;

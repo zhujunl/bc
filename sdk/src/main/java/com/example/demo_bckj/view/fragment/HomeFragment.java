@@ -434,7 +434,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popup_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popupNumberRegister("", "", false);
+                popupNumberRegister("", "");
             }
         });
         //输入框监听
@@ -519,36 +519,27 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //跳转
         popupLoginPw.setOnClickListener(view -> {
-            popupLoginPw("", "", false);
+            popupLoginPw("", "");
         });
 
+
         play.setOnClickListener(view -> {
-            if (!popupRb.isChecked()) {
-                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
-            } else {
-                boolean permission = checkPermissionAllGranted(Constants.PermissionString);
-                if (permission) {
-                    presenter.getDemoAccount(getActivity(), new PlayInterface() {
-                        @Override
-                        public void onSuccess(String account, String password) {
-                            popupNumberRegister(account, password, true);
-                        }
-
-                        @Override
-                        public void onError(String msg) {
-
-                        }
-                    });
-                } else {
-                    Toast.makeText(getActivity(), "未授予相关权限", Toast.LENGTH_SHORT).show();
-                    requestPermissions(Constants.PermissionString, 1);
+            presenter.getDemoAccount(getActivity(), new PlayInterface() {
+                @Override
+                public void onSuccess(String account, String password) {
+                    popupNumberRegister(account, password);
                 }
-            }
+
+                @Override
+                public void onError(String msg) {
+
+                }
+            });
         });
     }
 
     //账号密码登录弹窗
-    private void popupLoginPw(String account, String password, boolean isChecked) {
+    private void popupLoginPw(String account, String password) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
@@ -573,13 +564,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         popupLogin.setText(account);
         popup_et_pw.setText(password);
-        popupRb.setChecked(isChecked);
         //返回
         popup_back.setOnClickListener(view -> {
             popupLoginCode();
         });
         //立即注册
-        popupRegister.setOnClickListener(view -> popupNumberRegister("", "", false));
+        popupRegister.setOnClickListener(view -> popupNumberRegister("", ""));
         //忘记密码
         popup_forget_pw.setOnClickListener(view -> {
             popupForgetPassword();
@@ -690,7 +680,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-            popupLoginPw("", "", false);
+            popupLoginPw("", "");
         });
         //跳转联系客服
         popup_service.setOnClickListener(view -> Toast.makeText(getActivity(), "尽请期待", Toast.LENGTH_SHORT).show());
@@ -849,7 +839,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     //账号密码注册弹窗
-    private void popupNumberRegister(String user, String password, boolean isChecked) {
+    private void popupNumberRegister(String user, String password) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_number_register, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_number = inflate.findViewById(R.id.popup_number);
@@ -866,7 +856,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
-        popupRb.setChecked(isChecked);
+
 
         //返回
         popup_back.setOnClickListener(view -> {

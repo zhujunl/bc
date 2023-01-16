@@ -1,5 +1,6 @@
 package com.example.demo_bckj.control;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.example.demo_bckj.manager.HttpManager;
@@ -76,12 +77,12 @@ public class SdkControl {
     }
 
     //充值订单
-    public void Recharge(Context context, SDKListener sdkListener, RechargeOrder rechargeOrder) {
+    public void Recharge(Activity context, SDKListener sdkListener, RechargeOrder rechargeOrder) {
         RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, sdkListener);
         rechargeSubDialog.show();
     }
 
-    public void Recharge(Context context, SDKListener sdkListener, boolean exception) {
+    public void Recharge(Activity context, SDKListener sdkListener, boolean exception) {
         RechargeOrder rechargeOrder = new RechargeOrder.Builder()
                 .number_game("游戏订单号")
                 .props_name("物品名称")
