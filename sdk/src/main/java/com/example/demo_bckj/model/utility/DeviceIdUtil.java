@@ -18,6 +18,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.example.demo_bckj.model.bean.SignInfoBean;
+import com.example.demo_bckj.view.Constants;
 
 import org.json.JSONObject;
 
@@ -434,93 +435,42 @@ public class DeviceIdUtil {
 
         String sign = Base64.encodeToString(string.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         Log.d("tag", "Base64编码sign为：" + sign);
-        String json1 = StrUtil.getJson(context, "bc_sdk_config.json");
-        JSONObject jsonConfig = json1!=null?new JSONObject(json1):new JSONObject();;//json数据
-        String type = StrUtil.getValue(jsonConfig, context,"type");
-        String game = StrUtil.getValue(jsonConfig, context,"game");
-        String channel = StrUtil.getValue(jsonConfig, context,"channel");
-        String plan = StrUtil.getValue(jsonConfig, context,"plan");
-        String pack = StrUtil.getValue(jsonConfig, context,"package");
-        //        String j="{\n" +
-        //                "    \"type\": \"ML\",\n" +
-        //                "    \"game\": \"f60e429f71e147eb817f233f9fca4cce\",\n" +
-        //                "    \"channel\": \"\",\n" +
-        //                "    \"package\": \"\",\n" +
-        //                "    \"plan\": \"\",\n" +
-        //                "    \"material\": \"\",\n" +
-        //                "    \"device\": {\n" +
-        //                "        \"os\": \"Android\",\n" +
-        //                "        \"android\": {\n" +
-        //                "            \"system_version\": \"10\",\n" +
-        //                "            \"android_id\": \"3559324b96572744\",\n" +
-        //                "            \"android_q\": {\n" +
-        //                "                \"aaid\": \"748d89ad-dd0d-424a-83df-d934519f0489\",\n" +
-        //                "                \"oaid\": \"92e60edb3de3f9d0\",\n" +
-        //                "                \"vaid\": \"416bffbb34374591\"\n" +
-        //                "            },\n" +
-        //                "            \"id\": \"QKQ1.200419.002\",\n" +
-        //                "            \"imei\": [\"\", \"\"],\n" +
-        //                "            \"imsi\": \"\",\n" +
-        //                "            \"model\": \"M2007J1SC\",\n" +
-        //                "            \"product\": \"cas\",\n" +
-        //                "            \"brand\": \"Xiaomi\",\n" +
-        //                "            \"game_package_name\": \"com.aaaa.bbbb\",\n" +
-        //                "            \"game_version\": \"1.0.2\",\n" +
-        //                "            \"sdk_package_name\": \"com.dsadads.ewqreqwrqwe\",\n" +
-        //                "            \"sdk_version\": \"v2.1.6.1583728\",\n" +
-        //                "            \"serial\": \"unknown\",\n" +
-        //                "            \"sim_serial\": [\"\"]\n" +
-        //                "        },\n" +
-        //                "        \"network\": {\n" +
-        //                "            \"code\": 46002,\n" +
-        //                "            \"intranet_ip\": \"10.48.6.16\",\n" +
-        //                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
-        //                "            \"name\": \"那就这样\",\n" +
-        //                "            \"type\": \"wifi\"\n" +
-        //                "        }\n" +
-        //                "    }\n" +
-        //                "}";
-
-        String j = "{\n" +
-                "    \"type\": \"" + type + "\",\n" +
-                "    \"game\": \"" + game + "\",\n" +
-                "    \"channel\": \"" + channel + "\",\n" +
-                "    \"package\": \"" + pack + "\",\n" +
-                "    \"plan\": \"" + plan + "\",\n" +
-                "    \"material\": \"\",\n" +
-                "    \"device\": {\n" +
-                "        \"os\": \"Android\",\n" +
-                "        \"android\": {\n" +
-                "            \"system_version\": \"" + DeviceIdUtil.getSystemVersion() + "\",\n" +
-                "            \"android_id\": \"" + DeviceIdUtil.getAndroidId(context) + "\",\n" +
-                "            \"android_q\": {\n" +
-                "                \"aaid\": \"" + "748d89ad-dd0d-424a-83df-d934519f0489" + "\",\n" +
-                "                \"oaid\": \"" + "92e60edb3de3f9d0" + "\",\n" +
-                "                \"vaid\": \"" + "416bffbb34374591" + "\"\n" +
-                "            },\n" +
-                "            \"id\": \"" + "QKQ1.200419.002" + "\",\n" +
-                "            \"imei\": [" + DeviceIdUtil.getIMEI_1(context) + "," + DeviceIdUtil.getIMEI_2(context) + "],\n" +
-                "            \"imsi\": \"" + DeviceIdUtil.getIMSI(context) + "\",\n" +
-                "            \"model\": \"" + Build.MODEL + "\",\n" +
-                "            \"product\": \"" + "cas" + "\",\n" +
-                "            \"brand\": \"" + Build.BRAND + "\",\n" +
-                "            \"game_package_name\": \"" + "" + "\",\n" +
-                "            \"game_version\": \"" + "" + "\",\n" +
-                "            \"sdk_package_name\": \"" + DeviceIdUtil.getTopPackage(context) + "\",\n" +
-                "            \"sdk_version\": \"" + DeviceIdUtil.getVersionName(context) + "\",\n" +
-                "            \"serial\": \"" + DeviceIdUtil.getSERIAL() + "\",\n" +
-                "            \"sim_serial\": [" + DeviceIdUtil.getSimSerial(context) + "]\n" +
-                "        },\n" +
-                "        \"network\": {\n" +
-                "            \"code\": 46002,\n" +
-                "            \"intranet_ip\": \"10.48.6.16\",\n" +
-                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
-                "            \"name\": \"那就这样\",\n" +
-                "            \"type\": \"wifi\"\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
-        JSONObject json = new JSONObject(j);
+//        String map = FileUtil.getMapString(context, "bc_sdk_config.json");
+//        String j = "{\n" + map +
+//                "    \"material\": \"\",\n" +
+//                "    \"device\": {\n" +
+//                "        \"os\": \"Android\",\n" +
+//                "        \"android\": {\n" +
+//                "            \"system_version\": \"" + DeviceIdUtil.getSystemVersion() + "\",\n" +
+//                "            \"android_id\": \"" + DeviceIdUtil.getAndroidId(context) + "\",\n" +
+//                "            \"android_q\": {\n" +
+//                "                \"aaid\": \"" + "748d89ad-dd0d-424a-83df-d934519f0489" + "\",\n" +
+//                "                \"oaid\": \"" + "92e60edb3de3f9d0" + "\",\n" +
+//                "                \"vaid\": \"" + "416bffbb34374591" + "\"\n" +
+//                "            },\n" +
+//                "            \"id\": \"" + "QKQ1.200419.002" + "\",\n" +
+//                "            \"imei\": [" + DeviceIdUtil.getIMEI_1(context) + "," + DeviceIdUtil.getIMEI_2(context) + "],\n" +
+//                "            \"imsi\": \"" + DeviceIdUtil.getIMSI(context) + "\",\n" +
+//                "            \"model\": \"" + Build.MODEL + "\",\n" +
+//                "            \"product\": \"" + "cas" + "\",\n" +
+//                "            \"brand\": \"" + Build.BRAND + "\",\n" +
+//                "            \"game_package_name\": \"" + "" + "\",\n" +
+//                "            \"game_version\": \"" + "" + "\",\n" +
+//                "            \"sdk_package_name\": \"" + DeviceIdUtil.getTopPackage(context) + "\",\n" +
+//                "            \"sdk_version\": \"" + DeviceIdUtil.getVersionName(context) + "\",\n" +
+//                "            \"serial\": \"" + DeviceIdUtil.getSERIAL() + "\",\n" +
+//                "            \"sim_serial\": [" + DeviceIdUtil.getSimSerial(context) + "]\n" +
+//                "        },\n" +
+//                "        \"network\": {\n" +
+//                "            \"code\": 46002,\n" +
+//                "            \"intranet_ip\": \"10.48.6.16\",\n" +
+//                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
+//                "            \"name\": \"那就这样\",\n" +
+//                "            \"type\": \"wifi\"\n" +
+//                "        }\n" +
+//                "    }\n" +
+//                "}";
+        JSONObject json = new JSONObject(Constants.DEVICEINFO.toString());
         Log.d("tag", "设备信息的字符串为" + json);
         //加密
         String key = Encryptutility.strMD5(sign);

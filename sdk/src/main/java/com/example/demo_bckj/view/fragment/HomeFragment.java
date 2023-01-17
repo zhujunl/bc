@@ -174,6 +174,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     }
 
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -182,9 +183,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (!isFirstRun || !checkPermissionAllGranted(Constants.PermissionString)) {
                 bcSP.put("isFirst", true);
                 getActivity().runOnUiThread(() -> popupAgreement());
-                presenter.getSdk(getActivity());
+                int id = bcSP.getInt("id");
+                if (id!=-1){
+                    presenter.getSdk(getActivity(),id);
+                }else {
+                    presenter.getSdk(getActivity());
+                }
             } else {
-                presenter.getSdk(getActivity(), bcSP.getInt("id"));
                 AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
                 if (account != null && !TextUtils.isEmpty(account.getAccount()) && !TextUtils.isEmpty(account.getPassword())) {
                    getActivity().runOnUiThread(()-> presenter.getLoginPwLo(getActivity(), account.getAccount(), account.getPassword()));

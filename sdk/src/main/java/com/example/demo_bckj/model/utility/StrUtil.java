@@ -1,18 +1,5 @@
 package com.example.demo_bckj.model.utility;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.text.TextUtils;
-
-import com.example.demo_bckj.control.SdkControl;
-import com.example.demo_bckj.view.Constants;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -137,56 +124,6 @@ public class StrUtil {
 
     }
 
-    /**
-     * 获取Assets路径下的文件
-     *
-     * @param context
-     * @param fileName
-     * @return
-     */
-    public static String getJson(Context context, String fileName) {
-
-        String json = null;
-
-        AssetManager s = context.getAssets();
-        try {
-            InputStream is = null;
-            try {
-                is = s.open(fileName);
-                byte[] buffer = new byte[is.available()];
-                is.read(buffer);
-                json = new String(buffer, "utf-8");
-                is.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            //                JSONObject jsonObject = new JSONObject(json);//json数据
-            //                // 动态获取key值
-            //                Iterator<String> iterator = jsonObject.keys();//使用迭代器
-            //                while (iterator.hasNext()) {
-            //                    String key = iterator.next();//获取key
-            //                    String value = jsonObject.getString(key);//获取value
-            //                    Log.e("key-value","key="+key+" value="+value);
-            //                }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return json;
-
-    }
-
-    public static String getValue(JSONObject json, Context context, String key) {
-        String value = "";
-        try {
-            boolean has = json.has(key);
-            value = (has&&!TextUtils.isEmpty(json.getString(key))) ? json.getString(key):(TextUtils.isEmpty(SdkControl.getInstance(context).getValue(key))?
-                    Constants.CHANNEL : SdkControl.getInstance(context).getValue(key))  ;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return value;
-    }
 
     public static String httpCode(int code) {
         String style = "请求成功";

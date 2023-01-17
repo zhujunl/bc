@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,11 +17,18 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 
+import org.json.JSONException;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
@@ -124,4 +132,111 @@ public class FileUtil {
         return localContentValues;
     }
 
+
+    /**
+     * 获取Assets路径下的文件
+     *
+     * @param context
+     * @param fileName
+     * @return
+     */
+    public static String getJson(Context context, String fileName) {
+        String json = null;
+        AssetManager s = context.getAssets();
+        try {
+            InputStream is = null;
+            try {
+                is = s.open(fileName);
+                byte[] buffer = new byte[is.available()];
+                is.read(buffer);
+                json = new String(buffer, "utf-8");
+                is.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    /**
+     * 获取Assets路径下的文件
+     *
+     * @param context
+     * @param fileName
+     * @return
+     */
+    public static String getMapString(Context context, String fileName) {
+        String json = null;
+        AssetManager s = context.getAssets();
+        StringBuilder sb = new StringBuilder();
+        try {
+            InputStream is = null;
+            is = s.open(fileName);
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            json = new String(buffer, "utf-8");
+            org.json.JSONObject jsonObject = new org.json.JSONObject(json);
+            Iterator<String> iterator = jsonObject.keys();
+            Map<String, String> map = new HashMap<>();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                String value = jsonObject.getString(key);
+                map.put(key, value);
+                sb.append(key).append(":").append(value).append(",\n");
+            }
+            is.close();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    public static Map<String, String> getMap(Context context, String fileName) {
+        String json = null;
+        AssetManager s = context.getAssets();
+        Map<String, String> map = new HashMap<>();
+        try {
+            InputStream is = null;
+            is = s.open(fileName);
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            json = new String(buffer, "utf-8");
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            Iterator<String> iterator = jsonObject.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                String value = jsonObject.getString(key);
+                map.put(key, value);
+            }
+            is.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+
+    /**
+     * 判断assets文件夹下的文件是否存在
+     *
+     * @return false 不存在    true 存在
+     */
+    public static boolean isFileExists(Context context, String filename) {
+        AssetManager assetManager = context.getAssets();
+        try {
+            String[] names = assetManager.list("");
+            for (int i = 0; i < names.length; i++) {
+                if (names[i].equals(filename.trim())) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
 }
