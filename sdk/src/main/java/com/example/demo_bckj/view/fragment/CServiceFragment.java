@@ -1,5 +1,6 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.model.bean.ChatBean;
 import com.example.demo_bckj.presenter.CServicePresenter;
 import com.example.demo_bckj.view.adapter.CSAdapter;
@@ -17,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,18 +43,32 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
     private CSAdapter adapter;
     private Map<Integer, String> map = new HashMap<>();
     private List<ChatBean> datas = new ArrayList<>();
+    private DrawerLayout drawerLayout;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
+        });
+    }
 
     private static String TAG="CServiceFragment";
 
-    public static CServiceFragment getInstance() {
+    public static CServiceFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout) {
         if (instance == null) {
-            instance = new CServiceFragment();
+            instance = new CServiceFragment(drawerLayout);
         }
         return instance;
     }
 
-    public CServiceFragment() {
+    public CServiceFragment(DrawerLayout drawerLayout) {
+        this.drawerLayout=drawerLayout;
     }
+
 
     @Override
     protected void initData() {
@@ -109,5 +128,14 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
         super.onDestroy();
         Log.d(TAG, "onDestroy" );
         instance=null;
+    }
+
+    protected void finish() {
+        if (fm.getBackStackEntryCount()>1){
+            fm.popBackStack();
+            drawerLayout.closeDrawers();
+            return;
+        }
+        System.exit(0);
     }
 }

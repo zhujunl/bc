@@ -37,6 +37,7 @@ import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.listener.ClickListener;
+import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
@@ -55,7 +56,6 @@ import com.example.demo_bckj.view.round.RoundView;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -69,7 +69,7 @@ import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
  * @updateAuthor
  * @updateDes
  */
-public class HomeFragment extends BaseFragment<HomePresenter> implements ClickListener {
+public class HomeFragment extends BaseFragment<HomePresenter> implements ClickListener , LogoutListener {
     private final String TAG = "HomeFragment";
 
     public static HomeFragment instance;
@@ -114,7 +114,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private String tel = null;
     SPUtils bcSP;
     private SDKListener sdkListener;
-    private List<String> accountLists, telLists;
 
     public HomeFragment(SDKListener sdkListener) {
         this.sdkListener = sdkListener;
@@ -132,8 +131,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        //        CrashReport.initCrashReport(getContext().getApplicationContext(), "4a65560b7d", true);
-        HttpManager.getInstance().setListener(sdkListener, this, getActivity());
+        HttpManager.getInstance().setListener(sdkListener, this,this, getActivity());
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d("tag==", getDeviceId());
         new Thread(() -> {
             try {
@@ -145,8 +144,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         }).start();
 
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
-        accountLists = bcSP.getList("account", "");
-        telLists = bcSP.getList("tel", "");
         AutoBuilder = new AlertDialog.Builder(getActivity());
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(false);
@@ -159,7 +156,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 return true;
             }
         });
-        HttpManager.getInstance().setData(accountLists, telLists);
+        HttpManager.getInstance().setData(bcSP.getList("account", ""),  bcSP.getList("tel", ""));
 
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
@@ -183,16 +180,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (!isFirstRun || !checkPermissionAllGranted(Constants.PermissionString)) {
                 bcSP.put("isFirst", true);
                 getActivity().runOnUiThread(() -> popupAgreement());
-                int id = bcSP.getInt("id");
-                if (id!=-1){
-                    presenter.getSdk(getActivity(),id);
-                }else {
-                    presenter.getSdk(getActivity());
-                }
+                presenter.getSdk(getActivity(), false);
             } else {
                 AccountEntity account = DBManager.getInstance(getActivity()).getAccount();
                 if (account != null && !TextUtils.isEmpty(account.getAccount()) && !TextUtils.isEmpty(account.getPassword())) {
-                   getActivity().runOnUiThread(()-> presenter.getLoginPwLo(getActivity(), account.getAccount(), account.getPassword()));
+                    getActivity().runOnUiThread(() -> presenter.getLoginPwLo(getActivity(), account.getAccount(), account.getPassword()));
                 } else {
                     boolean refresh = false;
                     try {
@@ -266,20 +258,27 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     @Override
+    public void out() {
+        DrawerLayout.closeDrawers();
+        RoundView.getInstance().closeRoundView(getContext());
+        popupLoginCode();
+    }
+
+    @Override
     public void CService(boolean show) {
         Log.d(TAG, "CService");
-        cs = CServiceFragment.getInstance();
-
+        cs = CServiceFragment.getInstance(sdkListener,DrawerLayout);
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(1);
         nvTo(cs);
     }
 
+
     @Override
     public void Personal(boolean show, boolean isAuthenticated) {
         Log.d(TAG, "Personal");
-        pf = PersonFragment.getInstance(sdkListener);
+        pf = PersonFragment.getInstance(sdkListener,DrawerLayout);
         if (pf.getListener() == null) {
             pf.setListener(new PersonFragment.privacyListener() {
                 @Override
@@ -310,7 +309,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void Welfare(boolean isShow) {
         Log.d(TAG, "Welfare");
-        wp = WelfareFragment.getInstance();
+        wp = WelfareFragment.getInstance(sdkListener,DrawerLayout);
         changeStyle(2);
         nvTo(wp);
     }
@@ -348,9 +347,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         RoundView.getInstance().closeRoundView(getActivity());
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         if (alertDialog != null)
             alertDialog.dismiss();
     }
+
+
+
 
     //用户协议弹窗
     private void popupAgreement() {
@@ -425,9 +429,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
-            if (telLists.size() == 0)
+            if ( bcSP.getList("tel", "").size() == 0)
                 return;
-            PopupTel popupTel = PopupTel.getInstance(getActivity(), telLists, popupLogin, v, inflate.getWidth(), 200, true, 1);
+            PopupTel popupTel = PopupTel.getInstance(getActivity(),  bcSP.getList("tel", ""), popupLogin, v, inflate.getWidth(), 200, true, 1);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         alertDialog.setContentView(inflate);
@@ -562,9 +566,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
-            if (accountLists.size() == 0)
+            if (bcSP.getList("account", "").size() == 0)
                 return;
-            PopupTel popupTel = PopupTel.getInstance(getActivity(), accountLists, popupLogin, v, inflate.getWidth(), 200, true, 2);
+            PopupTel popupTel = PopupTel.getInstance(getActivity(), bcSP.getList("account", ""), popupLogin, v, inflate.getWidth(), 200, true, 2);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         popupLogin.setText(account);
@@ -1031,6 +1035,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 Log.i(TAG, "您拒绝了【" + permissionName + "】权限");
             }
             if (i == permissions.length - 1) {
+                if (checkPermissionAllGranted(Constants.PermissionString))
+                    presenter.getSdk(getActivity(), true);
                 popupLoginCode();
             }
         }

@@ -14,6 +14,7 @@ import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.FileUtil;
+import com.example.demo_bckj.model.utility.SPUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,13 +48,16 @@ public class HomePresenter extends BasePresenter {
     }
 
     //数据上报
-    public void getSdk(Context context) {
-        HttpManager.getInstance().getSdk(context, this);
+    public void getSdk(Context context, boolean isUpdate) {
+        int id = SPUtils.getInstance(context, "bcSP").getInt("id");
+        if (id == -1) {
+            HttpManager.getInstance().getSdk(context, this);
+        }
+        if (id != -1 && isUpdate) {
+            HttpManager.getInstance().getSdk(context, this, id);
+        }
     }
 
-    public void getSdk(Context context, int id) {
-        HttpManager.getInstance().getSdk(context, this, id);
-    }
 
     //获取手机验证码
     public void getPhoneLoginCode(Context context, String tel) {

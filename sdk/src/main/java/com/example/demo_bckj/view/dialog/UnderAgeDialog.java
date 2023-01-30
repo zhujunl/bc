@@ -54,7 +54,7 @@ public class UnderAgeDialog extends Dialog {
 
         @Override
         public void onFinish() {
-            HttpManager.getInstance().loginOut(context, true);
+            HttpManager.getInstance().loginOut(context,true);
         }
     }
 }

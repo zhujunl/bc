@@ -10,6 +10,7 @@ import com.example.demo_bckj.base.BasePresenter;
 import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
+import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.model.MyCallback;
@@ -50,6 +51,7 @@ import retrofit2.Response;
 public class HttpManager {
     private String TAG = "HttpManager";
     private SDKListener sdkListener;
+    private LogoutListener logoutListener;
     private ClickListener listener;
     private List<String> accountLists, telLists;
     private Context context;
@@ -66,9 +68,10 @@ public class HttpManager {
     public HttpManager() {
     }
 
-    public void setListener(SDKListener listener, ClickListener clickListener, Context context) {
+    public void setListener(SDKListener listener, ClickListener clickListener, LogoutListener logoutListener, Context context) {
         this.sdkListener = listener;
         this.listener = clickListener;
+        this.logoutListener = logoutListener;
         this.context = context;
     }
 
@@ -488,7 +491,7 @@ public class HttpManager {
         RetrofitManager.getInstance(c).getApiService().isOnline().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-                if (!TimeService.isRun()){
+                if (!TimeService.isRun()) {
                     return;
                 }
                 OnlineBean onlineBean = JSONObject.toJavaObject(jsStr, OnlineBean.class);
@@ -500,10 +503,10 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                if (!TimeService.isRun()){
+                if (!TimeService.isRun()) {
                     return;
                 }
-//                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                //                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -515,6 +518,9 @@ public class HttpManager {
             public void onSuccess(JSONObject jsStr) {
                 modifyPWDialog.dismiss();
                 Toast.makeText(context, "密码修改成功", Toast.LENGTH_SHORT).show();
+                if (logoutListener != null) {
+                    logoutListener.out();
+                }
             }
 
             @Override
@@ -525,7 +531,7 @@ public class HttpManager {
     }
 
     //退出
-    public void loginOut(Context context,boolean isDestroy) {
+    public void loginOut(Context context, boolean isDestroy) {
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -534,6 +540,9 @@ public class HttpManager {
                 DBManager.getInstance(context).delete();
                 if (isDestroy)
                     System.exit(0);
+                if (logoutListener != null) {
+                    logoutListener.out();
+                }
             }
 
             @Override

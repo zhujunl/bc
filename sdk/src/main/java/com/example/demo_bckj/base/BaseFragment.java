@@ -22,7 +22,9 @@ import me.jessyan.autosize.internal.CustomAdapt;
 public abstract class BaseFragment <P extends BasePresenter> extends Fragment implements IBaseView, CustomAdapt {
     protected P presenter;
     protected View v;
-    private FragmentManager fm;
+    protected FragmentManager fm;
+
+
 
     @Nullable
     @Override

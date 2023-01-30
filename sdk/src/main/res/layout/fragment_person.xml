@@ -225,32 +225,6 @@
                         />
                 </RelativeLayout>
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/testLinear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible">
-                <Button
-                    android:id="@+id/pay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="支付"/>
-                <Button
-                    android:id="@+id/payException"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="异常支付"/>
-                <Button
-                    android:id="@+id/loginServer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="登录区服"/>
-                <Button
-                    android:id="@+id/createRole"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="创建角色"/>
-            </LinearLayout>
             <Button
                 android:id="@+id/user_quit_login"
                 android:layout_width="match_parent"

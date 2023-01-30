@@ -72,8 +72,8 @@ public class PersonPresenter extends BasePresenter {
     }
 
 
-    public void loginOut(Context context,boolean isDestroy) {
-        HttpManager.getInstance().loginOut(context,isDestroy);
+    public void loginOut(Context context) {
+        HttpManager.getInstance().loginOut(context,false);
     }
 
     //用户创角

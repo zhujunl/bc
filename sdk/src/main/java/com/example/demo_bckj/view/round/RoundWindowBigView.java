@@ -54,8 +54,14 @@ public class RoundWindowBigView extends LinearLayout {
 
 
 
-        CService.setOnClickListener(v->click.CService(true));
-        PersonalBtn.setOnClickListener(v->click.Personal(true,true));
+        CService.setOnClickListener(v-> {
+            RoundView.getInstance().showSmallwin(context,click,10);
+            click.CService(true);
+        });
+        PersonalBtn.setOnClickListener(v-> {
+            RoundView.getInstance().showSmallwin(context,click,10);
+            click.Personal(true, true);
+        });
         setupViews();
     }
     //设置视图

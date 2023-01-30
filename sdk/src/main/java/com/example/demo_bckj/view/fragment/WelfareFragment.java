@@ -1,10 +1,16 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.presenter.WelfarePresenter;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
  * @author ZJL
@@ -19,14 +25,28 @@ public class WelfareFragment extends BaseFragment<WelfarePresenter> {
 
     public static WelfareFragment instance;
 
-    public static WelfareFragment getInstance(){
+    private  DrawerLayout drawerLayout;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
+        });
+    }
+
+    public static WelfareFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout){
         if (instance==null){
-            instance=new WelfareFragment();
+            instance=new WelfareFragment(drawerLayout);
         }
         return instance;
     }
 
-    public WelfareFragment() {
+    public WelfareFragment(DrawerLayout drawerLayout) {
+        this.drawerLayout=drawerLayout;
     }
 
     @Override
@@ -64,5 +84,14 @@ public class WelfareFragment extends BaseFragment<WelfarePresenter> {
         super.onDestroy();
         Log.d(TAG, "onDestroy" );
         instance=null;
+    }
+
+    protected void finish() {
+        if (fm.getBackStackEntryCount()>1){
+            fm.popBackStack();
+            drawerLayout.closeDrawers();
+            return;
+        }
+        System.exit(0);
     }
 }

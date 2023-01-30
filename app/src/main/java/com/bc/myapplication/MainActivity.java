@@ -2,9 +2,12 @@ package com.bc.myapplication;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 
 import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.control.SdkControl;
+import com.example.demo_bckj.model.bean.RechargeOrder;
+import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.view.fragment.HomeFragment;
 
@@ -52,7 +55,41 @@ public class MainActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
 
+        Button p = findViewById(R.id.pay);
+        Button l = findViewById(R.id.loginServer);
+        Button c = findViewById(R.id.createRole);
+
+        p.setOnClickListener(v -> {
+            SdkControl.getInstance(this).Recharge(this, listener, new RechargeOrder.Builder()
+                    .number_game("游戏订单号")
+                    .props_name("物品名称")
+                    .server_id("区服 ID")
+                    .server_name("区服名称")
+                    .role_id("角色 ID")
+                    .role_name("角色名称")
+                    .callback_url("https://apitest.infinite-game.cn/ping")
+                    .money(1)
+                    .extend_data("")
+                    .build());
+        });
+        l.setOnClickListener(v -> {
+            SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
+                    .serverID("builder.serverID")
+                    .serverName("builder.serverName")
+                    .roleId("builder.roleId")
+                    .roleName("builder.roleName").bulid());
+        });
+        c.setOnClickListener(v -> {
+            SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
+                    .serverID("builder.serverID")
+                    .serverName("builder.serverName")
+                    .roleId("builder.roleId")
+                    .roleName("builder.roleName").bulid());
+        });
+        Button b = findViewById(R.id.payException);
+        b.setOnClickListener(v -> {
+            SdkControl.getInstance(this).Recharge(this, listener, true);
+        });
+
     }
-
-
 }

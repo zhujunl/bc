@@ -1,30 +1,29 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.demo_bckj.BuildConfig;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.control.SDKListener;
-import com.example.demo_bckj.control.SdkControl;
 import com.example.demo_bckj.db.dao.AccountDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.manager.DBManager;
-import com.example.demo_bckj.model.bean.RechargeOrder;
-import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 import com.example.demo_bckj.view.round.MyWebView;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
  * @author ZJL
@@ -46,16 +45,29 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private MyWebView myWebView, webView;
     private privacyListener listener;
     private AccountDao dao;
+    private DrawerLayout drawerLayout;
 
-    public static PersonFragment getInstance(SDKListener sdkListener) {
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
+        });
+    }
+
+    public static PersonFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout) {
         if (instance == null) {
-            instance = new PersonFragment(sdkListener);
+            instance = new PersonFragment(sdkListener, drawerLayout);
         }
         return instance;
     }
 
-    public PersonFragment(SDKListener sdkListener) {
+    public PersonFragment(SDKListener sdkListener, DrawerLayout drawerLayout) {
         this.sdkListener = sdkListener;
+        this.drawerLayout=drawerLayout;
     }
 
     @Override
@@ -78,43 +90,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
         click();
 
-        LinearLayout testLinear=v.findViewById(R.id.testLinear);
-        testLinear.setVisibility(BuildConfig.DEBUG? View.VISIBLE:View.INVISIBLE);
-        Button p = v.findViewById(R.id.pay);
-        Button l = v.findViewById(R.id.loginServer);
-        Button c = v.findViewById(R.id.createRole);
-
-        p.setOnClickListener(v -> {
-            SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener, new RechargeOrder.Builder()
-                    .number_game("游戏订单号")
-                    .props_name("物品名称")
-                    .server_id("区服 ID")
-                    .server_name("区服名称")
-                    .role_id("角色 ID")
-                    .role_name("角色名称")
-                    .callback_url("https://apitest.infinite-game.cn/ping")
-                    .money(1)
-                    .extend_data("")
-                    .build());
-        });
-        l.setOnClickListener(v -> {
-            SdkControl.getInstance(getActivity()).CreateRole(getActivity(), new RoleBean.Builder()
-                    .serverID("builder.serverID")
-                    .serverName("builder.serverName")
-                    .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid());
-        });
-        c.setOnClickListener(v -> {
-            SdkControl.getInstance(getActivity()).LoginServer(getActivity(), new RoleBean.Builder()
-                    .serverID("builder.serverID")
-                    .serverName("builder.serverName")
-                    .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid());
-        });
-        Button b = v.findViewById(R.id.payException);
-        b.setOnClickListener(v -> {
-            SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener, true);
-        });
     }
 
     @Override
@@ -199,7 +174,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             listener.privacy();
         });
         quit.setOnClickListener(v -> {
-            presenter.loginOut(getContext(), true);
+            presenter.loginOut(getContext());
         });
         header.setOnClickListener(v -> {
 
@@ -211,6 +186,15 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         super.onDestroy();
         Log.d(TAG, "fragment  onDestroy");
         instance = null;
+    }
+
+    protected void finish() {
+        if (fm.getBackStackEntryCount()>1){
+            fm.popBackStack();
+            drawerLayout.closeDrawers();
+            return;
+        }
+        System.exit(0);
     }
 
     public void setListener(privacyListener listener) {
