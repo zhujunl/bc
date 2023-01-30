@@ -1,6 +1,7 @@
 package com.example.demo_bckj.manager;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -331,12 +332,20 @@ public class HttpManager {
     }
 
     //重置密码
-    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation) {
+    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation, Dialog dialog,boolean isLogin) {
         RetrofitManager.getInstance(context).getApiService().resetPwd(tel, code, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 Object message = jsStr.get("message");
                 Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+                if (isLogin){
+                    loginOut(context,false);
+                }else {
+                    logoutListener.out();
+                }
             }
 
             @Override
@@ -518,9 +527,7 @@ public class HttpManager {
             public void onSuccess(JSONObject jsStr) {
                 modifyPWDialog.dismiss();
                 Toast.makeText(context, "密码修改成功", Toast.LENGTH_SHORT).show();
-                if (logoutListener != null) {
-                    logoutListener.out();
-                }
+                loginOut(context,false);
             }
 
             @Override

@@ -261,7 +261,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     public void out() {
         DrawerLayout.closeDrawers();
         RoundView.getInstance().closeRoundView(getContext());
-        popupLoginCode();
+        getActivity().runOnUiThread(()->popupLoginCode());
     }
 
     @Override
@@ -784,7 +784,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-
+            popupForgetPassword();
         });
         //输入框监听
         popup_new_password.addTextChangedListener(new TextWatcher() {

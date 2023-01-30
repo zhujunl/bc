@@ -98,7 +98,7 @@ public class HomePresenter extends BasePresenter {
 
     //重置密码
     public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation) {
-        HttpManager.getInstance().resetPwd(context, tel, code, password, passwordConfirmation);
+        HttpManager.getInstance().resetPwd(context, tel, code, password, passwordConfirmation,null,false);
     }
 
 
