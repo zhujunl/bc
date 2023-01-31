@@ -3,17 +3,20 @@ package com.example.demo_bckj.manager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.base.BasePresenter;
+import com.example.demo_bckj.control.SDKListener;
+import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.ConfigEntity;
+import com.example.demo_bckj.db.entity.TelEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
 import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
@@ -54,7 +57,6 @@ public class HttpManager {
     private SDKListener sdkListener;
     private LogoutListener logoutListener;
     private ClickListener listener;
-    private List<String> accountLists, telLists;
     private Context context;
 
     private static HttpManager instance;
@@ -76,10 +78,6 @@ public class HttpManager {
         this.context = context;
     }
 
-    public void setData(List<String> accountLists, List<String> telLists) {
-        this.accountLists = accountLists;
-        this.telLists = telLists;
-    }
 
     public boolean init(Context context) throws IOException {
         Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().init().execute();
@@ -93,6 +91,7 @@ public class HttpManager {
             Constants.DEVICE = urlBean.getProtocol_url().getDevice();
             Constants.REGISTER = urlBean.getProtocol_url().getRegister();
             Constants.PRIVACY = urlBean.getProtocol_url().getPrivacy();
+            Constants.CUSTOMER_SERVICE=urlBean.getUrl().getCustomer_service();
             return true;
         } else {
             return false;
@@ -202,10 +201,9 @@ public class HttpManager {
                                 .build();
                         sdkListener.Login(user);
                         TimeService.start(context);
-                        if (!telLists.contains(tel)) {
-                            telLists.add(tel);
-                            SPUtils.getInstance(context, "bcSP").put("tel", telLists);
-                        }
+                        DBManager.getInstance(context).insertTel(tel);
+                        List<TelEntity> telEntities = DBManager.getInstance(context).queryTel();
+                        Log.d(TAG, "telEntities==" + telEntities);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
@@ -237,11 +235,10 @@ public class HttpManager {
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
+                        DBManager.getInstance(context).insertAccount(number,pass);
+                        List<AccountLoginEntity> query = DBManager.getInstance(context).query();
+                        Log.d(TAG, "AccountLoginEntity==" +query.toString() );
                         alertDialog.dismiss();
-                        if (!accountLists.contains(number)) {
-                            accountLists.add(number);
-                            SPUtils.getInstance(context, "bcSP").put("account", accountLists);
-                        }
                         RoundView.getInstance().showRoundView(context, listener);
                         thread.start();
                         listener.Personal(false, data.getData().getAuthenticated());
@@ -273,10 +270,9 @@ public class HttpManager {
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
-                        if (!accountLists.contains(name)) {
-                            accountLists.add(name);
-                            SPUtils.getInstance(context, "bcSP").put("account", accountLists);
-                        }
+                        DBManager.getInstance(context).insertAccount(name,password);
+                        List<AccountLoginEntity> query = DBManager.getInstance(context).query();
+                        Log.d(TAG, "AccountLoginEntity==" +query);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
@@ -378,6 +374,7 @@ public class HttpManager {
                         .token(authorization.getAuthorization())
                         .build();
                 sdkListener.Login(user);
+                Log.d(TAG, "refreshToken"+"Thread=="+Thread.currentThread().getName());
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
             }

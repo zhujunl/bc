@@ -77,10 +77,10 @@ public abstract class BaseFragment <P extends BasePresenter> extends Fragment im
     }
 
 
-    public void nvTo(Fragment fragment){
+    public void nvTo(Fragment fragment,String name){
         fm.beginTransaction()
-                .replace(R.id.container,fragment)
-                .addToBackStack(null)
+                .replace(R.id.container, fragment)
+                .addToBackStack(name)
                 .commit();
     }
 }

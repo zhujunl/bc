@@ -22,6 +22,7 @@ import java.util.Map;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -132,7 +133,7 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
 
     protected void finish() {
         if (fm.getBackStackEntryCount()>1){
-            fm.popBackStack();
+            fm.popBackStack("CService", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             drawerLayout.closeDrawers();
             return;
         }

@@ -76,6 +76,17 @@ public class MyDBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + "config" + "(id integer PRIMARY KEY AUTOINCREMENT" +
                 ",authorization varchar" +
                 ")");
+
+        db.execSQL("CREATE TABLE "+"accountLogin" +"(id integer PRIMARY KEY AUTOINCREMENT "+
+                ",account varchar"+
+                ",password varchar"+
+                ",time varchar"+
+                ")");
+
+        db.execSQL("CREATE TABLE "+"tel" +"(id integer PRIMARY KEY AUTOINCREMENT "+
+                ",telNumber varchar"+
+                ",time varchar"+
+                ")");
     }
 }
 

@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.db.entity.AccountLoginEntity;
+import com.example.demo_bckj.db.entity.TelEntity;
 import com.example.demo_bckj.model.utility.SPUtils;
 
 import java.util.List;
@@ -22,16 +24,16 @@ import androidx.recyclerview.widget.RecyclerView;
  * @updateAuthor
  * @updateDes
  */
-public class TAdapter extends RecyclerView.Adapter<TAdapter.MyHolder> {
+public class TAdapter<T> extends RecyclerView.Adapter<TAdapter<T>.MyHolder> {
 
     private Context context;
-    private List<String> lists;
+    private List<T> lists;
     telListener listener;
 
-    public TAdapter(Context context, List<String> lists,telListener listener ){
+    public TAdapter(Context context, List<T> lists, telListener listener) {
         this.context = context;
         this.lists = lists;
-        this.listener=listener;
+        this.listener = listener;
     }
 
     @NonNull
@@ -44,15 +46,29 @@ public class TAdapter extends RecyclerView.Adapter<TAdapter.MyHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        holder.tel.setText(lists.get(position));
-        holder.btn.setOnClickListener(v->{
-            lists.remove(position);
-            notifyDataSetChanged();
-            SPUtils.getInstance(context,"bcSP").put("tel",lists);
-        });
-        holder.itemView.setOnClickListener(v->{
-            listener.itemClick(lists.get(position));
-        });
+        if (lists.get(position) instanceof AccountLoginEntity) {
+            AccountLoginEntity item = (AccountLoginEntity) lists.get(position);
+            holder.tel.setText(item.getAccount());
+            holder.btn.setOnClickListener(v -> {
+                lists.remove(position);
+                notifyDataSetChanged();
+                SPUtils.getInstance(context, "bcSP").put("tel", lists);
+            });
+            holder.itemView.setOnClickListener(v -> {
+                listener.itemClick(item.getAccount(), item.getPassword());
+            });
+        } else {
+            TelEntity item = (TelEntity) lists.get(position);
+            holder.tel.setText(item.getTelNumber());
+            holder.btn.setOnClickListener(v -> {
+                lists.remove(position);
+                notifyDataSetChanged();
+                SPUtils.getInstance(context, "bcSP").put("tel", lists);
+            });
+            holder.itemView.setOnClickListener(v -> {
+                listener.itemClick(item.getTelNumber(), "");
+            });
+        }
     }
 
     @Override
@@ -71,7 +87,7 @@ public class TAdapter extends RecyclerView.Adapter<TAdapter.MyHolder> {
         }
     }
 
-    public interface telListener{
-        void itemClick(String tel);
+    public interface telListener {
+        void itemClick(String tel, String password);
     }
 }

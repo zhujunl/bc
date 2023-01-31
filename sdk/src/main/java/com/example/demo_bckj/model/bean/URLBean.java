@@ -21,6 +21,7 @@ package com.example.demo_bckj.model.bean;
 // "errors":[]}
 public class URLBean {
     private protocol protocol_url;
+    private url url;
 
     public protocol getProtocol_url() {
         return protocol_url;
@@ -28,6 +29,14 @@ public class URLBean {
 
     public void setProtocol_url(protocol protocol_url) {
         this.protocol_url = protocol_url;
+    }
+
+    public URLBean.url getUrl() {
+        return url;
+    }
+
+    public void setUrl(URLBean.url url) {
+        this.url = url;
     }
 
     public static class protocol{
@@ -69,10 +78,32 @@ public class URLBean {
         }
     }
 
+    public static class url{
+        private String game;
+        private String customer_service;
+
+        public String getGame() {
+            return game;
+        }
+
+        public void setGame(String game) {
+            this.game = game;
+        }
+
+        public String getCustomer_service() {
+            return customer_service;
+        }
+
+        public void setCustomer_service(String customer_service) {
+            this.customer_service = customer_service;
+        }
+    }
+
     @Override
     public String toString() {
         return "URLBean{" +
                 "protocol_url=" + protocol_url +
+                ", url=" + url +
                 '}';
     }
 }

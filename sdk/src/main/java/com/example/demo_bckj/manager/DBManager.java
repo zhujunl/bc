@@ -4,10 +4,16 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.example.demo_bckj.db.dao.AccountDao;
+import com.example.demo_bckj.db.dao.AccountLoginDao;
 import com.example.demo_bckj.db.dao.ConfigDao;
+import com.example.demo_bckj.db.dao.TelDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
+import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.ConfigEntity;
+import com.example.demo_bckj.db.entity.TelEntity;
 import com.example.demo_bckj.model.bean.AccountPwBean;
+
+import java.util.List;
 
 /**
  * @author ZJL
@@ -21,6 +27,8 @@ public class DBManager {
     private static DBManager instance;
     private AccountDao dao;
     private ConfigDao configDao;
+    private AccountLoginDao accountLoginDao;
+    private TelDao telDao;
 
     public static DBManager getInstance(Context context) {
         if (instance == null) {
@@ -32,6 +40,8 @@ public class DBManager {
     public DBManager(Context context) {
         dao = AccountDao.getInstance(context);
         configDao = ConfigDao.getInstance(context);
+        accountLoginDao=AccountLoginDao.getInstance(context);
+        telDao=TelDao.getInstance(context);
     }
 
     public AccountDao getDao() {
@@ -100,5 +110,21 @@ public class DBManager {
     public void delete() {
         dao.delete();
         configDao.deleteAuthorization();
+    }
+
+    public void insertAccount(String account ,String password){
+        accountLoginDao.insertData(account,password);
+    }
+
+    public List<AccountLoginEntity> query(){
+        return accountLoginDao.query();
+    }
+
+    public void insertTel(String tel){
+        telDao.insertData(tel);
+    }
+
+    public List<TelEntity> queryTel(){
+        return telDao.query();
     }
 }

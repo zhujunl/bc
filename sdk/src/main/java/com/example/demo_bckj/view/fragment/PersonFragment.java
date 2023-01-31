@@ -24,6 +24,7 @@ import com.example.demo_bckj.view.round.MyWebView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * @author ZJL
@@ -59,10 +60,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     }
 
     public static PersonFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout) {
-        if (instance == null) {
-            instance = new PersonFragment(sdkListener, drawerLayout);
-        }
-        return instance;
+        return new PersonFragment(sdkListener, drawerLayout);
     }
 
     public PersonFragment(SDKListener sdkListener, DrawerLayout drawerLayout) {
@@ -190,7 +188,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     protected void finish() {
         if (fm.getBackStackEntryCount()>1){
-            fm.popBackStack();
+            fm.popBackStack("Personal", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             drawerLayout.closeDrawers();
             return;
         }

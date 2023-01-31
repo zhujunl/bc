@@ -11,6 +11,7 @@ import com.example.demo_bckj.presenter.WelfarePresenter;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * @author ZJL
@@ -88,7 +89,7 @@ public class WelfareFragment extends BaseFragment<WelfarePresenter> {
 
     protected void finish() {
         if (fm.getBackStackEntryCount()>1){
-            fm.popBackStack();
+            fm.popBackStack("Welfare", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             drawerLayout.closeDrawers();
             return;
         }
