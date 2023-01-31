@@ -194,7 +194,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                         e.printStackTrace();
                     }
                     if (!refresh) {
-                        getActivity().runOnUiThread(() -> popupLoginCode());
+                        getActivity().runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
                     }
                 }
             }
@@ -262,7 +262,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     public void out() {
         DrawerLayout.closeDrawers();
         RoundView.getInstance().closeRoundView(getContext());
-        getActivity().runOnUiThread(() -> popupLoginCode());
+        getActivity().runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
     }
 
     @Override
@@ -298,7 +298,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         if (!isAuthenticated) {
-            RealNameDialog realNameDialog = new RealNameDialog(getActivity(), false, pf);
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(), false, pf,this);
             realNameDialog.show();
         }
         if (alertDialog.isShowing())
@@ -322,7 +322,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             DrawerLayout.closeDrawers();
             RoundView.getInstance().closeRoundView(getActivity());
             HttpManager.getInstance().loginOut(getActivity(), false);
-            popupLoginCode();
+            loginSelect(bcSP.getBoolean("isAccount"));
             if (pf != null)
                 pf.onDestroy();
             if (wp != null)
@@ -414,10 +414,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     //手机号验证码登录
-    private void popupLoginCode() {
+    private void popupLoginCode(boolean isAccount) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
+        ImageView back=inflate.findViewById(R.id.popup_back);
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
         TextView popupTvCode = inflate.findViewById(R.id.popup_Tv_code);
         CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
@@ -429,7 +430,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
-
+        back.setVisibility(isAccount?View.VISIBLE:View.INVISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
             List<TelEntity> telEntities = DBManager.getInstance(getContext()).queryTel();
@@ -443,11 +444,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             alertDialog.setView(inflate);
             alertDialog.show();
         }
+        back.setOnClickListener(v1 -> popupForgetPassword());
+
         //跳转注册
         popup_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popupNumberRegister("", "");
+                popupNumberRegister("", "",false);
             }
         });
         //输入框监听
@@ -532,7 +535,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //跳转
         popupLoginPw.setOnClickListener(view -> {
-            popupLoginPw("", "");
+            popupLoginPw("", "",isAccount);
         });
 
 
@@ -540,7 +543,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             presenter.getDemoAccount(getActivity(), new PlayInterface() {
                 @Override
                 public void onSuccess(String account, String password) {
-                    popupNumberRegister(account, password);
+                    popupNumberRegister(account, password,false);
                 }
 
                 @Override
@@ -552,7 +555,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     //账号密码登录弹窗
-    private void popupLoginPw(String account, String password) {
+    private void popupLoginPw(String account, String password,boolean isAccount) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
@@ -567,7 +570,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
         TextView popup_forget_pw = inflate.findViewById(R.id.popup_forget_pw);
         alertDialog.setContentView(inflate);
-
+        if (!alertDialog.isShowing()) {
+            alertDialog.setView(inflate);
+            alertDialog.show();
+        }
+        popup_back.setVisibility(isAccount?View.INVISIBLE:View.VISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
             List<AccountLoginEntity> query = DBManager.getInstance(getContext()).query();
@@ -581,10 +588,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popup_et_pw.setText(password);
         //返回
         popup_back.setOnClickListener(view -> {
-            popupLoginCode();
+            popupLoginCode(bcSP.getBoolean("isAccount"));
         });
         //立即注册
-        popupRegister.setOnClickListener(view -> popupNumberRegister("", ""));
+        popupRegister.setOnClickListener(view -> popupNumberRegister("", "",true));
         //忘记密码
         popup_forget_pw.setOnClickListener(view -> {
             popupForgetPassword();
@@ -695,7 +702,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-            popupLoginPw("", "");
+            popupLoginPw("", "",bcSP.getBoolean("isAccount"));
         });
         //跳转联系客服
         popup_service.setOnClickListener(view -> Toast.makeText(getActivity(), "尽请期待", Toast.LENGTH_SHORT).show());
@@ -755,7 +762,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 }
             }
         });
-        popup_loginPw.setOnClickListener(view -> popupLoginCode());
+        popup_loginPw.setOnClickListener(view -> popupLoginCode(bcSP.getBoolean("isAccount")));
         popupTvCode.setOnClickListener(view -> {
             String trim1 = popupLogin.getText().toString().trim();
             if (TextUtils.isEmpty(trim1)) {
@@ -849,12 +856,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
         popup_loginPw.setOnClickListener(view -> {
-            popupLoginCode();
+            popupLoginCode(bcSP.getBoolean("isAccount"));
         });
     }
 
     //账号密码注册弹窗
-    private void popupNumberRegister(String user, String password) {
+    private void popupNumberRegister(String user, String password,boolean isAccount) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_number_register, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_number = inflate.findViewById(R.id.popup_number);
@@ -875,7 +882,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //返回
         popup_back.setOnClickListener(view -> {
-            popupLoginCode();
+            if (isAccount){
+                popupLoginPw("","", bcSP.getBoolean("isAccount"));
+            }else {
+                popupLoginCode(bcSP.getBoolean("isAccount"));
+            }
         });
         popupSubmit.setOnClickListener(view -> {
             String number = popup_number.getText().toString().trim();
@@ -1009,6 +1020,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
     }
 
+    private void loginSelect(boolean isAccount){
+        if (isAccount){
+            popupLoginPw("","", true);
+        }else {
+            popupLoginCode(false);
+        }
+    }
+
 
     /**
      * 检查是否获取所有权限
@@ -1042,7 +1061,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
             if (i == permissions.length - 1) {
                 presenter.getSdk(getActivity(), true);
-                popupLoginCode();
+                popupLoginCode(bcSP.getBoolean("isAccount"));
             }
         }
     }

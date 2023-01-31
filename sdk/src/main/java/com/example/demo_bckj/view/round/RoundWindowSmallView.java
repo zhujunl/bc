@@ -216,7 +216,11 @@ public class RoundWindowSmallView extends LinearLayout {
     }
 
     public void updateViewPosition(){
-        windowManager.updateViewLayout(this, mParams);
+        try {
+            windowManager.updateViewLayout(this, mParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

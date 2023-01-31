@@ -9,10 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
@@ -36,17 +38,20 @@ public class RealNameDialog extends Dialog {
 
     private Context context;
     private EditText name, code;
+    private TextView back;
     private ImageView remove, removeCode;
     private Button submit;
     private PersonPresenter presenter;
     private PersonFragment personFragment;
     private String n, c;
+    private LogoutListener mLogoutListener;
 
-    public RealNameDialog(@NonNull Context context, boolean isCancelable, PersonFragment personFragment) {
+    public RealNameDialog(@NonNull Context context, boolean isCancelable, PersonFragment personFragment, LogoutListener mLogoutListener) {
         super(context);
         setContentView(R.layout.popup_autonym);
         this.context = context;
         this.personFragment = personFragment;
+        this.mLogoutListener = mLogoutListener;
         setCancelable(isCancelable);
         initView();
     }
@@ -57,6 +62,8 @@ public class RealNameDialog extends Dialog {
         remove = findViewById(R.id.popup_remove);
         removeCode = findViewById(R.id.popup_remove_code);
         submit = findViewById(R.id.popup_submit);
+        back = findViewById(R.id.back);
+        back.setVisibility(mLogoutListener==null?View.INVISIBLE:View.VISIBLE);
         click();
     }
 
@@ -112,6 +119,11 @@ public class RealNameDialog extends Dialog {
         });
         removeCode.setOnClickListener(v -> {
             code.setText("");
+        });
+        back.setOnClickListener(v -> {
+            if (mLogoutListener!=null){
+                mLogoutListener.out();
+            }
         });
     }
 

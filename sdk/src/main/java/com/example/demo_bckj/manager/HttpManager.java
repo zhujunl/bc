@@ -10,9 +10,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.base.BasePresenter;
 import com.example.demo_bckj.control.SDKListener;
-import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.ConfigEntity;
-import com.example.demo_bckj.db.entity.TelEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
 import com.example.demo_bckj.listener.LogoutListener;
@@ -39,7 +37,6 @@ import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 import com.example.demo_bckj.view.round.RoundView;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Headers;
 import okhttp3.ResponseBody;
@@ -202,8 +199,7 @@ public class HttpManager {
                         sdkListener.Login(user);
                         TimeService.start(context);
                         DBManager.getInstance(context).insertTel(tel);
-                        List<TelEntity> telEntities = DBManager.getInstance(context).queryTel();
-                        Log.d(TAG, "telEntities==" + telEntities);
+                        SPUtils.getInstance(context,"bcSP").put("isAccount",false);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
@@ -236,8 +232,7 @@ public class HttpManager {
                                 .build();
                         sdkListener.Login(user);
                         DBManager.getInstance(context).insertAccount(number,pass);
-                        List<AccountLoginEntity> query = DBManager.getInstance(context).query();
-                        Log.d(TAG, "AccountLoginEntity==" +query.toString() );
+                        SPUtils.getInstance(context,"bcSP").put("isAccount",true);
                         alertDialog.dismiss();
                         RoundView.getInstance().showRoundView(context, listener);
                         thread.start();
@@ -270,9 +265,8 @@ public class HttpManager {
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
+                        SPUtils.getInstance(context,"bcSP").put("isAccount",true);
                         DBManager.getInstance(context).insertAccount(name,password);
-                        List<AccountLoginEntity> query = DBManager.getInstance(context).query();
-                        Log.d(TAG, "AccountLoginEntity==" +query);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
