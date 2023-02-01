@@ -40,8 +40,8 @@ public class DBManager {
     public DBManager(Context context) {
         dao = AccountDao.getInstance(context);
         configDao = ConfigDao.getInstance(context);
-        accountLoginDao=AccountLoginDao.getInstance(context);
-        telDao=TelDao.getInstance(context);
+        accountLoginDao = AccountLoginDao.getInstance(context);
+        telDao = TelDao.getInstance(context);
     }
 
     public AccountDao getDao() {
@@ -112,19 +112,27 @@ public class DBManager {
         configDao.deleteAuthorization();
     }
 
-    public void insertAccount(String account ,String password){
-        accountLoginDao.insertData(account,password);
+    public void insertAccount(String account, String password) {
+        accountLoginDao.insertData(account, password);
     }
 
-    public List<AccountLoginEntity> query(){
+    public List<AccountLoginEntity> query() {
         return accountLoginDao.query();
     }
 
-    public void insertTel(String tel){
+    public void deleteAccountLogin(AccountLoginEntity accountLoginEntity) {
+        accountLoginDao.delete(accountLoginEntity);
+    }
+
+    public void insertTel(String tel) {
         telDao.insertData(tel);
     }
 
-    public List<TelEntity> queryTel(){
+    public List<TelEntity> queryTel() {
         return telDao.query();
+    }
+
+    public void deleteTel(TelEntity entity) {
+        telDao.delete(entity);
     }
 }

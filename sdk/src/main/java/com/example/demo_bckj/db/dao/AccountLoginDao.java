@@ -35,15 +35,15 @@ public class AccountLoginDao {
         mDatabase = mHelper.getWritableDatabase();
     }
 
-    public void insertData(String  account,String password) {
-        if (isExist(account,password)){
-            update(account,password);
+    public void insertData(String account, String password) {
+        if (isExist(account, password)) {
+            update(account, password);
             return;
         }
         ContentValues values = new ContentValues();
-        values.put("account",account);
-        values.put("password",password);
-        values.put("time",System.currentTimeMillis());
+        values.put("account", account);
+        values.put("password", password);
+        values.put("time", System.currentTimeMillis());
         mDatabase.insert("accountLogin", null, values);
     }
 
@@ -51,10 +51,14 @@ public class AccountLoginDao {
         mDatabase.delete("accountLogin", "id > 0", new String[]{});
     }
 
+    public void delete(AccountLoginEntity accountLoginEntity) {
+        mDatabase.delete("accountLogin", "id = ?", new String[]{String.valueOf(accountLoginEntity.getId())});
+    }
+
     public List<AccountLoginEntity> query() {
         String sql = "select * from accountLogin order by time desc";
         Cursor cursor = mDatabase.rawQuery(sql, null);
-        List<AccountLoginEntity> lists=new ArrayList<>();
+        List<AccountLoginEntity> lists = new ArrayList<>();
         if (cursor == null) {
             return null;
         }
@@ -70,8 +74,8 @@ public class AccountLoginDao {
         return lists;
     }
 
-    private boolean isExist(String  account,String password){
-        Cursor cursor=mDatabase.rawQuery( "SELECT * FROM accountLogin WHERE account= ? AND password=? ", new String[]{account,password});
+    private boolean isExist(String account, String password) {
+        Cursor cursor = mDatabase.rawQuery("SELECT * FROM accountLogin WHERE account= ? AND password=? ", new String[]{account, password});
         if (cursor == null) {
             return false;
         }
@@ -82,15 +86,15 @@ public class AccountLoginDao {
                     .password(cursor.getString(2))
                     .time(cursor.getLong(3))
                     .build();
-            return a!=null;
+            return a != null;
         }
         return false;
     }
 
-    public void update(String  account,String password){
+    public void update(String account, String password) {
         ContentValues values = new ContentValues();
         values.put("password", password);
-        values.put("time",System.currentTimeMillis());
+        values.put("time", System.currentTimeMillis());
         mDatabase.update("accountLogin", values, " account = '" + account + "'", null);
     }
 }

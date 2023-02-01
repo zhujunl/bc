@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.TelEntity;
-import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.manager.DBManager;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class TAdapter<T> extends RecyclerView.Adapter<TAdapter<T>.MyHolder> {
             holder.btn.setOnClickListener(v -> {
                 lists.remove(position);
                 notifyDataSetChanged();
-                SPUtils.getInstance(context, "bcSP").put("tel", lists);
+                DBManager.getInstance(context).deleteAccountLogin(item);
             });
             holder.itemView.setOnClickListener(v -> {
                 listener.itemClick(item.getAccount(), item.getPassword());
@@ -63,7 +63,7 @@ public class TAdapter<T> extends RecyclerView.Adapter<TAdapter<T>.MyHolder> {
             holder.btn.setOnClickListener(v -> {
                 lists.remove(position);
                 notifyDataSetChanged();
-                SPUtils.getInstance(context, "bcSP").put("tel", lists);
+                DBManager.getInstance(context).deleteTel(item);
             });
             holder.itemView.setOnClickListener(v -> {
                 listener.itemClick(item.getTelNumber(), "");

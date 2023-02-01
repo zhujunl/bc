@@ -36,13 +36,13 @@ public class TelDao {
     }
 
     public void insertData(String tel) {
-        if (isExist(tel)){
+        if (isExist(tel)) {
             update(tel);
             return;
         }
         ContentValues values = new ContentValues();
-        values.put("telNumber",tel);
-        values.put("time",System.currentTimeMillis());
+        values.put("telNumber", tel);
+        values.put("time", System.currentTimeMillis());
         mDatabase.insert("tel", null, values);
     }
 
@@ -50,10 +50,14 @@ public class TelDao {
         mDatabase.delete("tel", "id > 0", new String[]{});
     }
 
+    public void delete(TelEntity entity) {
+        mDatabase.delete("tel", "id = ?", new String[]{String.valueOf(entity.getId())});
+    }
+
     public List<TelEntity> query() {
         String sql = "select * from tel order by time desc";
         Cursor cursor = mDatabase.rawQuery(sql, null);
-        List<TelEntity> lists=new ArrayList<>();
+        List<TelEntity> lists = new ArrayList<>();
         if (cursor == null) {
             return null;
         }
@@ -67,14 +71,14 @@ public class TelDao {
         return lists;
     }
 
-    public void update(String tel){
+    public void update(String tel) {
         ContentValues values = new ContentValues();
-        values.put("time",System.currentTimeMillis());
+        values.put("time", System.currentTimeMillis());
         mDatabase.update("tel", values, " telNumber = '" + tel + "'", null);
     }
 
-    public boolean isExist(String tel){
-        Cursor cursor=mDatabase.rawQuery( "SELECT * FROM tel WHERE telNumber= ? ", new String[]{tel});
+    public boolean isExist(String tel) {
+        Cursor cursor = mDatabase.rawQuery("SELECT * FROM tel WHERE telNumber= ? ", new String[]{tel});
         if (cursor == null) {
             return false;
         }
@@ -83,7 +87,7 @@ public class TelDao {
             a.setId(cursor.getInt(0));
             a.setTelNumber(cursor.getString(1));
             a.setTime(cursor.getLong(2));
-            return a!=null;
+            return a != null;
         }
         return false;
     }
