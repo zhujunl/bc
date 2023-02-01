@@ -2,8 +2,6 @@ package com.example.demo_bckj.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
+import com.example.demo_bckj.view.fragment.PersonFragment;
 
 import androidx.annotation.NonNull;
 
@@ -33,8 +32,8 @@ public class VerifyPhoneDialog extends Dialog {
     private Context context;
     private BindNewPhoneDialog bindDialog;
     private PersonPresenter presenter;
+    private PersonFragment.privacyListener pListener;
 
-    private String phoneNumber = "11111111111";
 
 
     public VerifyPhoneDialog(@NonNull Context context, PersonPresenter presenter) {
@@ -83,10 +82,11 @@ public class VerifyPhoneDialog extends Dialog {
             bindDialog.show();
         });
         service.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            pListener.cs(this);
         });
     }
 
+    public void setListener(PersonFragment.privacyListener pListener){
+        this.pListener=pListener;
+    }
 }

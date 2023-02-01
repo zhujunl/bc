@@ -25,7 +25,7 @@ public class DeviceAndroid {
     private String android_id;
     private DeviceAndroidQ android_q;
     private String id;
-    private List<String> imei;
+    private List<Object> imei;
     private String imsi;
     private String model;
     private String product;
@@ -42,7 +42,10 @@ public class DeviceAndroid {
         android_id = DeviceIdUtil.getAndroidId(context);
         id=DeviceIdUtil.getBasebandVersion();
         android_q=new DeviceAndroidQ();
-        imei = new ArrayList<>(Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context)));
+//        imei = Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context));
+        imei=new ArrayList<>();
+        imei.add("");
+        imei.add("");
         imsi = DeviceIdUtil.getIMSI(context);
         model = Build.MODEL;
         product = Build.MANUFACTURER;
@@ -89,7 +92,7 @@ public class DeviceAndroid {
         this.id = id;
     }
 
-    public void setImei(List<String> imei) {
+    public void setImei(List<Object> imei) {
         this.imei = imei;
     }
 
@@ -149,7 +152,7 @@ public class DeviceAndroid {
         return id;
     }
 
-    public List<String> getImei() {
+    public List<Object> getImei() {
         return imei;
     }
 
@@ -198,7 +201,7 @@ public class DeviceAndroid {
         private String android_id;
         private DeviceAndroidQ android_q;
         private String id;
-        private List<String> imei;
+        private List<Object> imei;
         private String imsi;
         private String model;
         private String product;
@@ -230,7 +233,7 @@ public class DeviceAndroid {
             return this;
         }
 
-        public Builder imei(List<String> val) {
+        public Builder imei(List<Object> val) {
             this.imei = val;
             return this;
         }

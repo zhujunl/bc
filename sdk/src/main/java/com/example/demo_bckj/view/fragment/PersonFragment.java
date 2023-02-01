@@ -1,5 +1,6 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -146,6 +147,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             } else {
                 //验证手机号
                 VerifyPhoneDialog verifyPhoneDialog = new VerifyPhoneDialog(getActivity(), presenter);
+                verifyPhoneDialog.setListener(listener);
                 verifyPhoneDialog.show();
             }
         });
@@ -188,8 +190,11 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     protected void finish() {
         if (fm.getBackStackEntryCount()>1){
-            fm.popBackStack("Personal", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             drawerLayout.closeDrawers();
+            for (int i = 0; i < fm.getBackStackEntryCount()-1; i++) {
+                fm.popBackStack("CService", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fm.popBackStack("Personal", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             return;
         }
         System.exit(0);
@@ -207,6 +212,8 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         void user();
 
         void privacy();
+
+        void cs(Dialog dialog);
     }
 
 }

@@ -20,8 +20,6 @@ public class Network {
 
     public Network() {
         intranet_ip = DeviceIdUtil.getNetworkIp();
-//        mac = DeviceIdUtil.getNetworkMac();
-
     }
 
     public Network(Builder build) {

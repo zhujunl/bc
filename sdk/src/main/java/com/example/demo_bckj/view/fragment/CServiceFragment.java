@@ -133,8 +133,11 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
 
     protected void finish() {
         if (fm.getBackStackEntryCount()>1){
-            fm.popBackStack("CService", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             drawerLayout.closeDrawers();
+            for (int i = 0; i < fm.getBackStackEntryCount()-1; i++) {
+                fm.popBackStack("CService", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fm.popBackStack("Personal", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             return;
         }
         System.exit(0);

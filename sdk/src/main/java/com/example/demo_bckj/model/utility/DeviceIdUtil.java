@@ -193,7 +193,7 @@ public class DeviceIdUtil {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
             if (tm == null)
                 return "";
-            return tm.getSubscriberId();
+            return tm.getSubscriberId()==null?"":tm.getSubscriberId();
         } catch (Exception e) {
             e.printStackTrace();
             return " ";
@@ -224,9 +224,7 @@ public class DeviceIdUtil {
     public static String getSerialNumber() {
         String serial = "";
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {//9.0+
-                serial = Build.getSerial();
-            } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {//8.0+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {//8.0+
                 serial = Build.SERIAL;
             } else {//8.0-
                 Class<?> c = Class.forName("android.os.SystemProperties");

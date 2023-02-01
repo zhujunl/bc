@@ -18,7 +18,7 @@ public class Constants {
     public static String REGISTER = "https://static.infinite-game.cn/resources/protocol/register.html";
     public static String PRIVACY = "https://static.infinite-game.cn/resources/protocol/register.html";
     public static String DEVICE = "https://static.infinite-game.cn/resources/protocol/register.html";
-    public static String CUSTOMER_SERVICE = "//sdk.infinite-game.cn/contact?game=f60e429f71e147eb817f233f9fca4cce";
+    public static String CUSTOMER_SERVICE = "https://sdk.infinite-game.cn/contact?game=f60e429f71e147eb817f233f9fca4cce";
 
 
     public static String[] PermissionString = {

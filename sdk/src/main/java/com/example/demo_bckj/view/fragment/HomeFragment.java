@@ -1,6 +1,7 @@
 package com.example.demo_bckj.view.fragment;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -97,7 +98,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private ImageView userMoreAgreement;
     private ImageView userMorePrivacy;
     private TextView userQuitLogin;
-    private MyWebView myWebView, webView;
+    private MyWebView myWebView, webView ,csWebView;
     private String string;
     private JSONObject jsonObject;
     private AlertDialog alertDialog, AgreementDialog;
@@ -234,6 +235,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         personBtn = (Button) v.findViewById(R.id.person_btn);
         myWebView = v.findViewById(R.id.myWebView);
         webView = v.findViewById(R.id.WebView);
+        csWebView=v.findViewById(R.id.CSWebView);
 
         welfareBtn.setOnClickListener(view -> {
             Welfare(false);
@@ -300,6 +302,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 public void privacy() {
                     DrawerLayout.closeDrawers();
                     PrivacyAgreement(alertDialog, false);
+                }
+
+                @Override
+                public void cs(Dialog dialog) {
+                    CustomerServer(dialog,true);
                 }
             });
         }
@@ -713,7 +720,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             popupLoginPw("", "",bcSP.getBoolean("isAccount"));
         });
         //跳转联系客服
-        popup_service.setOnClickListener(view -> Toast.makeText(getActivity(), "尽请期待", Toast.LENGTH_SHORT).show());
+        popup_service.setOnClickListener(view ->  CustomerServer(alertDialog,false));
         //输入框监听
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1162,5 +1169,35 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             return false;
         });
         myWebView.show(Constants.PRIVACY);
+    }
+
+    /**客服网页*/
+    public void CustomerServer(Dialog dialog ,boolean isShow){
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        if (isShow)
+            DrawerLayout.closeDrawers();
+        csWebView.setTittle("客服");
+        csWebView.setVisibility(View.VISIBLE);
+        csWebView.show(Constants.CUSTOMER_SERVICE);
+        csWebView.btnListener(view -> {
+            csWebView.setVisibility(View.INVISIBLE);
+            if ( !dialog.isShowing())
+                dialog.show();
+            if (isShow)
+                DrawerLayout.openDrawer(Gravity.LEFT);
+        });
+        csWebView.setOnKey((view, i, keyEvent) -> {
+            if (i == KeyEvent.KEYCODE_BACK) {
+                csWebView.setVisibility(View.INVISIBLE);
+                if ( !dialog.isShowing())
+                    dialog.show();
+                if (isShow)
+                    DrawerLayout.openDrawer(Gravity.LEFT);
+                return true;
+            }
+            return false;
+        });
     }
 }
