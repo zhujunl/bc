@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.db.entity.AccountEntity;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
@@ -75,6 +77,12 @@ public class ModifyPWDialog extends Dialog {
             }
         });
         forget.setOnClickListener(v -> {
+            AccountEntity query = DBManager.getInstance(context).getDao().query();
+            String tel = query.getTel();
+            if (TextUtils.isEmpty(tel)){
+                Toast.makeText(context, "该账号未绑定手机，请绑定手机！", Toast.LENGTH_SHORT).show();
+                return;
+            }
             popupForgetPassword();
         });
     }

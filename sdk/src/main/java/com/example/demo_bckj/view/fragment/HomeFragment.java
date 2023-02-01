@@ -2,6 +2,7 @@ package com.example.demo_bckj.view.fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.os.Build;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
+import com.example.demo_bckj.broadcast.NetworkConnectChangedReceiver;
 import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.db.entity.AccountLoginEntity;
@@ -130,13 +132,19 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             DBManager.getInstance(getActivity()).delete();
         }
     }
-
+    NetworkConnectChangedReceiver networkChange;
 
     @Override
     protected void initData() {
         HttpManager.getInstance().setListener(sdkListener, this, this, getActivity());
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d("tag==", getDeviceId());
+        IntentFilter filter=new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        networkChange=new NetworkConnectChangedReceiver();
+        getActivity().registerReceiver(networkChange,filter);
         new Thread(() -> {
             try {
                 boolean init = presenter.init(getActivity());
@@ -352,7 +360,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Log.d(TAG, "onDestroy");
         RoundView.getInstance().closeRoundView(getActivity());
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        getActivity().unregisterReceiver(networkChange);
         if (alertDialog != null)
             alertDialog.dismiss();
     }

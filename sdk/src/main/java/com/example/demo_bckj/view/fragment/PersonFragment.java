@@ -150,12 +150,12 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
             }
         });
         modifyPw.setOnClickListener(v -> {
-            if (TextUtils.isEmpty(tel)) {
-                //绑定手机号
-                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(), presenter);
-                bindNewPhoneDialog.show();
-                return;
-            }
+//            if (TextUtils.isEmpty(tel)) {
+//                //绑定手机号
+//                BindNewPhoneDialog bindNewPhoneDialog = new BindNewPhoneDialog(getActivity(), presenter);
+//                bindNewPhoneDialog.show();
+//                return;
+//            }
             //修改密码
             ModifyPWDialog modifyPWDialog = new ModifyPWDialog(getActivity(), presenter);
             modifyPWDialog.show();

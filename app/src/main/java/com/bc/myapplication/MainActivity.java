@@ -72,14 +72,14 @@ public class MainActivity extends AppCompatActivity {
                     .extend_data("")
                     .build());
         });
-        l.setOnClickListener(v -> {
+        c.setOnClickListener(v -> {
             SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
                     .roleName("builder.roleName").bulid());
         });
-        c.setOnClickListener(v -> {
+        l.setOnClickListener(v -> {
             SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")

@@ -1,6 +1,9 @@
 package com.example.demo_bckj.model.utility.device;
 
 import android.content.Context;
+import android.telephony.TelephonyManager;
+
+import com.example.demo_bckj.model.utility.DeviceIdUtil;
 
 import androidx.annotation.NonNull;
 
@@ -53,6 +56,12 @@ public class Device {
         this.os = "Android";
         this.android = new DeviceAndroid(context);
         this.netWork = new Network();
+        netWork.setType(DeviceIdUtil.getNetworkType(context));
+        netWork.setMac(DeviceIdUtil.getMacAddr());
+        TelephonyManager telManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        netWork.setCode(String.valueOf(telManager.getSimOperator()));
+        String operator = DeviceIdUtil.getSimOperator(telManager.getSimOperator());
+        netWork.setName(operator);
     }
 
     public Device(String os, DeviceAndroid android, Network netWork) {

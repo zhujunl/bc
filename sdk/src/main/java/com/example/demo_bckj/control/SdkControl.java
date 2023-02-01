@@ -56,12 +56,6 @@ public class SdkControl {
         } else {
             Constants.DEVICEINFO = new DeviceInfo(FileUtil.getMap(context, "bc_sdk_config.json"), new Device(context));
         }
-        try {
-            JSONObject jsonObject = new JSONObject(Constants.DEVICEINFO.toString());
-//            String value = getValue(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean hasGame(Map<String, String> map) {

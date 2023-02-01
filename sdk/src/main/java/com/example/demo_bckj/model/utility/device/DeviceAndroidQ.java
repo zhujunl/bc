@@ -16,9 +16,9 @@ public class DeviceAndroidQ {
     private String vaid;
 
     public DeviceAndroidQ() {
-        aaid = "748d89ad-dd0d-424a-83df-d934519f0489";
-        oaid = "92e60edb3de3f9d0";
-        vaid = "416bffbb34374591";
+        aaid = "";
+        oaid = "";
+        vaid = "";
     }
 
     public DeviceAndroidQ(String aaid, String oaid, String vaid) {

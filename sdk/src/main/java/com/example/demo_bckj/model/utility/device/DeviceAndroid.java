@@ -3,6 +3,7 @@ package com.example.demo_bckj.model.utility.device;
 import android.content.Context;
 import android.os.Build;
 
+import com.example.demo_bckj.BuildConfig;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 
 import java.util.ArrayList;
@@ -39,15 +40,17 @@ public class DeviceAndroid {
     public DeviceAndroid(Context context) {
         system_version = DeviceIdUtil.getSystemVersion();
         android_id = DeviceIdUtil.getAndroidId(context);
-        id = "QKQ1.200419.002";
+        id=DeviceIdUtil.getBasebandVersion();
         android_q=new DeviceAndroidQ();
         imei = new ArrayList<>(Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context)));
         imsi = DeviceIdUtil.getIMSI(context);
         model = Build.MODEL;
-        product = "cas";
+        product = Build.MANUFACTURER;
         brand = Build.BRAND;
-        sdk_package_name = DeviceIdUtil.getTopPackage(context);
-        sdk_version = DeviceIdUtil.getVersionName(context);
+        game_package_name=DeviceIdUtil.getTopPackage(context);
+        game_version=DeviceIdUtil.getVersionName(context);
+        sdk_package_name = "com.infinite.game";
+        sdk_version = BuildConfig.version;
         serial = DeviceIdUtil.getSERIAL();
         sim_serial = new ArrayList<>(Arrays.asList(DeviceIdUtil.getSimSerial(context)));
     }

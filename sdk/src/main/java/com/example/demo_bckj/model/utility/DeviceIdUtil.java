@@ -22,6 +22,9 @@ import com.example.demo_bckj.view.Constants;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -66,6 +69,12 @@ public class DeviceIdUtil {
             ex.printStackTrace();
         }
         return "";
+    }
+
+    /**获取基带版本*/
+    public static String getBasebandVersion(){
+        String version = Build.getRadioVersion();
+        return version;
     }
 
     /**
@@ -316,6 +325,34 @@ public class DeviceIdUtil {
         return "00:00:00:00:00:00";
     }
 
+    // Android 6.0以上获取WiFi的Mac地址
+    //由于android6.0对wifi mac地址获取进行了限制，用原来的方法获取会获取到02:00:00:00:00:00这个固定地址。
+    //但是可以通过读取节点进行获取"/sys/class/net/wlan0/address"
+    public static String getMacAddr() {
+        try {
+            return loadFileAsString("/sys/class/net/wlan0/address")
+                    .toUpperCase().substring(0, 17);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private static String loadFileAsString(String filePath)
+            throws java.io.IOException {
+        StringBuffer fileData = new StringBuffer(1000);
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        char[] buf = new char[1024];
+        int numRead = 0;
+        while ((numRead = reader.read(buf)) != -1) {
+            String readData = String.valueOf(buf, 0, numRead);
+            fileData.append(readData);
+        }
+        reader.close();
+        return fileData.toString();
+    }
+
+
     /**
      * 获取手机当前网络类型
      *
@@ -377,12 +414,22 @@ public class DeviceIdUtil {
 
     public static String getSimOperator(String operator) {
         switch (operator) {
+            case "46000":
+                return "中国移动（GSM）";
+            case "46001":
+                return "中国联通（GSM";
+            case "46002":
+                return "中国移动（TD-S）";
+            case "46003":
+                return "中国电信（CDMA）";
             case "46005":
-                return "中国电信";
+                return "中国电信（CDMA）";
             case "46006":
-                return "中国联通";
+                return "中国联通（WCDMA）";
             case "46007":
-                return "中国移动";
+                return "中国移动（TD-S）";
+            case "46011":
+                return "中国电信（FDD-LTE）";
             default:
                 return "";
         }

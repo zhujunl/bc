@@ -1,5 +1,7 @@
 package com.example.demo_bckj.model.utility.device;
 
+import com.example.demo_bckj.model.utility.DeviceIdUtil;
+
 /**
  * @author ZJL
  * @date 2023/1/16 10:40
@@ -10,18 +12,16 @@ package com.example.demo_bckj.model.utility.device;
 
 
 public class Network {
-    private int code;
+    private String  code;
     private String intranet_ip;
     private String mac;
     private String name;
     private String type;
 
     public Network() {
-        code = 46002;
-        intranet_ip = "10.48.6.16";
-        mac = "e0:1f:88:33:01:f0";
-        name = "那就这样";
-        type = "wifi";
+        intranet_ip = DeviceIdUtil.getNetworkIp();
+//        mac = DeviceIdUtil.getNetworkMac();
+
     }
 
     public Network(Builder build) {
@@ -32,11 +32,11 @@ public class Network {
         setType(build.type);
     }
 
-    public int getCode() {
+    public String  getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -73,13 +73,13 @@ public class Network {
     }
 
     public static class Builder {
-        private int code;
+        private String code;
         private String intranet_ip;
         private String mac;
         private String name;
         private String type;
 
-        public Builder code(int val) {
+        public Builder code(String val) {
             this.code = val;
             return this;
         }
