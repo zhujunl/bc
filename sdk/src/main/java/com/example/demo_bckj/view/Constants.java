@@ -2,6 +2,7 @@ package com.example.demo_bckj.view;
 
 import android.Manifest;
 
+import com.example.demo_bckj.BuildConfig;
 import com.example.demo_bckj.model.utility.device.DeviceInfo;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class Constants {
     //    public static String BASE_URL="http://bcapi.mfbmn.com/";
-    public static String BASE_URL = "https://apitest.infinite-game.cn";
+    public static String BASE_URL = BuildConfig.baseUrl;
     public static String REGISTER = "https://static.infinite-game.cn/resources/protocol/register.html";
     public static String PRIVACY = "https://static.infinite-game.cn/resources/protocol/register.html";
     public static String DEVICE = "https://static.infinite-game.cn/resources/protocol/register.html";
