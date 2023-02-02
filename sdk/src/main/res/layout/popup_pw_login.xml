@@ -50,8 +50,8 @@
             android:src="@mipmap/removes_login"
             android:layout_centerInParent="true"
             android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/spinnerImg"
+            app:layout_constraintBottom_toBottomOf="@id/spinnerImg"
             app:layout_constraintRight_toLeftOf="@id/spinnerImg"/>
         <Button
             android:id="@+id/spinnerImg"

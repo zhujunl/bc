@@ -246,9 +246,14 @@ public class DeviceIdUtil {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return "";
         }
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);  //拿到电话管理器
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);  //拿到电话管理器
 
-        return tm.getSimSerialNumber();
+            return tm.getSimSerialNumber();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
