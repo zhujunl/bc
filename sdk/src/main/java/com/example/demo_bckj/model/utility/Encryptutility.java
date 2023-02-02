@@ -1,6 +1,9 @@
 package com.example.demo_bckj.model.utility;
 
+import android.text.TextUtils;
+
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -51,5 +54,13 @@ public class Encryptutility {
             sb.append(base.charAt(number));
         }
         return sb.toString();
+    }
+
+    public static String Base64Encode(String  encode){
+        return TextUtils.isEmpty(encode)||encode==null?null:new String(Base64.encode(encode.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    public static String Base64Decode(String decode){
+        return  TextUtils.isEmpty(decode)||decode==null?null:new String(Base64.decode(decode));
     }
 }

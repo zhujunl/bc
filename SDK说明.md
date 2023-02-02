@@ -3,7 +3,7 @@
 本SDK以aar包形式提供，需要拷贝到项目的libs目录中，在build.gradle中添加相关引用。
 
 ```java
-// 在App build.gradle的dependencies中添加依赖
+// 将aar包放入libs文件夹下，并在App build.gradle的dependencies中添加依赖
 implementation fileTree(dir: 'libs', include: ['*.aar'])
 ```
 
@@ -35,6 +35,7 @@ implementation fileTree(dir: 'libs', include: ['*.aar'])
 1. 在manifest节点加上：xmlns:tools="http://schemas.android.com/tools"
 2. 在application 节点加上：tools:replace="android:icon, android:theme" 
 3. 修改application节点中theme内容，将style parent属性改为：Theme.MaterialComponents.DayNight.NoActionBar.Bridge
+4. Activity节点中添加可旋转 android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
 ```
 
 
@@ -60,32 +61,36 @@ implementation fileTree(dir: 'libs', include: ['*.aar'])
 在MainActivity中完成初始化：
 
 ```java
-  FragmentManager fm = getSupportFragmentManager();
-        HomeFragment homeFragment=HomeFragment.getInstance(new SDKListener() {
-            @Override
-            public void Login(User user) {
-                Log.d(TAG, "登录=="+user );
-            }
+    FragmentManager fm = getSupportFragmentManager();
+    HomeFragment homeFragment=HomeFragment.getInstance(new SDKListener() {
+        @Override
+        public void Login(User user) {
+            Log.d(TAG, "登录=="+user );
+        }
 
-            @Override
-            public void SignOut() {
-                Log.d(TAG, "退出" );
-            }
+        @Override
+        public void SignOut() {
+            Log.d(TAG, "退出" );
+        }
 
-            @Override
-            public void RechargeSuccess(String orderNum) {
-                Log.d(TAG, orderNum+"充值成功");
-            }
+        @Override
+        public void RechargeSuccess(String orderNum) {
+            Log.d(TAG, orderNum+"充值成功");
+        }
 
-            @Override
-            public void RechargeFail(String message) {
-                Log.d(TAG, "充值失败=="+message);
-            }
-        });
-        fm.beginTransaction()
-                .replace(R.id.home,homeFragment)
-                .addToBackStack(null)
-                .commit();
+        @Override
+        public void RechargeFail(String message) {
+            Log.d(TAG, "充值失败=="+message);
+        }
+    });
+    fm.beginTransaction()
+        .replace(R.id.home,homeFragment)
+        .addToBackStack(null)
+        .commit();
+```
+
+```java
+SdkControl.getInstance(this).init(map);//初始化游戏信息配置，可以传null
 ```
 
 ## 接口说明
@@ -96,7 +101,7 @@ public interface SDKListener {
     /**
      * 登录
      *
-     * @param user
+     * @param user 账号信息
      */
     void Login(User user);
 
@@ -107,13 +112,14 @@ public interface SDKListener {
 
     /**
      * 充值成功
+     * @param orderNum 订单号
      */
     void RechargeSuccess(String orderNum);
 
     /**
      * 充值失败
      *
-     * @param message
+     * @param message 失败信息
      */
     void RechargeFail(String message);
 }
@@ -137,3 +143,28 @@ public interface SDKListener {
         });
 ```
 
+## 登录区服
+
+```java
+SdkControl.getInstance(this).Recharge(this, listener, new RechargeOrder.Builder()
+        .number_game("游戏订单号")
+        .props_name("物品名称")
+        .server_id("区服 ID")
+        .server_name("区服名称")
+        .role_id("角色 ID")
+        .role_name("角色名称")
+        .callback_url("https://apitest.infinite-game.cn/ping")
+        .money(1)
+        .extend_data("")
+        .build());
+```
+
+## 创建角色
+
+```java
+SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
+        .serverID("builder.serverID")
+        .serverName("builder.serverName")
+        .roleId("builder.roleId")
+        .roleName("builder.roleName").bulid());
+```

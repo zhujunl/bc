@@ -41,7 +41,10 @@ public class SdkControl {
     public SdkControl(Context context) {
         this.context = context;
     }
-
+    /**
+     * @param gameConfig 游戏配置信息，可以为空。
+     *                   存在bc_sdk_config.json时使用文件中数据，不存在时使用gameConfig数据，gameConfig为空则使用默认数据
+     * */
     public void init(Map<String, String> gameConfig) {
         boolean fileExists = FileUtil.isFileExists(context, "bc_sdk_config.json");
         if (!fileExists) {

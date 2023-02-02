@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.demo_bckj.db.MyDBHelper;
 import com.example.demo_bckj.db.entity.AccountEntity;
+import com.example.demo_bckj.model.utility.Encryptutility;
 
 /**
  * @author ZJL
@@ -35,15 +36,15 @@ public class AccountDao {
     public void insertData(AccountEntity account) {
         delete();
         ContentValues values = new ContentValues();
-        values.put("account", account.getAccount());
-        values.put("tel", account.getTel());
-        values.put("slug", account.getSlug());
-        values.put("nickName", account.getNickName());
+        values.put("account", Encryptutility.Base64Encode(account.getAccount()));
+        values.put("tel", Encryptutility.Base64Encode(account.getTel()));
+        values.put("slug", Encryptutility.Base64Encode(account.getSlug()));
+        values.put("nickName", Encryptutility.Base64Encode(account.getNickName()));
         values.put("isAuthenticated", account.getAuthenticated());
-        values.put("realName", account.getRealName());
-        values.put("birthday", account.getBirthday());
+        values.put("realName", Encryptutility.Base64Encode(account.getRealName()));
+        values.put("birthday", Encryptutility.Base64Encode(account.getBirthday()));
         values.put("age", account.getAge());
-        values.put("password", account.getPassword());
+        values.put("password", Encryptutility.Base64Encode(account.getPassword()));
         mDatabase.insert("account", null, values);
     }
 
@@ -61,15 +62,15 @@ public class AccountDao {
 
         while (cursor.moveToNext()) {
             AccountEntity account = new AccountEntity.Builder()
-                    .account(cursor.getString(1))
-                    .tel(cursor.getString(2))
-                    .slug(cursor.getString(3))
-                    .nickName(cursor.getString(4))
+                    .account(Encryptutility.Base64Decode(cursor.getString(1)))
+                    .tel(Encryptutility.Base64Decode(cursor.getString(2)))
+                    .slug(Encryptutility.Base64Decode(cursor.getString(3)))
+                    .nickName(Encryptutility.Base64Decode(cursor.getString(4)))
                     .isAuthenticated(cursor.getInt(5) == 1)
-                    .realName(cursor.getString(6))
-                    .birthday(cursor.getString(7))
+                    .realName(Encryptutility.Base64Decode(cursor.getString(6)))
+                    .birthday(Encryptutility.Base64Decode(cursor.getString(7)))
                     .age(cursor.getInt(8))
-                    .password(cursor.getString(9))
+                    .password(Encryptutility.Base64Decode(cursor.getString(9)))
                     .build();
             return account;
         }

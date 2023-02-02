@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.demo_bckj.db.MyDBHelper;
 import com.example.demo_bckj.db.entity.AccountLoginEntity;
+import com.example.demo_bckj.model.utility.Encryptutility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,8 @@ public class AccountLoginDao {
             return;
         }
         ContentValues values = new ContentValues();
-        values.put("account", account);
-        values.put("password", password);
+        values.put("account", Encryptutility.Base64Encode(account));
+        values.put("password", Encryptutility.Base64Encode(password));
         values.put("time", System.currentTimeMillis());
         mDatabase.insert("accountLogin", null, values);
     }
@@ -65,8 +66,8 @@ public class AccountLoginDao {
         while (cursor.moveToNext()) {
             AccountLoginEntity account = new AccountLoginEntity.Builder()
                     .id(cursor.getInt(0))
-                    .account(cursor.getString(1))
-                    .password(cursor.getString(2))
+                    .account(Encryptutility.Base64Decode(cursor.getString(1)))
+                    .password(Encryptutility.Base64Decode(cursor.getString(2)))
                     .time(cursor.getLong(3))
                     .build();
             lists.add(account);
@@ -82,8 +83,8 @@ public class AccountLoginDao {
         while (cursor.moveToNext()) {
             AccountLoginEntity a = new AccountLoginEntity.Builder()
                     .id(cursor.getInt(0))
-                    .account(cursor.getString(1))
-                    .password(cursor.getString(2))
+                    .account(Encryptutility.Base64Decode(cursor.getString(1)))
+                    .password(Encryptutility.Base64Decode(cursor.getString(2)))
                     .time(cursor.getLong(3))
                     .build();
             return a != null;
@@ -93,8 +94,8 @@ public class AccountLoginDao {
 
     public void update(String account, String password) {
         ContentValues values = new ContentValues();
-        values.put("password", password);
+        values.put("password", Encryptutility.Base64Encode(password));
         values.put("time", System.currentTimeMillis());
-        mDatabase.update("accountLogin", values, " account = '" + account + "'", null);
+        mDatabase.update("accountLogin", values, " account = '" + Encryptutility.Base64Decode(account) + "'", null);
     }
 }

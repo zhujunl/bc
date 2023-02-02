@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.demo_bckj.db.MyDBHelper;
 import com.example.demo_bckj.db.entity.TelEntity;
+import com.example.demo_bckj.model.utility.Encryptutility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class TelDao {
             return;
         }
         ContentValues values = new ContentValues();
-        values.put("telNumber", tel);
+        values.put("telNumber", Encryptutility.Base64Encode(tel));
         values.put("time", System.currentTimeMillis());
         mDatabase.insert("tel", null, values);
     }
@@ -64,7 +65,7 @@ public class TelDao {
         while (cursor.moveToNext()) {
             TelEntity account = new TelEntity();
             account.setId(cursor.getInt(0));
-            account.setTelNumber(cursor.getString(1));
+            account.setTelNumber(Encryptutility.Base64Decode(cursor.getString(1)));
             account.setTime(cursor.getLong(2));
             lists.add(account);
         }
@@ -74,7 +75,7 @@ public class TelDao {
     public void update(String tel) {
         ContentValues values = new ContentValues();
         values.put("time", System.currentTimeMillis());
-        mDatabase.update("tel", values, " telNumber = '" + tel + "'", null);
+        mDatabase.update("tel", values, " telNumber = '" + Encryptutility.Base64Decode(tel) + "'", null);
     }
 
     public boolean isExist(String tel) {
@@ -85,7 +86,7 @@ public class TelDao {
         while (cursor.moveToNext()) {
             TelEntity a = new TelEntity();
             a.setId(cursor.getInt(0));
-            a.setTelNumber(cursor.getString(1));
+            a.setTelNumber(Encryptutility.Base64Decode(cursor.getString(1)));
             a.setTime(cursor.getLong(2));
             return a != null;
         }

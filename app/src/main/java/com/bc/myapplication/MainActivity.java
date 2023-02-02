@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Map<String ,String > map=new HashMap<>();
         map.put("package","65767249bd2a4fb2a4e195fe59aa54aa");
+
         SdkControl.getInstance(this).init(map);
+//        SdkControl.getInstance(this).init(null);
         FragmentManager fm = getSupportFragmentManager();
         HomeFragment homeFragment = HomeFragment.getInstance(listener);
         fm.beginTransaction()
