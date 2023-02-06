@@ -81,6 +81,11 @@ public class WelfareFragment extends BaseFragment<WelfarePresenter> {
     }
 
     @Override
+    public void Login(boolean isAccount) {
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy" );

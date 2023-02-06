@@ -8,7 +8,6 @@ import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
-import com.example.demo_bckj.view.dialog.RealNameDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 
 /**
@@ -50,15 +49,6 @@ public class PersonPresenter extends BasePresenter {
         HttpManager.getInstance().modifyBindPhone(context, codeOld, codeNew, tel, dialog, bindNewPhoneDialog, this);
     }
 
-    //是否已完成实名认证
-    public void IsRealName(Context context) {
-        HttpManager.getInstance().IsRealName(context, this);
-    }
-
-    //实名认证
-    public void setRealName(Context context, String idCode, String realname, RealNameDialog realNameDialog) {
-        HttpManager.getInstance().setRealName(context, idCode, realname, realNameDialog, this);
-    }
 
     //修改密码
     public void modifyPwd(Context context, String passwordOld, String password, String passwordConfirmation, ModifyPWDialog modifyPWDialog) {
@@ -67,6 +57,6 @@ public class PersonPresenter extends BasePresenter {
 
 
     public void loginOut(Context context) {
-        HttpManager.getInstance().loginOut(context, false);
+        HttpManager.getInstance().loginOut(context, false, true);
     }
 }

@@ -95,12 +95,22 @@ public class SdkControl {
         HttpManager.getInstance().CreateRole(context, roleBean,callback);
     }
 
-    //角色登录区服
+    /**
+     *角色登录区服
+     * @param context 上下文
+     * @param roleBean 角色类
+     * @param callback 回调
+     * */
     public void LoginServer(Context context, RoleBean roleBean,MyCallback<ResponseBody> callback) {
         HttpManager.getInstance().LoginServer(context, roleBean,callback);
     }
 
-    //充值订单
+    /**
+     * 创建订单
+     * @param context 上下文
+     * @param sdkListener sdk监听接口
+     * @param rechargeOrder 订单实体类
+     * */
     public void Recharge(Activity context, SDKListener sdkListener, RechargeOrder rechargeOrder) {
         RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, sdkListener);
         rechargeSubDialog.show();
@@ -120,6 +130,19 @@ public class SdkControl {
                 .build();
         RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, sdkListener, exception);
         rechargeSubDialog.show();
+    }
+
+    /**登录
+     * @param context 上下文
+     * */
+    public void Login(Context context){
+        HttpManager.getInstance().Login(context);
+    }
+
+    /**退出登录
+     * */
+    public void LoginOut(){
+        HttpManager.getInstance().loginOut(context, false, false);
     }
 
     private String getValue(JSONObject json) {

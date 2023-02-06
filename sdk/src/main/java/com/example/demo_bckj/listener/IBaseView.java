@@ -8,4 +8,5 @@ package com.example.demo_bckj.listener;
 public interface IBaseView {
     void onSuccess(Object o);
     void onError(String msg);
+    void Login(boolean isAccount);
 }

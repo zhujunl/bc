@@ -125,6 +125,11 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
     }
 
     @Override
+    public void Login(boolean isAccount) {
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy" );

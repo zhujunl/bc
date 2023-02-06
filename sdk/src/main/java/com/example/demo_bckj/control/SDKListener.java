@@ -13,26 +13,27 @@ public interface SDKListener {
 
     /**
      * 登录
-     *
      * @param user
      */
     void Login(User user);
+
+    void LoginFail(String message);
 
     /**
      * 退出
      */
     void SignOut();
 
+    void SignOutFail(String message);
+
     /**
      * 充值成功
-     *
      * @param orderNum 订单号
      */
     void RechargeSuccess(String orderNum);
 
     /**
      * 充值失败
-     *
      * @param message 失败信息
      */
     void RechargeFail(String message);

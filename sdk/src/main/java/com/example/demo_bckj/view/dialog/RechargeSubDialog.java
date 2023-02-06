@@ -66,11 +66,13 @@ public class RechargeSubDialog extends Dialog {
     private int pos;
     private RechargeOrder rechargeOrder;
     private String orderNum;
+    private SDKListener listener;
 
     public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, SDKListener listener) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
+        this.listener=listener;
         mHandlerThread = new HandlerThread("payOrder");
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper()) {
@@ -153,8 +155,7 @@ public class RechargeSubDialog extends Dialog {
                             listener.RechargeSuccess(context.getString(R.string.orderNum) + orderNum);
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
-                            listener.RechargeFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
+                            listener.RechargeFail(context.getString(R.string.orderNum) + rechargeOrder.getNumber_game() + context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:
@@ -224,9 +225,7 @@ public class RechargeSubDialog extends Dialog {
                     rechargeDialog.show();
                     Looper.loop();
                 } else {
-                    Looper.prepare();
-                    Toast.makeText(context, aliJson.get("message").toString(), Toast.LENGTH_SHORT).show();
-                    Looper.loop();
+                    listener.RechargeFail(aliJson.get("message").toString());
                 }
             } else if (json.get("code").toString().equals("1")) {
                 Looper.prepare();
@@ -234,7 +233,7 @@ public class RechargeSubDialog extends Dialog {
                 rechargeDialog.show();
                 Looper.loop();
             } else {
-                Toast.makeText(context, json.get("message").toString(), Toast.LENGTH_SHORT).show();
+                listener.RechargeFail(json.get("message").toString());
             }
         } catch (IOException e) {
             e.printStackTrace();

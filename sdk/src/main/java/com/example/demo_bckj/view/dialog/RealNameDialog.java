@@ -63,7 +63,7 @@ public class RealNameDialog extends Dialog {
         removeCode = findViewById(R.id.popup_remove_code);
         submit = findViewById(R.id.popup_submit);
         back = findViewById(R.id.back);
-        back.setVisibility(mLogoutListener==null?View.INVISIBLE:View.VISIBLE);
+        back.setVisibility(mLogoutListener == null ? View.INVISIBLE : View.VISIBLE);
         click();
     }
 
@@ -121,8 +121,8 @@ public class RealNameDialog extends Dialog {
             code.setText("");
         });
         back.setOnClickListener(v -> {
-            if (mLogoutListener!=null){
-                mLogoutListener.out();
+            if (mLogoutListener != null) {
+                mLogoutListener.out(true);
             }
         });
     }

@@ -98,7 +98,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private ImageView userMoreAgreement;
     private ImageView userMorePrivacy;
     private TextView userQuitLogin;
-    private MyWebView myWebView, webView ,csWebView;
+    private MyWebView myWebView, webView, csWebView;
     private String string;
     private JSONObject jsonObject;
     private AlertDialog alertDialog, AgreementDialog;
@@ -133,6 +133,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             DBManager.getInstance(getActivity()).delete();
         }
     }
+
     NetworkConnectChangedReceiver networkChange;
 
     @Override
@@ -140,12 +141,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         HttpManager.getInstance().setListener(sdkListener, this, this, getActivity());
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d("tag==", getDeviceId());
-        IntentFilter filter=new IntentFilter();
+        IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         filter.addAction("android.net.wifi.STATE_CHANGE");
-        networkChange=new NetworkConnectChangedReceiver();
-        getActivity().registerReceiver(networkChange,filter);
+        networkChange = new NetworkConnectChangedReceiver();
+        getActivity().registerReceiver(networkChange, filter);
         new Thread(() -> {
             try {
                 boolean init = presenter.init(getActivity());
@@ -235,7 +236,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         personBtn = (Button) v.findViewById(R.id.person_btn);
         myWebView = v.findViewById(R.id.myWebView);
         webView = v.findViewById(R.id.WebView);
-        csWebView=v.findViewById(R.id.CSWebView);
+        csWebView = v.findViewById(R.id.CSWebView);
 
         welfareBtn.setOnClickListener(view -> {
             Welfare(false);
@@ -255,7 +256,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected HomePresenter initPresenter() {
-        return new HomePresenter(sdkListener);
+        return new HomePresenter();
     }
 
     @Override
@@ -269,10 +270,16 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     @Override
-    public void out() {
+    public void Login(boolean isAccount) {
+        loginSelect(isAccount);
+    }
+
+    @Override
+    public void out(boolean isLoginShow) {
         DrawerLayout.closeDrawers();
         RoundView.getInstance().closeRoundView(getContext());
-        getActivity().runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
+        if (isLoginShow)
+            getActivity().runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
     }
 
     @Override
@@ -282,7 +289,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(1);
-        nvTo(cs,"CService");
+        nvTo(cs, "CService");
     }
 
 
@@ -306,20 +313,20 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
                 @Override
                 public void cs(Dialog dialog) {
-                    CustomerServer(dialog,true);
+                    CustomerServer(dialog, true);
                 }
             });
         }
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         if (!isAuthenticated) {
-            RealNameDialog realNameDialog = new RealNameDialog(getActivity(), false, pf,this);
+            RealNameDialog realNameDialog = new RealNameDialog(getActivity(), false, pf, this);
             realNameDialog.show();
         }
         if (alertDialog.isShowing())
             alertDialog.dismiss();
         changeStyle(0);
-        nvTo(pf,"Personal");
+        nvTo(pf, "Personal");
     }
 
     @Override
@@ -327,7 +334,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Log.d(TAG, "Welfare");
         wp = WelfareFragment.getInstance(sdkListener, DrawerLayout);
         changeStyle(2);
-        nvTo(wp,"Welfare");
+        nvTo(wp, "Welfare");
     }
 
     @Override
@@ -336,7 +343,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         getActivity().runOnUiThread(() -> {
             DrawerLayout.closeDrawers();
             RoundView.getInstance().closeRoundView(getActivity());
-            HttpManager.getInstance().loginOut(getActivity(), false);
+            HttpManager.getInstance().loginOut(getActivity(), false, true);
             loginSelect(bcSP.getBoolean("isAccount"));
             if (pf != null)
                 pf.onDestroy();
@@ -433,7 +440,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
-        ImageView back=inflate.findViewById(R.id.popup_back);
+        ImageView back = inflate.findViewById(R.id.popup_back);
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
         TextView popupTvCode = inflate.findViewById(R.id.popup_Tv_code);
         CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
@@ -445,7 +452,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
-        back.setVisibility(isAccount?View.VISIBLE:View.INVISIBLE);
+        back.setVisibility(isAccount ? View.VISIBLE : View.INVISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
             List<TelEntity> telEntities = DBManager.getInstance(getContext()).queryTel();
@@ -465,7 +472,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popup_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popupNumberRegister("", "",false);
+                popupNumberRegister("", "", false);
             }
         });
         //输入框监听
@@ -550,7 +557,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //跳转
         popupLoginPw.setOnClickListener(view -> {
-            popupLoginPw("", "",isAccount);
+            popupLoginPw("", "", isAccount);
         });
 
 
@@ -558,7 +565,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             presenter.getDemoAccount(getActivity(), new PlayInterface() {
                 @Override
                 public void onSuccess(String account, String password) {
-                    popupNumberRegister(account, password,false);
+                    popupNumberRegister(account, password, false);
                 }
 
                 @Override
@@ -570,7 +577,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     //账号密码登录弹窗
-    private void popupLoginPw(String account, String password,boolean isAccount) {
+    private void popupLoginPw(String account, String password, boolean isAccount) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
@@ -589,7 +596,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        popup_back.setVisibility(isAccount?View.INVISIBLE:View.VISIBLE);
+        popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         spinnerImg.setOnClickListener(view -> {
             List<AccountLoginEntity> query = DBManager.getInstance(getContext()).query();
@@ -606,7 +613,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             popupLoginCode(bcSP.getBoolean("isAccount"));
         });
         //立即注册
-        popupRegister.setOnClickListener(view -> popupNumberRegister("", "",true));
+        popupRegister.setOnClickListener(view -> popupNumberRegister("", "", true));
         //忘记密码
         popup_forget_pw.setOnClickListener(view -> {
             popupForgetPassword();
@@ -717,10 +724,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-            popupLoginPw("", "",bcSP.getBoolean("isAccount"));
+            popupLoginPw("", "", bcSP.getBoolean("isAccount"));
         });
         //跳转联系客服
-        popup_service.setOnClickListener(view ->  CustomerServer(alertDialog,false));
+        popup_service.setOnClickListener(view -> CustomerServer(alertDialog, false));
         //输入框监听
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
@@ -876,7 +883,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     }
 
     //账号密码注册弹窗
-    private void popupNumberRegister(String user, String password,boolean isAccount) {
+    private void popupNumberRegister(String user, String password, boolean isAccount) {
         View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.popup_number_register, null);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         EditText popup_number = inflate.findViewById(R.id.popup_number);
@@ -897,9 +904,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
         //返回
         popup_back.setOnClickListener(view -> {
-            if (isAccount){
-                popupLoginPw("","", bcSP.getBoolean("isAccount"));
-            }else {
+            if (isAccount) {
+                popupLoginPw("", "", bcSP.getBoolean("isAccount"));
+            } else {
                 popupLoginCode(bcSP.getBoolean("isAccount"));
             }
         });
@@ -1035,10 +1042,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
     }
 
-    private void loginSelect(boolean isAccount){
-        if (isAccount){
-            popupLoginPw("","", true);
-        }else {
+    private void loginSelect(boolean isAccount) {
+        if (isAccount) {
+            popupLoginPw("", "", true);
+        } else {
             popupLoginCode(false);
         }
     }
@@ -1171,8 +1178,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         myWebView.show(Constants.PRIVACY);
     }
 
-    /**客服网页*/
-    public void CustomerServer(Dialog dialog ,boolean isShow){
+    /**
+     * 客服网页
+     */
+    public void CustomerServer(Dialog dialog, boolean isShow) {
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
@@ -1183,7 +1192,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         csWebView.show(Constants.CUSTOMER_SERVICE);
         csWebView.btnListener(view -> {
             csWebView.setVisibility(View.INVISIBLE);
-            if ( !dialog.isShowing())
+            if (!dialog.isShowing())
                 dialog.show();
             if (isShow)
                 DrawerLayout.openDrawer(Gravity.LEFT);
@@ -1191,7 +1200,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         csWebView.setOnKey((view, i, keyEvent) -> {
             if (i == KeyEvent.KEYCODE_BACK) {
                 csWebView.setVisibility(View.INVISIBLE);
-                if ( !dialog.isShowing())
+                if (!dialog.isShowing())
                     dialog.show();
                 if (isShow)
                     DrawerLayout.openDrawer(Gravity.LEFT);

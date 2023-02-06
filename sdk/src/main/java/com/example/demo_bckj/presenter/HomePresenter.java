@@ -8,16 +8,17 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.demo_bckj.base.BasePresenter;
+import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.control.SDKListener;
+import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author ZJL
@@ -27,21 +28,14 @@ import java.util.List;
  * @updateDes
  */
 public class HomePresenter extends BasePresenter {
-    private SDKListener sdkListener;
-    private List<String> accountLists, telLists;
 
-    public void setLists(List<String> accountLists, List<String> telLists) {
-        this.accountLists = accountLists;
-        this.telLists = telLists;
+
+
+
+    public HomePresenter() {
+        HttpManager.getInstance().setHomePresenter(this);
     }
 
-    public HomePresenter(SDKListener sdkListener) {
-        this.sdkListener = sdkListener;
-    }
-
-    public void setListener(SDKListener listener) {
-        this.sdkListener = listener;
-    }
 
     public boolean init(Context context) throws IOException {
         return HttpManager.getInstance().init(context);
@@ -57,7 +51,6 @@ public class HomePresenter extends BasePresenter {
             HttpManager.getInstance().getSdk(context, this, id);
         }
     }
-
 
     //获取手机验证码
     public void getPhoneLoginCode(Context context, String tel) {
@@ -112,7 +105,7 @@ public class HomePresenter extends BasePresenter {
      *
      * @param registerDialog
      */
-    public void getScreenView(AlertDialog registerDialog, Activity activity) {
+    private void getScreenView(AlertDialog registerDialog, Activity activity) {
         //获取窗口管理类,获取窗口的宽度和高度
         WindowManager windowManager = activity.getWindowManager();
         Display display = windowManager.getDefaultDisplay();
@@ -132,4 +125,17 @@ public class HomePresenter extends BasePresenter {
         bitmap = screenView.getDrawingCache();
         FileUtil.saveImg(activity, bitmap);
     }
+
+    public void Login(Context context){
+        if (view!=null){
+            AccountEntity account = DBManager.getInstance(context).getAccount();
+            if (account!=null){
+                Toast.makeText(context, "请先退出登录账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            SPUtils bcSP=SPUtils.getInstance(context,"bcSP");
+            view.Login(bcSP.getBoolean("isAccount"));
+        }
+    }
+
 }

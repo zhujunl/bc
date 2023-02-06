@@ -112,6 +112,11 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     }
 
+    @Override
+    public void Login(boolean isAccount) {
+
+    }
+
     public void init() {
         dao = DBManager.getInstance(getActivity()).getDao();
         AccountEntity query = dao.query();

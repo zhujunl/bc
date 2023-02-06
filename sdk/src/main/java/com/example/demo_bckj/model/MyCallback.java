@@ -45,6 +45,10 @@ public abstract class MyCallback<ResponseBody extends okhttp3.ResponseBody> impl
         this.mContext = mContext;
     }
 
+    public void setContext(Context context){
+        this.mContext=context;
+    }
+
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
         if (response == null || response.body() == null) {

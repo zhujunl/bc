@@ -27,11 +27,11 @@ import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.service.TimeService;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
-import com.example.demo_bckj.view.dialog.RealNameDialog;
 import com.example.demo_bckj.view.dialog.UnderAgeDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 import com.example.demo_bckj.view.round.RoundView;
@@ -55,6 +55,7 @@ public class HttpManager {
     private LogoutListener logoutListener;
     private ClickListener listener;
     private Context context;
+    private HomePresenter homePresenter;
 
     private static HttpManager instance;
 
@@ -75,6 +76,9 @@ public class HttpManager {
         this.context = context;
     }
 
+    public void setHomePresenter(HomePresenter homePresenter) {
+        this.homePresenter = homePresenter;
+    }
 
     public boolean init(Context context) throws IOException {
         Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().init().execute();
@@ -206,7 +210,8 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        sdkListener.LoginFail("登录失败，"+message);
                     }
                 });
     }
@@ -241,7 +246,8 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        sdkListener.LoginFail("登录失败，"+message);
                     }
                 });
     }
@@ -273,7 +279,8 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        sdkListener.LoginFail("登录失败，"+message);
                     }
                 });
     }
@@ -332,9 +339,9 @@ public class HttpManager {
                     dialog.dismiss();
                 }
                 if (isLogin) {
-                    loginOut(context, false);
+                    loginOut(context, false, true);
                 } else {
-                    logoutListener.out();
+                    logoutListener.out(true);
                 }
             }
 
@@ -481,11 +488,6 @@ public class HttpManager {
         });
     }
 
-    //实名认证
-    public void setRealName(Context context, String idCode, String realname, RealNameDialog realNameDialog, BasePresenter presenter) {
-
-    }
-
     //用户在线
     public void isOnline(Context c) {
         RetrofitManager.getInstance(c).getApiService().isOnline().enqueue(new MyCallback<ResponseBody>() {
@@ -518,7 +520,7 @@ public class HttpManager {
             public void onSuccess(JSONObject jsStr) {
                 modifyPWDialog.dismiss();
                 Toast.makeText(context, "密码修改成功", Toast.LENGTH_SHORT).show();
-                loginOut(context, false);
+                loginOut(context, false, true);
             }
 
             @Override
@@ -529,7 +531,7 @@ public class HttpManager {
     }
 
     //退出
-    public void loginOut(Context context, boolean isDestroy) {
+    public void loginOut(Context context, boolean isDestroy, boolean isLoginShow) {
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -539,15 +541,22 @@ public class HttpManager {
                 if (isDestroy)
                     System.exit(0);
                 if (logoutListener != null) {
-                    logoutListener.out();
+                    logoutListener.out(isLoginShow);
                 }
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                sdkListener.LoginFail("退出失败，"+message);
             }
         });
+    }
+
+    /**登录*/
+    public void Login(Context context) {
+        if (homePresenter != null) {
+            homePresenter.Login(context);
+        }
     }
 
     //用户创角

@@ -3,7 +3,6 @@ package com.bc.myapplication;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.control.SDKListener;
@@ -30,8 +29,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void LoginFail(String message) {
+
+        }
+
+        @Override
         public void SignOut() {
             Log.d(TAG, "退出");
+        }
+
+        @Override
+        public void SignOutFail(String message) {
+
         }
 
         @Override
@@ -49,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Map<String ,String > map=new HashMap<>();
-        map.put("package","65767249bd2a4fb2a4e195fe59aa54aa");
+        Map<String, String> map = new HashMap<>();
+        map.put("package", "65767249bd2a4fb2a4e195fe59aa54aa");
 
         SdkControl.getInstance(this).init(map);
-//        SdkControl.getInstance(this).init(null);
+        //        SdkControl.getInstance(this).init(null);
         FragmentManager fm = getSupportFragmentManager();
         HomeFragment homeFragment = HomeFragment.getInstance(listener);
         fm.beginTransaction()
@@ -64,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         Button p = findViewById(R.id.pay);
         Button l = findViewById(R.id.loginServer);
         Button c = findViewById(R.id.createRole);
+        Button login = findViewById(R.id.login_account);
+        Button out = findViewById(R.id.loginOut);
 
         p.setOnClickListener(v -> {
             SdkControl.getInstance(this).Recharge(this, listener, new RechargeOrder.Builder()
@@ -85,12 +96,12 @@ public class MainActivity extends AppCompatActivity {
                     .roleId("builder.roleId")
                     .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
                 public void onSuccess(JSONObject jsStr) {
-                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
+                    Log.d("CreateRole", "onSuccess:"+jsStr.toString());
                 }
 
                 @Override
                 public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
+                    Log.d("CreateRole", "onError:"+message);
                 }
             });
         });
@@ -101,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
                     .roleId("builder.roleId")
                     .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
                 public void onSuccess(JSONObject jsStr) {
-                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
+                    Log.d("LoginServer", "onSuccess:"+jsStr.toString());
                 }
 
                 @Override
                 public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
+                    Log.d("LoginServer", "onError:"+message);
                 }
             });
         });
@@ -114,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
         b.setOnClickListener(v -> {
             SdkControl.getInstance(this).Recharge(this, listener, true);
         });
+        login.setOnClickListener(v -> SdkControl.getInstance(MainActivity.this).Login(MainActivity.this));
+        out.setOnClickListener(v -> SdkControl.getInstance(MainActivity.this).LoginOut());
 
     }
 }

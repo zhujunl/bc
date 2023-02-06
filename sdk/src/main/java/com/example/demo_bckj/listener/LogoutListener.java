@@ -8,5 +8,5 @@ package com.example.demo_bckj.listener;
  * @updateDes
  */
 public interface LogoutListener {
-    void out();
+    void out(boolean isLoginShow);
 }
