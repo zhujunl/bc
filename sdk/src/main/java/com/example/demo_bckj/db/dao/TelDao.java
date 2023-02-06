@@ -75,11 +75,11 @@ public class TelDao {
     public void update(String tel) {
         ContentValues values = new ContentValues();
         values.put("time", System.currentTimeMillis());
-        mDatabase.update("tel", values, " telNumber = '" + Encryptutility.Base64Decode(tel) + "'", null);
+        mDatabase.update("tel", values, " telNumber = '" + Encryptutility.Base64Encode(tel) + "'", null);
     }
 
     public boolean isExist(String tel) {
-        Cursor cursor = mDatabase.rawQuery("SELECT * FROM tel WHERE telNumber= ? ", new String[]{tel});
+        Cursor cursor = mDatabase.rawQuery("SELECT * FROM tel WHERE telNumber= ? ", new String[]{Encryptutility.Base64Encode(tel)});
         if (cursor == null) {
             return false;
         }

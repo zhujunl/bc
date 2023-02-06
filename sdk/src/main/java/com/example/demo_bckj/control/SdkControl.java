@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.demo_bckj.manager.HttpManager;
+import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.utility.FileUtil;
@@ -18,6 +19,8 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import okhttp3.ResponseBody;
 
 /**
  * @author ZJL
@@ -88,13 +91,13 @@ public class SdkControl {
     }
 
     //用户创角
-    public void CreateRole(Context context, RoleBean roleBean) {
-        HttpManager.getInstance().CreateRole(context, roleBean);
+    public void CreateRole(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
+        HttpManager.getInstance().CreateRole(context, roleBean,callback);
     }
 
     //角色登录区服
-    public void LoginServer(Context context, RoleBean roleBean) {
-        HttpManager.getInstance().LoginServer(context, roleBean);
+    public void LoginServer(Context context, RoleBean roleBean,MyCallback<ResponseBody> callback) {
+        HttpManager.getInstance().LoginServer(context, roleBean,callback);
     }
 
     //充值订单

@@ -47,6 +47,8 @@
 -keep class com.example.demo_bckj.manager.**{*;}
 -keep class com.example.demo_bckj.model.**{*;}
 -keep class com.example.demo_bckj.control.**{*;}
+-keep class com.example.demo_bckj.view.**{*;}
+-keep class com.example.demo_bckj.service.**{*;}
 -keep public class * extends android.app.Fragment
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

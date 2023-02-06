@@ -88,7 +88,7 @@ public class HttpManager {
             Constants.DEVICE = urlBean.getProtocol_url().getDevice();
             Constants.REGISTER = urlBean.getProtocol_url().getRegister();
             Constants.PRIVACY = urlBean.getProtocol_url().getPrivacy();
-            Constants.CUSTOMER_SERVICE=urlBean.getUrl().getCustomer_service();
+            Constants.CUSTOMER_SERVICE = urlBean.getUrl().getCustomer_service();
             return true;
         } else {
             return false;
@@ -199,7 +199,7 @@ public class HttpManager {
                         sdkListener.Login(user);
                         TimeService.start(context);
                         DBManager.getInstance(context).insertTel(tel);
-                        SPUtils.getInstance(context,"bcSP").put("isAccount",false);
+                        SPUtils.getInstance(context, "bcSP").put("isAccount", false);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
@@ -231,8 +231,8 @@ public class HttpManager {
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
-                        DBManager.getInstance(context).insertAccount(number,pass);
-                        SPUtils.getInstance(context,"bcSP").put("isAccount",true);
+                        DBManager.getInstance(context).insertAccount(number, pass);
+                        SPUtils.getInstance(context, "bcSP").put("isAccount", true);
                         alertDialog.dismiss();
                         RoundView.getInstance().showRoundView(context, listener);
                         thread.start();
@@ -265,8 +265,8 @@ public class HttpManager {
                                 .token(authorization.getAuthorization())
                                 .build();
                         sdkListener.Login(user);
-                        SPUtils.getInstance(context,"bcSP").put("isAccount",true);
-                        DBManager.getInstance(context).insertAccount(name,password);
+                        SPUtils.getInstance(context, "bcSP").put("isAccount", true);
+                        DBManager.getInstance(context).insertAccount(name, password);
                         RoundView.getInstance().showRoundView(context, listener);
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
@@ -322,7 +322,7 @@ public class HttpManager {
     }
 
     //重置密码
-    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation, Dialog dialog,boolean isLogin) {
+    public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation, Dialog dialog, boolean isLogin) {
         RetrofitManager.getInstance(context).getApiService().resetPwd(tel, code, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -331,9 +331,9 @@ public class HttpManager {
                 if (dialog != null) {
                     dialog.dismiss();
                 }
-                if (isLogin){
-                    loginOut(context,false);
-                }else {
+                if (isLogin) {
+                    loginOut(context, false);
+                } else {
                     logoutListener.out();
                 }
             }
@@ -368,7 +368,7 @@ public class HttpManager {
                         .token(authorization.getAuthorization())
                         .build();
                 sdkListener.Login(user);
-                Log.d(TAG, "refreshToken"+"Thread=="+Thread.currentThread().getName());
+                Log.d(TAG, "refreshToken" + "Thread==" + Thread.currentThread().getName());
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
             }
@@ -518,7 +518,7 @@ public class HttpManager {
             public void onSuccess(JSONObject jsStr) {
                 modifyPWDialog.dismiss();
                 Toast.makeText(context, "密码修改成功", Toast.LENGTH_SHORT).show();
-                loginOut(context,false);
+                loginOut(context, false);
             }
 
             @Override
@@ -551,34 +551,14 @@ public class HttpManager {
     }
 
     //用户创角
-    public void CreateRole(Context context, RoleBean roleBean) {
+    public void CreateRole(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
         RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean.getRoleId(), roleBean.getServerName(),
-                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(JSONObject jsStr) {
-                Toast.makeText(context, jsStr.toString(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, "失败" + message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(callback);
     }
 
     //角色登录区服
-    public void LoginServer(Context context, RoleBean roleBean) {
+    public void LoginServer(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
         RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean.getRoleId(), roleBean.getServerName(),
-                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(JSONObject jsStr) {
-                Toast.makeText(context, jsStr.toString(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, "失败" + message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                roleBean.getRoleId(), roleBean.getRoleName()).enqueue((callback));
     }
 }

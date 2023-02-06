@@ -76,7 +76,8 @@ public class AccountLoginDao {
     }
 
     private boolean isExist(String account, String password) {
-        Cursor cursor = mDatabase.rawQuery("SELECT * FROM accountLogin WHERE account= ? AND password=? ", new String[]{account, password});
+        Cursor cursor = mDatabase.rawQuery("SELECT * FROM accountLogin WHERE account= ? AND password=? ",
+                new String[]{Encryptutility.Base64Encode(account), Encryptutility.Base64Encode(password)});
         if (cursor == null) {
             return false;
         }
@@ -96,6 +97,6 @@ public class AccountLoginDao {
         ContentValues values = new ContentValues();
         values.put("password", Encryptutility.Base64Encode(password));
         values.put("time", System.currentTimeMillis());
-        mDatabase.update("accountLogin", values, " account = '" + Encryptutility.Base64Decode(account) + "'", null);
+        mDatabase.update("accountLogin", values, " account = '" + Encryptutility.Base64Encode(account) + "'", null);
     }
 }

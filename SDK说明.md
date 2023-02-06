@@ -146,19 +146,37 @@ public interface SDKListener {
 ## 登录区服
 
 ```
-SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
-        .serverID("builder.serverID")
-        .serverName("builder.serverName")
-        .roleId("builder.roleId")
-        .roleName("builder.roleName").bulid());
+ SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
+                    .serverID("builder.serverID")
+                    .serverName("builder.serverName")
+                    .roleId("builder.roleId")
+                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
+                public void onSuccess(JSONObject jsStr) {
+                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
+                }
+            });
 ```
 
 ## 创建角色
 
 ```java
-SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
-        .serverID("builder.serverID")
-        .serverName("builder.serverName")
-        .roleId("builder.roleId")
-        .roleName("builder.roleName").bulid());
+ SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
+                    .serverID("builder.serverID")
+                    .serverName("builder.serverName")
+                    .roleId("builder.roleId")
+                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
+                public void onSuccess(JSONObject jsStr) {
+                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
+                }
+            });
 ```

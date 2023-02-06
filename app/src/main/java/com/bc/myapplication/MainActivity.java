@@ -3,9 +3,12 @@ package com.bc.myapplication;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.control.SdkControl;
+import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.User;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
     String TAG = "MainActivity";
@@ -79,14 +83,32 @@ public class MainActivity extends AppCompatActivity {
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid());
+                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
+                public void onSuccess(JSONObject jsStr) {
+                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
+                }
+            });
         });
         l.setOnClickListener(v -> {
             SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid());
+                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
+                public void onSuccess(JSONObject jsStr) {
+                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
+                }
+            });
         });
         Button b = findViewById(R.id.payException);
         b.setOnClickListener(v -> {
