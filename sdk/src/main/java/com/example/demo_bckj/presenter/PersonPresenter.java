@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.TextView;
 
 import com.example.demo_bckj.base.BasePresenter;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
@@ -18,12 +17,6 @@ import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
  * @updateDes
  */
 public class PersonPresenter extends BasePresenter {
-    private SDKListener sdkListener;
-
-    public PersonPresenter(SDKListener sdkListener) {
-        this.sdkListener = sdkListener;
-    }
-
     //绑定手机发送验证码
     public void BindPhoneCode(Context context, String tel, TextView TCode) {
         HttpManager.getInstance().BindPhoneCode(context, tel, TCode);

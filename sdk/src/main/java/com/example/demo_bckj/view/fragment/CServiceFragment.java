@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.model.bean.ChatBean;
 import com.example.demo_bckj.presenter.CServicePresenter;
 import com.example.demo_bckj.view.adapter.CSAdapter;
@@ -59,7 +58,7 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
 
     private static String TAG="CServiceFragment";
 
-    public static CServiceFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout) {
+    public static CServiceFragment getInstance( DrawerLayout drawerLayout) {
         if (instance == null) {
             instance = new CServiceFragment(drawerLayout);
         }

@@ -2,6 +2,7 @@ package com.example.demo_bckj.control;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.demo_bckj.manager.HttpManager;
@@ -17,6 +18,7 @@ import com.example.demo_bckj.view.dialog.RechargeSubDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -29,39 +31,47 @@ import okhttp3.ResponseBody;
  * @updateAuthor
  * @updateDes
  */
-public class SdkControl {
+public class SDKManager {
 
-    private static SdkControl instance;
+    private static SDKManager instance;
     private Context context;
 
-    public static SdkControl getInstance(Context context) {
+    public static SDKManager getInstance() {
         if (instance == null) {
-            instance = new SdkControl(context);
+            instance = new SDKManager();
         }
         return instance;
     }
 
-    public SdkControl(Context context) {
-        this.context = context;
+    public SDKManager() {
     }
+
     /**
-     * @param gameConfig 游戏配置信息，可以为空。
-     *                   存在bc_sdk_config.json时使用文件中数据，不存在时使用gameConfig数据，gameConfig为空则使用默认数据
-     * */
-    public void init(Map<String, String> gameConfig) {
+     * SDK初始化接口
+     *
+     * @param context    上下文
+     * @param gameId 游戏配置信息，可以为空。
+     *
+     */
+    public void init(Activity context, String gameId) {
+        this.context = context;
+        Map<String, String> map = new HashMap<>();
+        map.put("game", gameId); // 游戏唯一标识
         boolean fileExists = FileUtil.isFileExists(context, "bc_sdk_config.json");
         if (!fileExists) {
-            if (gameConfig != null) {
-                if (!hasGame(gameConfig)) {
-                    gameConfig.put("game", Constants.GAME);
+            if (map != null&& !TextUtils.isEmpty(gameId)) {
+                if (!hasGame(map)) {
+                    map.put("game", Constants.GAME);
                 }
-                Constants.DEVICEINFO = new DeviceInfo(gameConfig, new Device(context));
+                Constants.DEVICEINFO = new DeviceInfo(map, new Device(context));
             } else {
                 Constants.DEVICEINFO = new DeviceInfo(Constants.MAP, new Device(context));
             }
         } else {
             Constants.DEVICEINFO = new DeviceInfo(FileUtil.getMap(context, "bc_sdk_config.json"), new Device(context));
         }
+
+
     }
 
     private boolean hasGame(Map<String, String> map) {
@@ -90,33 +100,41 @@ public class SdkControl {
         return flag;
     }
 
-    //用户创角
+    /**
+     * 用户创角
+     *
+     * @param context  上下文
+     * @param roleBean 角色类
+     * @param callback 回调
+     */
     public void CreateRole(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
-        HttpManager.getInstance().CreateRole(context, roleBean,callback);
+        HttpManager.getInstance().CreateRole(context, roleBean, callback);
     }
 
     /**
-     *角色登录区服
-     * @param context 上下文
+     * 角色登录区服
+     *
+     * @param context  上下文
      * @param roleBean 角色类
      * @param callback 回调
-     * */
-    public void LoginServer(Context context, RoleBean roleBean,MyCallback<ResponseBody> callback) {
-        HttpManager.getInstance().LoginServer(context, roleBean,callback);
+     */
+    public void LoginServer(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
+        HttpManager.getInstance().LoginServer(context, roleBean, callback);
     }
 
     /**
      * 创建订单
-     * @param context 上下文
-     * @param sdkListener sdk监听接口
-     * @param rechargeOrder 订单实体类
-     * */
-    public void Recharge(Activity context, SDKListener sdkListener, RechargeOrder rechargeOrder) {
-        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, sdkListener);
+     *
+     * @param context          上下文
+     * @param rechargeOrder    订单实体类
+     * @param rechargeListener 订单支付回调监听
+     */
+    public void Recharge(Activity context, RechargeOrder rechargeOrder, RechargeListener rechargeListener) {
+        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, rechargeListener);
         rechargeSubDialog.show();
     }
 
-    public void Recharge(Activity context, SDKListener sdkListener, boolean exception) {
+    public void Recharge(Activity context, boolean exception, RechargeListener listener) {
         RechargeOrder rechargeOrder = new RechargeOrder.Builder()
                 .number_game("游戏订单号")
                 .props_name("物品名称")
@@ -128,21 +146,29 @@ public class SdkControl {
                 .money(1)
                 .extend_data("")
                 .build();
-        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, sdkListener, exception);
+        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, listener, exception);
         rechargeSubDialog.show();
     }
 
-    /**登录
-     * @param context 上下文
-     * */
-    public void Login(Context context){
-        HttpManager.getInstance().Login(context);
+    /**
+     * 游戏主动登录
+     *
+     * @param context       上下文
+     * @param loginListener 登录回调监听
+     */
+    public void Login(Context context, LoginListener loginListener) {
+        HttpManager.getInstance().Login(context, loginListener);
     }
 
-    /**退出登录
-     * */
-    public void LoginOut(){
-        HttpManager.getInstance().loginOut(context, false, false);
+    /**
+     * 游戏主动退出登录
+     *
+     * @param isDestroy        退出登录是否退出应用
+     * @param isLoginShow      退出登录是否弹出登录
+     * @param loginOutListener 退出回调监听
+     */
+    public void LoginOut(boolean isDestroy, boolean isLoginShow, LoginOutListener loginOutListener) {
+        HttpManager.getInstance().loginOut(context, isDestroy, isLoginShow, loginOutListener);
     }
 
     private String getValue(JSONObject json) {
@@ -156,12 +182,12 @@ public class SdkControl {
                 o = json.get(next);
                 if (o instanceof String) {
                     sb.append("\"").append(next).append("\":\"").append(o.toString()).append("\",");
-                    Log.d("getValue", "String=="+sb.toString());
+                    Log.d("getValue", "String==" + sb.toString());
                 } else {
                     JSONObject jsonObject = new JSONObject(o.toString());
                     String value = getValue(jsonObject);
                     sb.append("\"").append(next).append("\":").append(value).append(",");
-                    Log.d("getValue", "Object=="+sb.toString());
+                    Log.d("getValue", "Object==" + sb.toString());
                 }
             }
             Log.d("getValue", "sb=" + sb.toString());

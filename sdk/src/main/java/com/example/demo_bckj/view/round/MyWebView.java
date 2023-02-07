@@ -27,6 +27,7 @@ public class MyWebView extends FrameLayout {
     private TextView tittle;
 
 
+
     public MyWebView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.view_web,this);

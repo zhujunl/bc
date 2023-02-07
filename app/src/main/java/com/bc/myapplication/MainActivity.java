@@ -5,16 +5,15 @@ import android.util.Log;
 import android.widget.Button;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo_bckj.control.SDKListener;
-import com.example.demo_bckj.control.SdkControl;
+import com.example.demo_bckj.control.LoginListener;
+import com.example.demo_bckj.control.LoginOutListener;
+import com.example.demo_bckj.control.RechargeListener;
+import com.example.demo_bckj.control.SDKManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.view.fragment.HomeFragment;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,49 +21,35 @@ import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
     String TAG = "MainActivity";
-    SDKListener listener = new SDKListener() {
-        @Override
-        public void Login(User user) {
-            Log.d(TAG, "登录==" + user);
-        }
-
-        @Override
-        public void LoginFail(String message) {
-
-        }
-
-        @Override
-        public void SignOut() {
-            Log.d(TAG, "退出");
-        }
-
-        @Override
-        public void SignOutFail(String message) {
-
-        }
-
-        @Override
-        public void RechargeSuccess(String orderNum) {
-            Log.d(TAG, orderNum + "充值成功");
-        }
-
-        @Override
-        public void RechargeFail(String message) {
-            Log.d(TAG, "充值失败==" + message);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Map<String, String> map = new HashMap<>();
-        map.put("package", "65767249bd2a4fb2a4e195fe59aa54aa");
 
-        SdkControl.getInstance(this).init(map);
-        //        SdkControl.getInstance(this).init(null);
+        SDKManager.getInstance().init(MainActivity.this, "");
         FragmentManager fm = getSupportFragmentManager();
-        HomeFragment homeFragment = HomeFragment.getInstance(listener);
+        HomeFragment homeFragment = HomeFragment.getInstance(new LoginListener() {
+            @Override
+            public void onSuccess(User user) {
+                Log.d(TAG, "default login success");
+            }
+
+            @Override
+            public void onFail(String message) {
+                Log.d(TAG, "default login fail");
+            }
+        }, new LoginOutListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "default sign out success");
+            }
+
+            @Override
+            public void onFail(String message) {
+                Log.d(TAG, "default sign out fail");
+            }
+        });
         fm.beginTransaction()
                 .replace(R.id.home, homeFragment)
                 .addToBackStack(null)
@@ -77,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         Button out = findViewById(R.id.loginOut);
 
         p.setOnClickListener(v -> {
-            SdkControl.getInstance(this).Recharge(this, listener, new RechargeOrder.Builder()
+            SDKManager.getInstance().Recharge(MainActivity.this, new RechargeOrder.Builder()
                     .number_game("游戏订单号")
                     .props_name("物品名称")
                     .server_id("区服 ID")
@@ -87,46 +72,89 @@ public class MainActivity extends AppCompatActivity {
                     .callback_url("https://apitest.infinite-game.cn/ping")
                     .money(1)
                     .extend_data("")
-                    .build());
+                    .build(), new RechargeListener() {
+                @Override
+                public void onSuccess(String orderNum) {
+
+                }
+
+                @Override
+                public void onFail(String message) {
+
+                }
+            });
         });
         c.setOnClickListener(v -> {
-            SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
+            SDKManager.getInstance().CreateRole(MainActivity.this, new RoleBean.Builder()
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
                     .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
                 public void onSuccess(JSONObject jsStr) {
-                    Log.d("CreateRole", "onSuccess:"+jsStr.toString());
+                    Log.d("CreateRole", "onSuccess:" + jsStr.toString());
                 }
 
                 @Override
                 public void onError(String message) {
-                    Log.d("CreateRole", "onError:"+message);
+                    Log.d("CreateRole", "onError:" + message);
                 }
             });
         });
         l.setOnClickListener(v -> {
-            SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
+            SDKManager.getInstance().LoginServer(MainActivity.this, new RoleBean.Builder()
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
                     .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
                 public void onSuccess(JSONObject jsStr) {
-                    Log.d("LoginServer", "onSuccess:"+jsStr.toString());
+                    Log.d("LoginServer", "onSuccess:" + jsStr.toString());
                 }
 
                 @Override
                 public void onError(String message) {
-                    Log.d("LoginServer", "onError:"+message);
+                    Log.d("LoginServer", "onError:" + message);
                 }
             });
         });
         Button b = findViewById(R.id.payException);
         b.setOnClickListener(v -> {
-            SdkControl.getInstance(this).Recharge(this, listener, true);
-        });
-        login.setOnClickListener(v -> SdkControl.getInstance(MainActivity.this).Login(MainActivity.this));
-        out.setOnClickListener(v -> SdkControl.getInstance(MainActivity.this).LoginOut());
+            SDKManager.getInstance().Recharge(this, true, new RechargeListener() {
+                @Override
+                public void onSuccess(String orderNum) {
 
+                }
+
+                @Override
+                public void onFail(String message) {
+
+                }
+            });
+        });
+
+        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, new LoginListener() {
+            @Override
+            public void onSuccess(User user) {
+
+            }
+
+            @Override
+            public void onFail(String message) {
+
+            }
+        }));
+
+        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, new LoginOutListener() {
+            @Override
+            public void onSuccess() {
+                Log.d("out", "onSuccess");
+            }
+
+            @Override
+            public void onFail(String message) {
+                Log.d("out", "onFail:" + message);
+            }
+        }));
     }
+
+
 }

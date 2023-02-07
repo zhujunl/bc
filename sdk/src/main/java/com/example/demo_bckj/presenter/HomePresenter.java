@@ -30,8 +30,6 @@ import java.io.IOException;
 public class HomePresenter extends BasePresenter {
 
 
-
-
     public HomePresenter() {
         HttpManager.getInstance().setHomePresenter(this);
     }
@@ -91,7 +89,7 @@ public class HomePresenter extends BasePresenter {
 
     //重置密码
     public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation) {
-        HttpManager.getInstance().resetPwd(context, tel, code, password, passwordConfirmation,null,false);
+        HttpManager.getInstance().resetPwd(context, tel, code, password, passwordConfirmation, null, false);
     }
 
 
@@ -126,14 +124,14 @@ public class HomePresenter extends BasePresenter {
         FileUtil.saveImg(activity, bitmap);
     }
 
-    public void Login(Context context){
-        if (view!=null){
+    public void Login(Context context) {
+        if (view != null) {
             AccountEntity account = DBManager.getInstance(context).getAccount();
-            if (account!=null){
+            if (account != null) {
                 Toast.makeText(context, "请先退出登录账号", Toast.LENGTH_SHORT).show();
                 return;
             }
-            SPUtils bcSP=SPUtils.getInstance(context,"bcSP");
+            SPUtils bcSP = SPUtils.getInstance(context, "bcSP");
             view.Login(bcSP.getBoolean("isAccount"));
         }
     }

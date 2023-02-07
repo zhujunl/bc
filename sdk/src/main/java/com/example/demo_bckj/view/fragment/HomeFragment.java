@@ -19,7 +19,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,7 +36,8 @@ import android.widget.Toast;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.broadcast.NetworkConnectChangedReceiver;
-import com.example.demo_bckj.control.SDKListener;
+import com.example.demo_bckj.control.LoginListener;
+import com.example.demo_bckj.control.LoginOutListener;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.TelEntity;
@@ -51,11 +51,8 @@ import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.view.Constants;
-import com.example.demo_bckj.view.dialog.PrivacyDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
-import com.example.demo_bckj.view.dialog.UserAgreeDialog;
 import com.example.demo_bckj.view.pop.PopupTel;
-import com.example.demo_bckj.view.round.MyWebView;
 import com.example.demo_bckj.view.round.RoundView;
 
 import org.json.JSONObject;
@@ -65,6 +62,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
 
@@ -80,9 +78,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     public static HomeFragment instance;
 
-    public static HomeFragment getInstance(SDKListener sdkListener) {
+    public static HomeFragment getInstance(LoginListener loginListener, LoginOutListener loginOutListener) {
         if (instance == null) {
-            instance = new HomeFragment(sdkListener);
+            instance = new HomeFragment(loginListener,loginOutListener);
         }
         return instance;
     }
@@ -98,13 +96,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private ImageView userMoreAgreement;
     private ImageView userMorePrivacy;
     private TextView userQuitLogin;
-    private MyWebView myWebView, webView, csWebView;
     private String string;
     private JSONObject jsonObject;
     private AlertDialog alertDialog, AgreementDialog;
     AlertDialog.Builder AutoBuilder;
-    private PrivacyDialog mPrivacyDialog;
-    private UserAgreeDialog mUserAgreeDialog;
+
 
 
     private CServiceFragment cs;
@@ -119,10 +115,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     private String tel = null;
     SPUtils bcSP;
-    private SDKListener sdkListener;
+    private LoginListener loginListener;
+    private LoginOutListener loginOutListener;
 
-    public HomeFragment(SDKListener sdkListener) {
-        this.sdkListener = sdkListener;
+    public HomeFragment(LoginListener loginListener, LoginOutListener loginOutListener) {
+        this.loginListener = loginListener;
+        this.loginOutListener=loginOutListener;
     }
 
     @Override
@@ -138,7 +136,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        HttpManager.getInstance().setListener(sdkListener, this, this, getActivity());
+        HttpManager.getInstance().setListener(loginListener,loginOutListener, this, this, getActivity());
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d("tag==", getDeviceId());
         IntentFilter filter = new IntentFilter();
@@ -234,9 +232,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         welfareBtn = (Button) v.findViewById(R.id.welfare_btn);
         cServiceBtn = (Button) v.findViewById(R.id.cservice_btn);
         personBtn = (Button) v.findViewById(R.id.person_btn);
-        myWebView = v.findViewById(R.id.myWebView);
-        webView = v.findViewById(R.id.WebView);
-        csWebView = v.findViewById(R.id.CSWebView);
 
         welfareBtn.setOnClickListener(view -> {
             Welfare(false);
@@ -285,7 +280,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void CService(boolean show) {
         Log.d(TAG, "CService");
-        cs = CServiceFragment.getInstance(sdkListener, DrawerLayout);
+        cs = CServiceFragment.getInstance( DrawerLayout);
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(1);
@@ -296,7 +291,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void Personal(boolean show, boolean isAuthenticated) {
         Log.d(TAG, "Personal");
-        pf = PersonFragment.getInstance(sdkListener, DrawerLayout);
+        pf = PersonFragment.getInstance(DrawerLayout);
         if (pf.getListener() == null) {
             pf.setListener(new PersonFragment.privacyListener() {
                 @Override
@@ -313,7 +308,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
                 @Override
                 public void cs(Dialog dialog) {
-                    CustomerServer(dialog, true);
+                    CustomerServer(dialog, false);
                 }
             });
         }
@@ -332,7 +327,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void Welfare(boolean isShow) {
         Log.d(TAG, "Welfare");
-        wp = WelfareFragment.getInstance(sdkListener, DrawerLayout);
+        wp = WelfareFragment.getInstance(DrawerLayout);
         changeStyle(2);
         nvTo(wp, "Welfare");
     }
@@ -727,7 +722,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             popupLoginPw("", "", bcSP.getBoolean("isAccount"));
         });
         //跳转联系客服
-        popup_service.setOnClickListener(view -> CustomerServer(alertDialog, false));
+        popup_service.setOnClickListener(view -> CustomerServer(alertDialog, true));
         //输入框监听
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1129,84 +1124,48 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     /**
      * 弹出用户协议
      */
-    public void UserAgreement(AlertDialog dialog, boolean isShow) {
+    public void UserAgreement(AlertDialog dialog, boolean isDialog) {
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        webView.setTittle("无限游戏用户协议");
-        webView.setVisibility(View.VISIBLE);
-        webView.btnListener(view -> {
-            webView.setVisibility(View.INVISIBLE);
-            if (isShow && !dialog.isShowing())
-                dialog.show();
-        });
-        webView.setOnKey((view, i, keyEvent) -> {
-            if (i == KeyEvent.KEYCODE_BACK) {
-                webView.setVisibility(View.INVISIBLE);
-                if (isShow && !dialog.isShowing())
-                    dialog.show();
-                return true;
-            }
-            return false;
-        });
-        webView.show(Constants.REGISTER);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        WebFragment webFragment = new WebFragment(this, fm, isDialog,0);
+        fm.beginTransaction()
+                .replace(R.id.home,webFragment)
+                .addToBackStack("webFragment")
+                .commit();
     }
 
     /**
      * 弹出隐私协议
      */
-    public void PrivacyAgreement(AlertDialog dialog, boolean isShow) {
+    public void PrivacyAgreement(AlertDialog dialog, boolean isDialog) {
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        myWebView.setTittle("无限游戏用户隐私政策");
-        myWebView.setVisibility(View.VISIBLE);
-        myWebView.btnListener(view -> {
-            myWebView.setVisibility(View.INVISIBLE);
-            if (isShow && !dialog.isShowing())
-                dialog.show();
-        });
-        myWebView.setOnKey((view, i, keyEvent) -> {
-            if (i == KeyEvent.KEYCODE_BACK) {
-                myWebView.setVisibility(View.INVISIBLE);
-                if (isShow && !dialog.isShowing())
-                    dialog.show();
-                return true;
-            }
-            return false;
-        });
-        myWebView.show(Constants.PRIVACY);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        WebFragment webFragment = new WebFragment(this, fm, isDialog,1);
+        fm.beginTransaction()
+                .replace(R.id.home,webFragment)
+                .addToBackStack("webFragment")
+                .commit();
     }
 
     /**
      * 客服网页
      */
-    public void CustomerServer(Dialog dialog, boolean isShow) {
+    public void CustomerServer(Dialog dialog, boolean isDialog) {
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        if (isShow)
-            DrawerLayout.closeDrawers();
-        csWebView.setTittle("客服");
-        csWebView.setVisibility(View.VISIBLE);
-        csWebView.show(Constants.CUSTOMER_SERVICE);
-        csWebView.btnListener(view -> {
-            csWebView.setVisibility(View.INVISIBLE);
-            if (!dialog.isShowing())
-                dialog.show();
-            if (isShow)
-                DrawerLayout.openDrawer(Gravity.LEFT);
-        });
-        csWebView.setOnKey((view, i, keyEvent) -> {
-            if (i == KeyEvent.KEYCODE_BACK) {
-                csWebView.setVisibility(View.INVISIBLE);
-                if (!dialog.isShowing())
-                    dialog.show();
-                if (isShow)
-                    DrawerLayout.openDrawer(Gravity.LEFT);
-                return true;
-            }
-            return false;
-        });
+        if (!isDialog){
+            RoundView.getInstance().closeRoundView(getContext());
+        }
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        WebFragment webFragment = new WebFragment(this, fm, isDialog,2);
+        fm.beginTransaction()
+                .replace(R.id.home,webFragment)
+                .addToBackStack("webFragment")
+                .commit();
     }
 }

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.db.dao.AccountDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.manager.DBManager;
@@ -20,7 +19,6 @@ import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
 import com.example.demo_bckj.view.dialog.ModifyPWDialog;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
 import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
-import com.example.demo_bckj.view.round.MyWebView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -43,8 +41,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private Button quit;
     private String tel, nickName;
     private ImageView header;
-    private SDKListener sdkListener;
-    private MyWebView myWebView, webView;
     private privacyListener listener;
     private AccountDao dao;
     private DrawerLayout drawerLayout;
@@ -60,12 +56,11 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         });
     }
 
-    public static PersonFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout) {
-        return new PersonFragment(sdkListener, drawerLayout);
+    public static PersonFragment getInstance(DrawerLayout drawerLayout) {
+        return new PersonFragment(drawerLayout);
     }
 
-    public PersonFragment(SDKListener sdkListener, DrawerLayout drawerLayout) {
-        this.sdkListener = sdkListener;
+    public PersonFragment(DrawerLayout drawerLayout) {
         this.drawerLayout=drawerLayout;
     }
 
@@ -98,7 +93,7 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
 
     @Override
     protected PersonPresenter initPresenter() {
-        return new PersonPresenter(sdkListener);
+        return new PersonPresenter();
     }
 
     @Override

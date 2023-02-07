@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
-import com.example.demo_bckj.control.SDKListener;
 import com.example.demo_bckj.presenter.WelfarePresenter;
 
 import androidx.activity.OnBackPressedCallback;
@@ -39,7 +38,7 @@ public class WelfareFragment extends BaseFragment<WelfarePresenter> {
         });
     }
 
-    public static WelfareFragment getInstance(SDKListener sdkListener, DrawerLayout drawerLayout){
+    public static WelfareFragment getInstance(DrawerLayout drawerLayout){
         if (instance==null){
             instance=new WelfareFragment(drawerLayout);
         }

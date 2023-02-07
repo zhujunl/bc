@@ -9,7 +9,8 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.base.BasePresenter;
-import com.example.demo_bckj.control.SDKListener;
+import com.example.demo_bckj.control.LoginListener;
+import com.example.demo_bckj.control.LoginOutListener;
 import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
@@ -51,7 +52,8 @@ import retrofit2.Response;
  */
 public class HttpManager {
     private String TAG = "HttpManager";
-    private SDKListener sdkListener;
+    private LoginListener loginListener;
+    private LoginOutListener loginOutListener;
     private LogoutListener logoutListener;
     private ClickListener listener;
     private Context context;
@@ -69,8 +71,9 @@ public class HttpManager {
     public HttpManager() {
     }
 
-    public void setListener(SDKListener listener, ClickListener clickListener, LogoutListener logoutListener, Context context) {
-        this.sdkListener = listener;
+    public void setListener(LoginListener loginListener, LoginOutListener loginOutListener, ClickListener clickListener, LogoutListener logoutListener, Context context) {
+        this.loginListener=loginListener;
+        this.loginOutListener=loginOutListener;
         this.listener = clickListener;
         this.logoutListener = logoutListener;
         this.context = context;
@@ -200,7 +203,7 @@ public class HttpManager {
                                 .age(data.getData().getAge())
                                 .token(authorization.getAuthorization())
                                 .build();
-                        sdkListener.Login(user);
+                        loginListener.onSuccess(user);
                         TimeService.start(context);
                         DBManager.getInstance(context).insertTel(tel);
                         SPUtils.getInstance(context, "bcSP").put("isAccount", false);
@@ -210,8 +213,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                        sdkListener.LoginFail("登录失败，"+message);
+                        loginListener.onFail("登录失败，" + message);
                     }
                 });
     }
@@ -235,7 +237,7 @@ public class HttpManager {
                                 .age(data.getData().getAge())
                                 .token(authorization.getAuthorization())
                                 .build();
-                        sdkListener.Login(user);
+                        loginListener.onSuccess(user);
                         DBManager.getInstance(context).insertAccount(number, pass);
                         SPUtils.getInstance(context, "bcSP").put("isAccount", true);
                         alertDialog.dismiss();
@@ -246,8 +248,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                        sdkListener.LoginFail("登录失败，"+message);
+                        loginListener.onFail("登录失败，" + message);
                     }
                 });
     }
@@ -270,7 +271,7 @@ public class HttpManager {
                                 .age(data.getData().getAge())
                                 .token(authorization.getAuthorization())
                                 .build();
-                        sdkListener.Login(user);
+                        loginListener.onSuccess(user);
                         SPUtils.getInstance(context, "bcSP").put("isAccount", true);
                         DBManager.getInstance(context).insertAccount(name, password);
                         RoundView.getInstance().showRoundView(context, listener);
@@ -279,8 +280,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-//                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                        sdkListener.LoginFail("登录失败，"+message);
+                        loginListener.onFail("登录失败，" + message);
                     }
                 });
     }
@@ -374,7 +374,7 @@ public class HttpManager {
                         .age(data.getData().getAge())
                         .token(authorization.getAuthorization())
                         .build();
-                sdkListener.Login(user);
+                loginListener.onSuccess(user);
                 Log.d(TAG, "refreshToken" + "Thread==" + Thread.currentThread().getName());
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
@@ -473,20 +473,6 @@ public class HttpManager {
         });
     }
 
-    //是否已完成实名认证
-    public void IsRealName(Context context, BasePresenter presenter) {
-        RetrofitManager.getInstance(context).getApiService().IsRealName().enqueue(new MyCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(JSONObject jsStr) {
-                presenter.getView().onSuccess("");
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     //用户在线
     public void isOnline(Context c) {
@@ -536,7 +522,7 @@ public class HttpManager {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 TimeService.stop(context);
-                sdkListener.SignOut();
+                loginOutListener.onSuccess();
                 DBManager.getInstance(context).delete();
                 if (isDestroy)
                     System.exit(0);
@@ -547,17 +533,43 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                sdkListener.LoginFail("退出失败，"+message);
+                loginOutListener.onFail("退出失败，" + message);
             }
         });
     }
 
-    /**登录*/
-    public void Login(Context context) {
+
+    public void loginOut(Context context, boolean isDestroy, boolean isLoginShow, LoginOutListener outListener) {
+        RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                TimeService.stop(context);
+                outListener.onSuccess();
+                DBManager.getInstance(context).delete();
+                if (isDestroy)
+                    System.exit(0);
+                if (logoutListener != null) {
+                    logoutListener.out(isLoginShow);
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                outListener.onFail("退出失败，" + message);
+            }
+        });
+    }
+
+    /**
+     * 登录
+     */
+    public void Login(Context context, LoginListener loginListener) {
+        this.loginListener=loginListener;
         if (homePresenter != null) {
             homePresenter.Login(context);
         }
     }
+
 
     //用户创角
     public void CreateRole(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {

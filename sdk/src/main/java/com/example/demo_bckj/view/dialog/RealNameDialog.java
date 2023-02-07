@@ -121,6 +121,7 @@ public class RealNameDialog extends Dialog {
             code.setText("");
         });
         back.setOnClickListener(v -> {
+            dismiss();
             if (mLogoutListener != null) {
                 mLogoutListener.out(true);
             }
