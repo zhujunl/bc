@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.manager.HttpManager;
-import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.utility.FileUtil;
@@ -26,7 +25,6 @@ import java.util.Map;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import okhttp3.ResponseBody;
 
 /**
  * @author ZJL
@@ -53,17 +51,18 @@ public class SDKManager {
     /**
      * SDK初始化接口
      *
-     * @param context    上下文
-     * @param gameId 游戏配置信息，可以为空。
-     *
+     * @param activity         调用初始化接口的ACtivity
+     * @param gameId           游戏配置信息，可以为空。
+     * @param loginCallBack    登录回调
+     * @param loginOutCallBack 退出回调
      */
-    public void init(Activity context, String gameId, LoginCallBack loginListener, LoginOutCallBack LoginOutListener, RechargeCallBack rechargeListener) {
-        this.context = context;
+    public void init(Activity activity, String gameId, LoginCallBack loginCallBack, LoginOutCallBack loginOutCallBack) {
+        this.context = activity;
         Map<String, String> map = new HashMap<>();
         map.put("game", gameId); // 游戏唯一标识
         boolean fileExists = FileUtil.isFileExists(context, "bc_sdk_config.json");
         if (!fileExists) {
-            if (map != null&& !TextUtils.isEmpty(gameId)) {
+            if (map != null && !TextUtils.isEmpty(gameId)) {
                 if (!hasGame(map)) {
                     map.put("game", Constants.GAME);
                 }
@@ -75,11 +74,11 @@ public class SDKManager {
             Constants.DEVICEINFO = new DeviceInfo(FileUtil.getMap(context, "bc_sdk_config.json"), new Device(context));
         }
 
-        HttpManager.getInstance().init(loginListener,LoginOutListener);
-        HttpManager.getInstance().setRechargeListener(rechargeListener);
+        HttpManager.getInstance().init(loginCallBack, loginOutCallBack);
+        HttpManager.getInstance().setRecharge();
 
         HomeFragment homeFragment = HomeFragment.getInstance();
-        FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
+        FragmentManager fm = ((FragmentActivity) activity).getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.home, homeFragment)
                 .addToBackStack(null)
@@ -120,7 +119,7 @@ public class SDKManager {
      * @param roleBean 角色类
      * @param callback 回调
      */
-    public void CreateRole(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
+    public void CreateRole(Context context, RoleBean roleBean, GameCallBack callback) {
         HttpManager.getInstance().CreateRole(context, roleBean, callback);
     }
 
@@ -131,42 +130,26 @@ public class SDKManager {
      * @param roleBean 角色类
      * @param callback 回调
      */
-    public void LoginServer(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
+    public void LoginServer(Context context, RoleBean roleBean, GameCallBack callback) {
         HttpManager.getInstance().LoginServer(context, roleBean, callback);
     }
 
     /**
      * 创建订单
      *
-     * @param context          上下文
-     * @param rechargeOrder    订单实体类
-     * @param callBack 订单支付回调监听
+     * @param activity      调用支付订单的Activity
+     * @param rechargeOrder 订单实体类
+     * @param callBack      订单支付回调监听
      */
-    public void Recharge(Activity context, RechargeOrder rechargeOrder, RechargeCallBack callBack) {
-        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, callBack);
-        rechargeSubDialog.show();
-    }
-
-    public void Recharge(Activity context, boolean exception, RechargeCallBack callBack) {
-        RechargeOrder rechargeOrder = new RechargeOrder.Builder()
-                .number_game("游戏订单号")
-                .props_name("物品名称")
-                .server_id("区服 ID")
-                .server_name("区服名称")
-                .role_id("角色 ID")
-                .role_name("角色名称")
-                .callback_url("https://apitest.infinite-game.cn/ping")
-                .money(1)
-                .extend_data("")
-                .build();
-        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, callBack, exception);
+    public void Recharge(Activity activity, RechargeOrder rechargeOrder, RechargeCallBack callBack) {
+        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(activity, rechargeOrder, callBack);
         rechargeSubDialog.show();
     }
 
     /**
      * 游戏主动登录
      *
-     * @param context       上下文
+     * @param context  上下文
      * @param callBack 登录回调监听
      */
     public void Login(Context context, LoginCallBack callBack) {
@@ -176,9 +159,9 @@ public class SDKManager {
     /**
      * 游戏主动退出登录
      *
-     * @param isDestroy        退出登录是否退出应用
-     * @param isLoginShow      退出登录是否弹出登录
-     * @param callBack 退出回调监听
+     * @param isDestroy   退出登录是否退出应用
+     * @param isLoginShow 退出登录是否弹出登录
+     * @param callBack    退出回调监听
      */
     public void LoginOut(boolean isDestroy, boolean isLoginShow, LoginOutCallBack callBack) {
         HttpManager.getInstance().loginOut(context, isDestroy, isLoginShow, callBack);

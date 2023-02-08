@@ -23,6 +23,7 @@ public abstract class BaseFragment <P extends BasePresenter> extends Fragment im
     protected P presenter;
     protected View v;
     protected FragmentManager fm;
+    protected boolean isInit=false;
 
 
 

@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.manager.DBManager;
+import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
@@ -122,6 +123,7 @@ public class RealNameDialog extends Dialog {
         });
         back.setOnClickListener(v -> {
             dismiss();
+            HttpManager.getInstance().loginOut(context, false, true);
             if (mLogoutListener != null) {
                 mLogoutListener.out(true);
             }

@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BasePresenter;
+import com.example.demo_bckj.control.GameCallBack;
 import com.example.demo_bckj.control.LoginCallBack;
 import com.example.demo_bckj.control.LoginOutCallBack;
 import com.example.demo_bckj.control.RechargeCallBack;
@@ -94,8 +95,11 @@ public class HttpManager {
         this.loginOutListener = loginOutListener;
     }
 
-    public void setRechargeListener( RechargeCallBack rechargeListener){
-        this.rechargeListener = rechargeListener;
+    private RechargeCallBack getRechargeCallBack() {
+        return rechargeListener;
+    }
+
+    public void setRecharge() {
         mHandlerThread = new HandlerThread("payOrder");
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper()) {
@@ -113,14 +117,14 @@ public class HttpManager {
                         // 判断resultStatus 为9000则代表支付成功
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-//                            Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
-                            if (rechargeListener!=null)
-                                rechargeListener.onSuccess(context.getString(R.string.orderNum) + orderNum);
+                            //                            Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
+                            if (getRechargeCallBack() != null)
+                                getRechargeCallBack().onSuccess(context.getString(R.string.orderNum) + orderNum);
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-//                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
-                            if (rechargeListener!=null)
-                                rechargeListener.onFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
+                            //                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
+                            if (getRechargeCallBack() != null)
+                                getRechargeCallBack().onFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:
@@ -597,8 +601,8 @@ public class HttpManager {
 
 
     public void loginOut(Context context, boolean isDestroy, boolean isLoginShow, LoginOutCallBack outListener) {
-        if (outListener!=null)
-            this.loginOutListener=outListener;
+        if (outListener != null)
+            this.loginOutListener = outListener;
         RetrofitManager.getInstance(context).getApiService().logout().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -623,7 +627,7 @@ public class HttpManager {
      * 登录
      */
     public void Login(Context context, LoginCallBack loginListener) {
-        if (loginListener!=null)
+        if (loginListener != null)
             this.loginListener = loginListener;
         if (homePresenter != null) {
             homePresenter.Login(context);
@@ -634,8 +638,8 @@ public class HttpManager {
     private Handler mHandler;
 
     public void charge(Activity context, @NonNull RechargeOrder rechargeOrder, RechargeCallBack rechargeListener) {
-        if (rechargeListener!=null)
-            this.rechargeListener=rechargeListener;
+        if (rechargeListener != null)
+            this.rechargeListener = rechargeListener;
         try {
             Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().CreateOrder(rechargeOrder.getNumber_game(),
                     rechargeOrder.getMoney(), rechargeOrder.getProps_name(), rechargeOrder.getServer_id(),
@@ -667,7 +671,7 @@ public class HttpManager {
                     rechargeDialog.show();
                     Looper.loop();
                 } else {
-                    if (this.rechargeListener!=null)
+                    if (this.rechargeListener != null)
                         this.rechargeListener.onFail(aliJson.get("message").toString());
                 }
             } else if (json.get("code").toString().equals("1")) {
@@ -676,7 +680,7 @@ public class HttpManager {
                 rechargeDialog.show();
                 Looper.loop();
             } else {
-                if (this.rechargeListener!=null)
+                if (this.rechargeListener != null)
                     this.rechargeListener.onFail(json.get("message").toString());
             }
         } catch (IOException e) {
@@ -686,14 +690,38 @@ public class HttpManager {
 
 
     //用户创角
-    public void CreateRole(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
+    public void CreateRole(Context context, RoleBean roleBean, GameCallBack callback) {
         RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean.getRoleId(), roleBean.getServerName(),
-                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(callback);
+                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                if (callback != null)
+                    callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String message) {
+                if (callback != null)
+                    callback.onFail(message);
+            }
+        });
     }
 
     //角色登录区服
-    public void LoginServer(Context context, RoleBean roleBean, MyCallback<ResponseBody> callback) {
+    public void LoginServer(Context context, RoleBean roleBean, GameCallBack callback) {
         RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean.getRoleId(), roleBean.getServerName(),
-                roleBean.getRoleId(), roleBean.getRoleName()).enqueue((callback));
+                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                if (callback != null)
+                    callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String message) {
+                if (callback != null)
+                    callback.onFail(message);
+            }
+        });
     }
 }

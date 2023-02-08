@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
@@ -59,8 +60,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
@@ -78,12 +81,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     public static HomeFragment instance;
 
-    public static HomeFragment getInstance(LoginCallBack loginListener, LoginOutCallBack loginOutListener) {
-        if (instance == null) {
-            instance = new HomeFragment(loginListener,loginOutListener);
-        }
-        return instance;
-    }
 
     public static HomeFragment getInstance() {
         if (instance == null) {
@@ -125,10 +122,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private LoginCallBack loginListener;
     private LoginOutCallBack loginOutListener;
 
-    public HomeFragment(LoginCallBack loginListener, LoginOutCallBack loginOutListener) {
-        this.loginListener = loginListener;
-        this.loginOutListener=loginOutListener;
-    }
 
     public HomeFragment() {
     }
@@ -163,6 +156,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 e.printStackTrace();
             }
         }).start();
+        mHandlerThread = new HandlerThread("loginHandler");
+        mHandlerThread.start();
+        handler = new Handler(mHandlerThread.getLooper());
+        handler.postDelayed(runnable, 50);
+
 
         bcSP = SPUtils.getInstance(getActivity(), "bcSP");
         AutoBuilder = new AlertDialog.Builder(getActivity());
@@ -178,10 +176,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
 
-        mHandlerThread = new HandlerThread("loginHandler");
-        mHandlerThread.start();
-        handler = new Handler(mHandlerThread.getLooper());
-        handler.postDelayed(runnable, 50);
+
 
         //       //沉浸式状态栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -207,12 +202,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 } else {
                     boolean refresh = false;
                     try {
-                        refresh = presenter.refreshToken(getActivity());
+                        if (!isInit)
+                            refresh = presenter.refreshToken(getActivity());
+                        isInit=true;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     if (!refresh) {
-                        getActivity().runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
                     }
                 }
             }
@@ -358,6 +355,24 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 cs.onDestroy();
         });
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
     }
 
     @Override

@@ -4,20 +4,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 
-import com.alibaba.fastjson.JSONObject;
+import com.example.demo_bckj.control.GameCallBack;
 import com.example.demo_bckj.control.LoginCallBack;
 import com.example.demo_bckj.control.LoginOutCallBack;
 import com.example.demo_bckj.control.RechargeCallBack;
 import com.example.demo_bckj.control.SDKManager;
-import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.User;
-import com.example.demo_bckj.view.fragment.HomeFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
     String TAG = "MainActivity";
@@ -30,32 +26,22 @@ public class MainActivity extends AppCompatActivity {
         SDKManager.getInstance().init(MainActivity.this, "", new LoginCallBack() {
             @Override
             public void onSuccess(User user) {
-
+                Log.d(TAG, "init login success" );
             }
 
             @Override
             public void onFail(String message) {
-
+                Log.d(TAG, "init login fail" );
             }
         }, new LoginOutCallBack() {
             @Override
             public void onSuccess() {
-
+                Log.d(TAG, "init login out success" );
             }
 
             @Override
             public void onFail(String message) {
-
-            }
-        }, new RechargeCallBack() {
-            @Override
-            public void onSuccess(String orderNum) {
-
-            }
-
-            @Override
-            public void onFail(String message) {
-
+                Log.d(TAG, "init login out fail" );
             }
         });
 
@@ -79,12 +65,12 @@ public class MainActivity extends AppCompatActivity {
                     .build(), new RechargeCallBack() {
                 @Override
                 public void onSuccess(String orderNum) {
-
+                    Log.d(TAG, "支付成功" );
                 }
 
                 @Override
                 public void onFail(String message) {
-
+                    Log.d(TAG, "支付失败" );
                 }
             });
         });
@@ -93,14 +79,15 @@ public class MainActivity extends AppCompatActivity {
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
-                public void onSuccess(JSONObject jsStr) {
-                    Log.d("CreateRole", "onSuccess:" + jsStr.toString());
+                    .roleName("builder.roleName").bulid(), new GameCallBack() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "CreateRole Success");
                 }
 
                 @Override
-                public void onError(String message) {
-                    Log.d("CreateRole", "onError:" + message);
+                public void onFail(String message) {
+                    Log.d(TAG, "CreateRole Fail");
                 }
             });
         });
@@ -109,28 +96,15 @@ public class MainActivity extends AppCompatActivity {
                     .serverID("builder.serverID")
                     .serverName("builder.serverName")
                     .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
-                public void onSuccess(JSONObject jsStr) {
-                    Log.d("LoginServer", "onSuccess:" + jsStr.toString());
-                }
-
+                    .roleName("builder.roleName").bulid(), new GameCallBack() {
                 @Override
-                public void onError(String message) {
-                    Log.d("LoginServer", "onError:" + message);
-                }
-            });
-        });
-        Button b = findViewById(R.id.payException);
-        b.setOnClickListener(v -> {
-            SDKManager.getInstance().Recharge(this, true, new RechargeCallBack() {
-                @Override
-                public void onSuccess(String orderNum) {
-
+                public void onSuccess() {
+                    Log.d(TAG, "LoginServer Success");
                 }
 
                 @Override
                 public void onFail(String message) {
-
+                    Log.d(TAG, "LoginServer Fail");
                 }
             });
         });
@@ -138,24 +112,24 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, new LoginCallBack() {
             @Override
             public void onSuccess(User user) {
-
+                Log.d(TAG, "登录成功" );
             }
 
             @Override
             public void onFail(String message) {
-
+                Log.d(TAG, "登录失败" );
             }
         }));
 
         out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, new LoginOutCallBack() {
             @Override
             public void onSuccess() {
-                Log.d("out", "onSuccess");
+                Log.d(TAG, "退出成功" );
             }
 
             @Override
             public void onFail(String message) {
-                Log.d("out", "onFail:" + message);
+                Log.d(TAG, "退出失败" );
             }
         }));
     }
