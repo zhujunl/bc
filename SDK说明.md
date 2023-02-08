@@ -40,143 +40,288 @@ implementation fileTree(dir: 'libs', include: ['*.aar'])
 
 
 
-## 初始化
+1. # **初始化**
 
-修改activity_main.xml文件：
+1. ## 修改AndroidManifest.xml:
 
-```java
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <FrameLayout
-        android:id="@+id/home"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+   ```Java
+   1. 在manifest节点加上：xmlns:tools="http://schemas.android.com/tools"
+   2. 在application 节点加上：tools:replace="android:icon, android:theme" 
+   3. 修改application节点中theme内容，将style parent属性改为  Theme.MaterialComponents.DayNight.NoActionBar.Bridge
+   4. Activity节点中添加可旋转 android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+   ```
+
+1. ## 修改activity_main.xml文件：
+
+   > MainActivity的布局XML
+
+   ```XML
+   <?xml version="1.0" encoding="utf-8"?>
+   <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <FrameLayout
+           android:id="@+id/home"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"/>
+   </androidx.constraintlayout.widget.ConstraintLayout>
+   ```
+
+1. ## 在MainActivity中完成初始化：
+
+   > MainActivity为应用默认打开activity
+
+   ####  初始化接口
+
+   ```Java
+   /**
+    * SDK初始化接口
+    *
+    * @param activity    调用初始化接口的ACtivity
+    * @param gameId 游戏id。
+    * @param loginCallBack 登录回调
+    * @param loginOutCallBack 退出回调
+    *
+    */
+   init(Activity activity, String gameId, LoginCallBack loginCallBack, LoginOutCallBack loginOutCallBack)
+   ```
+
+   ```Java
+   SDKManager.getInstance().init(MainActivity.this, "gameId", new LoginCallBack() {
+       @Override
+       public void onSuccess(User user) {
+           Log.d(TAG, "init login success" );
+       }
+   
+       @Override
+       public void onFail(String message) {
+           Log.d(TAG, "init login fail" );
+       }
+   }, new LoginOutCallBack() {
+       @Override
+       public void onSuccess() {
+           Log.d(TAG, "init login out success" );
+       }
+   
+       @Override
+       public void onFail(String message) {
+           Log.d(TAG, "init login out fail" );
+       }
+   });
+   ```
+
+1. # SDK集成
+
+1. ## 登录操作
+
+   ```Java
+   /**
+    * 游戏主动登录
+    *
+    * @param context  上下文
+    * @param callBack 登录回调监听
+    */
+   Login(Context context, LoginCallBack callBack) 
+   ```
+
+    登录回调监听`callBack`可以传`null`值，在未调用该登录接口或登录回调监听参数为`null`值时，将实现SDK初始化时注册的登录回调
+
+1. ### 使用示例
+
+```Java
+SDKManager.getInstance().Login(MainActivity.this, new LoginCallBack() {
+    @Override
+    public void onSuccess(User user) {
+        Log.d(TAG, "Login Success" );
+    }
+
+    @Override
+    public void onFail(String message) {
+        Log.d(TAG, "Login Fail" );
+    }
+})
 ```
 
-在MainActivity中完成初始化：
+1. ### 登录成功User字段说明
 
-```java
-    FragmentManager fm = getSupportFragmentManager();
-    HomeFragment homeFragment=HomeFragment.getInstance(new SDKListener() {
-        @Override
-        public void Login(User user) {
-            Log.d(TAG, "登录=="+user );
-        }
+| 字段            | 类型    | 含义          | 说明 |
+| --------------- | ------- | ------------- | ---- |
+| account         | string  | 用户账号      |      |
+| slug            | string  | 用户唯一标识  |      |
+| isAuthenticated | boolean | 是否实名      |      |
+| age             | int     | 年龄          |      |
+| token           | string  | 账号登录token |      |
 
-        @Override
-        public void SignOut() {
-            Log.d(TAG, "退出" );
-        }
+1. ## 退出操作
 
-        @Override
-        public void RechargeSuccess(String orderNum) {
-            Log.d(TAG, orderNum+"充值成功");
-        }
+   ```Java
+   /**
+    * 游戏主动退出登录
+    *
+    * @param isDestroy  退出登录是否退出应用 
+    * @param isLoginShow  退出登录是否弹出登录 
+    * @param loginOutListener 退出回调监听
+    */
+   LoginOut(boolean isDestroy, boolean isLoginShow, LoginOutCallBack callBack)
+   ```
 
-        @Override
-        public void RechargeFail(String message) {
-            Log.d(TAG, "充值失败=="+message);
-        }
-    });
-    fm.beginTransaction()
-        .replace(R.id.home,homeFragment)
-        .addToBackStack(null)
-        .commit();
-```
+    退出回调监听`callBack`可以传`null`值，在未调用该退出接口或退出回调监听参数为`null`值时，将实现SDK初始化时注册的退出回调
 
-```java
-SdkControl.getInstance(this).init(map);//初始化游戏信息配置，可以传null
-```
+1. ### 使用示例
 
-## 接口说明
+   ```Java
+   SDKManager.getInstance().LoginOut(false, false, new LoginOutCallBack() {
+       @Override
+       public void onSuccess() {
+           Log.d(TAG, "Login Out Success" );
+       }
+   
+       @Override
+       public void onFail(String message) {
+           Log.d(TAG, "Login Out Fail" );
+       }
+   })
+   ```
 
-```java
-public interface SDKListener {
+1. ## **支付操作**
 
-    /**
-     * 登录
-     *
-     * @param user 账号信息
-     */
-    void Login(User user);
+   ```Java
+   /**
+    * 创建订单
+    *
+    * @param activity      调用支付订单的Activity
+    * @param rechargeOrder 订单实体类
+    * @param callBack      订单支付回调监听
+    */
+   Recharge(Activity activity, RechargeOrder rechargeOrder, RechargeCallBack callBack)
+   ```
 
-    /**
-     * 退出
-     */
-    void SignOut();
+   1. ###  使用示例
 
-    /**
-     * 充值成功
-     * @param orderNum 订单号
-     */
-    void RechargeSuccess(String orderNum);
+   ```Java
+   SDKManager.getInstance().Recharge(MainActivity.this, new RechargeOrder.Builder()
+               .number_game("游戏订单号")
+               .props_name("物品名称")
+               .server_id("区服 ID")
+               .server_name("区服名称")
+               .role_id("角色 ID")
+               .role_name("角色名称")
+               .callback_url("https://apitest.infinite-game.cn/ping")
+               .money(1)
+               .extend_data("")
+               .build(), new RechargeCallBack() {
+           @Override
+           public void onSuccess(String orderNum) {
+               Log.d(TAG, "Pay Success" );
+           }
+   
+           @Override
+           public void onFail(String message) {
+               Log.d(TAG, "Pay Fail" );
+           }
+       });
+   ```
 
-    /**
-     * 充值失败
-     *
-     * @param message 失败信息
-     */
-    void RechargeFail(String message);
-}
+   1. ###  字段说明
 
-```
+   | 字段         | 必填  | 类型   | 含义       | 说明                                                         |
+   | ------------ | ----- | ------ | ---------- | ------------------------------------------------------------ |
+   | number_game  | true  | string | 游戏订单号 | 64 位以内字符串                                              |
+   | money        | true  | string | 订单金额   | 订单金额（单位：分）                                         |
+   | props_name   | true  | string | 物品名称   | 64 位以内字符串                                              |
+   | server_id    | true  | string | 区服 ID    | 32 位以内字符串                                              |
+   | server_name  | true  | string | 区服名称   | 64 位以内字符串                                              |
+   | role_id      | true  | string | 角色 ID    | 32 位以内字符串                                              |
+   | role_name    | true  | string | 角色名称   | 64 位以内字符串                                              |
+   | callback_url | true  | string | 回调地址   | 长度 255 位以内的支付成功后通知 CP 下发物品的 url 地址       |
+   | extend_data  | false | string | 扩展字段   | 长度 255 位以内的扩展字段，如果存在，通知回调时会原样回调给 CP |
 
-## 支付操作
+1. ## **登录区服**
 
-```java
-     SdkControl.getInstance(getActivity()).Recharge(getActivity(), sdkListener,new RechargeOrder.Builder()
-                    .number_game("游戏订单号")
-                    .props_name("物品名称")
-                    .server_id("区服 ID")
-                    .server_name("区服名称")
-                    .role_id("角色 ID")
-                    .role_name("角色名称")
-                    .callback_url("https://apitest.infinite-game.cn/ping")
-                    .money(1)
-                    .extend_data("")
-                    .build());
-        });
-```
+   ```Java
+   /**
+    * 角色登录区服
+    *
+    * @param context  上下文
+    * @param roleBean 角色类
+    * @param callback 回调
+    */
+   LoginServer(Context context, RoleBean roleBean, GameCallBack callback)
+   ```
 
-## 登录区服
+    `callback`可以传`null`值，将对接口返回不做处理
 
-```
- SdkControl.getInstance(this).LoginServer(this, new RoleBean.Builder()
-                    .serverID("builder.serverID")
-                    .serverName("builder.serverName")
-                    .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
-                public void onSuccess(JSONObject jsStr) {
-                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
-                }
+   1. ##  使用示例
 
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
-                }
-            });
-```
+   ```Java
+    SDKManager.getInstance().LoginServer(MainActivity.this, new RoleBean.Builder()
+               .serverID("builder.serverID")
+               .serverName("builder.serverName")
+               .roleId("builder.roleId")
+               .roleName("builder.roleName").bulid(), new GameCallBack() {
+           @Override
+           public void onSuccess() {
+               Log.d(TAG, "LoginServer Success");
+           }
+   
+           @Override
+           public void onFail(String message) {
+               Log.d(TAG, "LoginServer Fail");
+           }
+       });
+   ```
 
-## 创建角色
+   1. ###  字段说明
 
-```java
- SdkControl.getInstance(this).CreateRole(this, new RoleBean.Builder()
-                    .serverID("builder.serverID")
-                    .serverName("builder.serverName")
-                    .roleId("builder.roleId")
-                    .roleName("builder.roleName").bulid(), new MyCallback<ResponseBody>() {
-                public void onSuccess(JSONObject jsStr) {
-                    Toast.makeText(MainActivity.this, jsStr.toString(), Toast.LENGTH_SHORT).show();
-                }
+   | 字段        | 必填 | 类型   | 含义    | 说明            |
+   | ----------- | ---- | ------ | ------- | --------------- |
+   | server_id   | true | string | 区服 ID | 32 位以内字符串 |
+   | server_name | true | string | 区服名  | 64 位以内字符串 |
+   | role_id     | true | string | 角色 ID | 32 位以内字符串 |
+   | role_name   | true | string | 角色名  | 64 位以内字符串 |
 
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "失败" + message, Toast.LENGTH_SHORT).show();
-                }
-            });
-```
+1. ## **创建角色** 
+
+   ```Java
+   /**
+    * 用户创建角色
+    *
+    * @param context  上下文
+    * @param roleBean 角色类
+    * @param callback 回调
+    * /
+   CreateRole(Context context, RoleBean roleBean, GameCallBack callback)
+   ```
+
+    `callback`可以传`null`值，将对接口返回不做处理
+
+   1. ###  使用示例
+
+      ```Java
+      SDKManager.getInstance().CreateRole(MainActivity.this, new RoleBean.Builder()
+                  .serverID("builder.serverID")
+                  .serverName("builder.serverName")
+                  .roleId("builder.roleId")
+                  .roleName("builder.roleName").bulid(), new GameCallBack() {
+              @Override
+              public void onSuccess() {
+                  Log.d(TAG, "CreateRole Success");
+              }
+      
+              @Override
+              public void onFail(String message) {
+                  Log.d(TAG, "CreateRole Fail");
+              }
+          });
+      ```
+
+   1. ###  字段说明
+
+   | 字段        | 必填 | 类型   | 含义    | 说明            |
+   | ----------- | ---- | ------ | ------- | --------------- |
+   | server_id   | true | string | 区服 ID | 32 位以内字符串 |
+   | server_name | true | string | 区服名  | 64 位以内字符串 |
+   | role_id     | true | string | 角色 ID | 32 位以内字符串 |
+   | role_name   | true | string | 角色名  | 64 位以内字符串 |
