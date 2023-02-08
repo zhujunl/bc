@@ -42,7 +42,7 @@ public class DeviceAndroid {
         android_id = DeviceIdUtil.getAndroidId(context);
         id=DeviceIdUtil.getBasebandVersion();
         android_q=new DeviceAndroidQ();
-        imei = Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context));
+        imei =new ArrayList<>(Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context)));
         imsi = DeviceIdUtil.getIMSI(context);
         model = Build.MODEL;
         product = Build.MANUFACTURER;

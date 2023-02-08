@@ -73,7 +73,6 @@ public class SDKManager {
         } else {
             Constants.DEVICEINFO = new DeviceInfo(FileUtil.getMap(context, "bc_sdk_config.json"), new Device(context));
         }
-
         HttpManager.getInstance().init(loginCallBack, loginOutCallBack);
         HttpManager.getInstance().setRecharge();
 

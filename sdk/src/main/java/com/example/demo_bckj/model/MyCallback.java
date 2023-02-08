@@ -57,7 +57,6 @@ public abstract class MyCallback<ResponseBody extends okhttp3.ResponseBody> impl
         }
         Headers headers = response.headers();
         String Authorization = headers.get("Authorization");
-        Log.d(TAG, "Authorization====" + Authorization);
         if (mContext != null && !TextUtils.isEmpty(Authorization)) {
             DBManager.getInstance(mContext).insertAuthorization(Authorization);
         }

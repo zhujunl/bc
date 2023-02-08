@@ -76,8 +76,8 @@ public class AccountLoginDao {
     }
 
     private boolean isExist(String account, String password) {
-        Cursor cursor = mDatabase.rawQuery("SELECT * FROM accountLogin WHERE account= ? AND password=? ",
-                new String[]{Encryptutility.Base64Encode(account), Encryptutility.Base64Encode(password)});
+        Cursor cursor = mDatabase.rawQuery("SELECT * FROM accountLogin WHERE account= ? ",
+                new String[]{Encryptutility.Base64Encode(account)});
         if (cursor == null) {
             return false;
         }

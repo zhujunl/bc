@@ -249,7 +249,7 @@ public class DeviceIdUtil {
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);  //拿到电话管理器
 
-            return tm.getSimSerialNumber();
+            return tm.getSimSerialNumber()!=null?tm.getSimSerialNumber():"";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -442,24 +442,24 @@ public class DeviceIdUtil {
     //获取sign和info
     public static SignInfoBean getSign(Context context) throws Exception {
         String nonce = Encryptutility.getRandomString(32);
-        Log.d("tag", "当前随机数：" + nonce);
+//        Log.d("tag", "当前随机数：" + nonce);
         char[] charArray = nonce.toCharArray();
 
         long currentTimeMillis = System.currentTimeMillis();
-        Log.d("tag", "当前时间戳：" + currentTimeMillis);
+//        Log.d("tag", "当前时间戳：" + currentTimeMillis);
 
         double rand = Encryptutility.nextDouble(0, 1);
-        Log.d("tag", "当前随机浮点数：" + rand);
+//        Log.d("tag", "当前随机浮点数：" + rand);
 
         String requestId = currentTimeMillis + "_" + rand;
-        Log.d("tag", "当前唯一标识符为:" + requestId);
+//        Log.d("tag", "当前唯一标识符为:" + requestId);
         char[] chars = String.valueOf(rand).toCharArray();
 
         char aChar = chars[2];
         String valueOf = String.valueOf(aChar);
         int achar = Integer.parseInt(valueOf);
-        Log.d("tag", "当前aChar为:" + aChar);
-        Log.d("tag", "当前aChar1为:" + achar);
+//        Log.d("tag", "当前aChar为:" + aChar);
+//        Log.d("tag", "当前aChar1为:" + achar);
         int length = String.valueOf(rand).length();
         String randNonce = "";
         for (int index = 2; index < length; index++) {
@@ -470,63 +470,28 @@ public class DeviceIdUtil {
             randNonce += charArray[e];
             //            Log.d("tag", "当前randNonce为："+ randNonce);
         }
-        Log.d("tag", "当前randNonce为：" + randNonce);
-        Log.d("tag", "当前拼接值为：" + randNonce + requestId);
+//        Log.d("tag", "当前randNonce为：" + randNonce);/
+//        Log.d("tag", "当前拼接值为：" + randNonce + requestId);
 
         String strMD5 = Encryptutility.strMD5(randNonce + requestId);
 
-        Log.d("tag", "当前MD5：" + strMD5);
+//        Log.d("tag", "当前MD5：" + strMD5);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("nonce", nonce);
         jsonObject.put("request_id", requestId);
         jsonObject.put("sign", strMD5);
         String string = jsonObject.toString();
-        Log.d("tag", "json串为：" + string);
+//        Log.d("tag", "json串为：" + string);
 
         String sign = Base64.encodeToString(string.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
-        Log.d("tag", "Base64编码sign为：" + sign);
-//        String map = FileUtil.getMapString(context, "bc_sdk_config.json");
-//        String j = "{\n" + map +
-//                "    \"material\": \"\",\n" +
-//                "    \"device\": {\n" +
-//                "        \"os\": \"Android\",\n" +
-//                "        \"android\": {\n" +
-//                "            \"system_version\": \"" + DeviceIdUtil.getSystemVersion() + "\",\n" +
-//                "            \"android_id\": \"" + DeviceIdUtil.getAndroidId(context) + "\",\n" +
-//                "            \"android_q\": {\n" +
-//                "                \"aaid\": \"" + "748d89ad-dd0d-424a-83df-d934519f0489" + "\",\n" +
-//                "                \"oaid\": \"" + "92e60edb3de3f9d0" + "\",\n" +
-//                "                \"vaid\": \"" + "416bffbb34374591" + "\"\n" +
-//                "            },\n" +
-//                "            \"id\": \"" + "QKQ1.200419.002" + "\",\n" +
-//                "            \"imei\": [" + DeviceIdUtil.getIMEI_1(context) + "," + DeviceIdUtil.getIMEI_2(context) + "],\n" +
-//                "            \"imsi\": \"" + DeviceIdUtil.getIMSI(context) + "\",\n" +
-//                "            \"model\": \"" + Build.MODEL + "\",\n" +
-//                "            \"product\": \"" + "cas" + "\",\n" +
-//                "            \"brand\": \"" + Build.BRAND + "\",\n" +
-//                "            \"game_package_name\": \"" + "" + "\",\n" +
-//                "            \"game_version\": \"" + "" + "\",\n" +
-//                "            \"sdk_package_name\": \"" + DeviceIdUtil.getTopPackage(context) + "\",\n" +
-//                "            \"sdk_version\": \"" + DeviceIdUtil.getVersionName(context) + "\",\n" +
-//                "            \"serial\": \"" + DeviceIdUtil.getSERIAL() + "\",\n" +
-//                "            \"sim_serial\": [" + DeviceIdUtil.getSimSerial(context) + "]\n" +
-//                "        },\n" +
-//                "        \"network\": {\n" +
-//                "            \"code\": 46002,\n" +
-//                "            \"intranet_ip\": \"10.48.6.16\",\n" +
-//                "            \"mac\": \"e0:1f:88:33:01:f0\",\n" +
-//                "            \"name\": \"那就这样\",\n" +
-//                "            \"type\": \"wifi\"\n" +
-//                "        }\n" +
-//                "    }\n" +
-//                "}";
+//        Log.d("tag", "Base64编码sign为：" + sign);
         JSONObject json = new JSONObject(Constants.DEVICEINFO.toString());
         Log.d("tag", "设备信息的字符串为" + json);
         //加密
         String key = Encryptutility.strMD5(sign);
-        Log.d("tag", "加密的字符串keyString值为" + key);
+//        Log.d("tag", "加密的字符串keyString值为" + key);
         String info = AESUtils.encrypt(json.toString(), key, key.substring(0, 16));
-        Log.d("tag", "加密的字符串info为" + info);
+//        Log.d("tag", "加密的字符串info为" + info);
 
         SignInfoBean signInfoBean = new SignInfoBean();
         signInfoBean.sign = sign;
