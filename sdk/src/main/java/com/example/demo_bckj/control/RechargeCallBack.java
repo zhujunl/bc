@@ -7,7 +7,7 @@ package com.example.demo_bckj.control;
  * @updateAuthor
  * @updateDes
  */
-public interface RechargeListener {
+public interface RechargeCallBack {
     void onSuccess(String orderNum);
 
     void onFail(String message);

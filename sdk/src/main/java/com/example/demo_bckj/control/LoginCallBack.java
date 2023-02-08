@@ -9,7 +9,7 @@ import com.example.demo_bckj.model.bean.User;
  * @updateAuthor
  * @updateDes
  */
-public interface LoginListener {
+public interface LoginCallBack {
     void onSuccess(User user);
 
     void onFail(String message);

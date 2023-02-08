@@ -7,7 +7,7 @@ package com.example.demo_bckj.control;
  * @updateAuthor
  * @updateDes
  */
-public interface LoginOutListener {
+public interface LoginOutCallBack {
     void onSuccess();
 
     void onFail(String message);

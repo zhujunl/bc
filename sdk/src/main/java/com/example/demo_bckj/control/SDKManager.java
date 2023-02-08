@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.demo_bckj.R;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
@@ -14,6 +15,7 @@ import com.example.demo_bckj.model.utility.device.Device;
 import com.example.demo_bckj.model.utility.device.DeviceInfo;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.RechargeSubDialog;
+import com.example.demo_bckj.view.fragment.HomeFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +24,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import okhttp3.ResponseBody;
 
 /**
@@ -53,7 +57,7 @@ public class SDKManager {
      * @param gameId 游戏配置信息，可以为空。
      *
      */
-    public void init(Activity context, String gameId) {
+    public void init(Activity context, String gameId, LoginCallBack loginListener, LoginOutCallBack LoginOutListener, RechargeCallBack rechargeListener) {
         this.context = context;
         Map<String, String> map = new HashMap<>();
         map.put("game", gameId); // 游戏唯一标识
@@ -71,6 +75,15 @@ public class SDKManager {
             Constants.DEVICEINFO = new DeviceInfo(FileUtil.getMap(context, "bc_sdk_config.json"), new Device(context));
         }
 
+        HttpManager.getInstance().init(loginListener,LoginOutListener);
+        HttpManager.getInstance().setRechargeListener(rechargeListener);
+
+        HomeFragment homeFragment = HomeFragment.getInstance();
+        FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.home, homeFragment)
+                .addToBackStack(null)
+                .commit();
 
     }
 
@@ -127,14 +140,14 @@ public class SDKManager {
      *
      * @param context          上下文
      * @param rechargeOrder    订单实体类
-     * @param rechargeListener 订单支付回调监听
+     * @param callBack 订单支付回调监听
      */
-    public void Recharge(Activity context, RechargeOrder rechargeOrder, RechargeListener rechargeListener) {
-        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, rechargeListener);
+    public void Recharge(Activity context, RechargeOrder rechargeOrder, RechargeCallBack callBack) {
+        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, callBack);
         rechargeSubDialog.show();
     }
 
-    public void Recharge(Activity context, boolean exception, RechargeListener listener) {
+    public void Recharge(Activity context, boolean exception, RechargeCallBack callBack) {
         RechargeOrder rechargeOrder = new RechargeOrder.Builder()
                 .number_game("游戏订单号")
                 .props_name("物品名称")
@@ -146,7 +159,7 @@ public class SDKManager {
                 .money(1)
                 .extend_data("")
                 .build();
-        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, listener, exception);
+        RechargeSubDialog rechargeSubDialog = new RechargeSubDialog(context, rechargeOrder, callBack, exception);
         rechargeSubDialog.show();
     }
 
@@ -154,10 +167,10 @@ public class SDKManager {
      * 游戏主动登录
      *
      * @param context       上下文
-     * @param loginListener 登录回调监听
+     * @param callBack 登录回调监听
      */
-    public void Login(Context context, LoginListener loginListener) {
-        HttpManager.getInstance().Login(context, loginListener);
+    public void Login(Context context, LoginCallBack callBack) {
+        HttpManager.getInstance().Login(context, callBack);
     }
 
     /**
@@ -165,10 +178,10 @@ public class SDKManager {
      *
      * @param isDestroy        退出登录是否退出应用
      * @param isLoginShow      退出登录是否弹出登录
-     * @param loginOutListener 退出回调监听
+     * @param callBack 退出回调监听
      */
-    public void LoginOut(boolean isDestroy, boolean isLoginShow, LoginOutListener loginOutListener) {
-        HttpManager.getInstance().loginOut(context, isDestroy, isLoginShow, loginOutListener);
+    public void LoginOut(boolean isDestroy, boolean isLoginShow, LoginOutCallBack callBack) {
+        HttpManager.getInstance().loginOut(context, isDestroy, isLoginShow, callBack);
     }
 
     private String getValue(JSONObject json) {

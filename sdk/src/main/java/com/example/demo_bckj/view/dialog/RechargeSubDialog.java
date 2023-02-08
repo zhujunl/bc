@@ -19,7 +19,8 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.example.demo_bckj.R;
-import com.example.demo_bckj.control.RechargeListener;
+import com.example.demo_bckj.control.RechargeCallBack;
+import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AliPayBean;
 import com.example.demo_bckj.model.bean.OrderBean;
@@ -66,43 +67,43 @@ public class RechargeSubDialog extends Dialog {
     private int pos;
     private RechargeOrder rechargeOrder;
     private String orderNum;
-    private RechargeListener listener;
+    private RechargeCallBack listener;
 
-    public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, RechargeListener listener) {
+    public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, RechargeCallBack listener) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
         this.listener = listener;
-        mHandlerThread = new HandlerThread("payOrder");
-        mHandlerThread.start();
-        mHandler = new Handler(mHandlerThread.getLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case 1:
-                        PayResult payResult = new PayResult((Map<String, String>) msg.obj);
-                        /**
-                         * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
-                         */
-                        String resultInfo = payResult.getResult();// 同步返回需要验证的信息
-                        String resultStatus = payResult.getResultStatus();
-                        // 判断resultStatus 为9000则代表支付成功
-                        if (TextUtils.equals(resultStatus, "9000")) {
-                            // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                            Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
-                            listener.onSuccess(context.getString(R.string.orderNum) + orderNum);
-                        } else {
-                            // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
-                            listener.onFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
+//        mHandlerThread = new HandlerThread("payOrder");
+//        mHandlerThread.start();
+//        mHandler = new Handler(mHandlerThread.getLooper()) {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                switch (msg.what) {
+//                    case 1:
+//                        PayResult payResult = new PayResult((Map<String, String>) msg.obj);
+//                        /**
+//                         * 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+//                         */
+//                        String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+//                        String resultStatus = payResult.getResultStatus();
+//                        // 判断resultStatus 为9000则代表支付成功
+//                        if (TextUtils.equals(resultStatus, "9000")) {
+//                            // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
+//                            Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
+//                            listener.onSuccess(context.getString(R.string.orderNum) + orderNum);
+//                        } else {
+//                            // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+//                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
+//                            listener.onFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
+//                        }
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        };
         this.rechargeOrder = rechargeOrder;
         Log.d(TAG, "订单信息==" + rechargeOrder.toString());
 
@@ -121,7 +122,8 @@ public class RechargeSubDialog extends Dialog {
         btn.setOnClickListener(v -> {
             new Thread(() -> {
                 if (pos == 1) {
-                    charge();
+//                    charge();
+                    HttpManager.getInstance().charge(context,rechargeOrder,listener);
                 } else {
                     wxCharge();
                 }
@@ -130,7 +132,7 @@ public class RechargeSubDialog extends Dialog {
         });
     }
 
-    public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, RechargeListener listener, boolean exception) {
+    public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, RechargeCallBack listener, boolean exception) {
         super(context);
         setContentView(R.layout.dialog_recharge_sub);
         this.context = context;
@@ -193,52 +195,52 @@ public class RechargeSubDialog extends Dialog {
 
 
     //支付宝支付
-    private void charge() {
-        try {
-            Response<ResponseBody> execute = RetrofitManager.getInstance(getContext()).getApiService().CreateOrder(rechargeOrder.getNumber_game(),
-                    rechargeOrder.getMoney(), rechargeOrder.getProps_name(), rechargeOrder.getServer_id(),
-                    rechargeOrder.getServer_name(), rechargeOrder.getRole_id(), rechargeOrder.getRole_name(), rechargeOrder.getCallback_url(),
-                    rechargeOrder.getExtend_data()).execute();
-            JSONObject json = FileUtil.getResponseBody(execute.body());
-            if (json.get("code").toString().equals("0")) {
-                OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
-                orderNum = response.getData().getNumber();
-                Response<ResponseBody> aliExecute = RetrofitManager.getInstance(getContext()).getApiService().AliPay(orderNum).execute();
-                JSONObject aliJson = FileUtil.getResponseBody(aliExecute.body());
-                if (aliJson.get("code").toString().equals("0")) {
-                    AliPayBean aliResponse = JSONObject.toJavaObject(aliJson, AliPayBean.class);
-                    String content = aliResponse.getData().getContent();
-                    PayTask alipay = new PayTask(context);
-                    Map<String, String> result = alipay.payV2(content, true);
-                    Message msg = new Message();
-                    msg.what = 1;
-                    msg.obj = result;
-                    mHandler.sendMessage(msg);
-                    Log.i("msp", result.toString());
-                } else if (aliJson.get("code").toString().equals("1")) {
-                    Object data = aliJson.get("data");
-                    JSONObject jsonObject = JSONObject.parseObject(data.toString());
-                    Object tip = jsonObject.get("tip");
-                    Object link = jsonObject.get("link");
-                    Looper.prepare();
-                    RechargeDialog rechargeDialog = new RechargeDialog(context, aliJson.get("message").toString(), tip.toString(), link.toString());
-                    rechargeDialog.show();
-                    Looper.loop();
-                } else {
-                    listener.onFail(aliJson.get("message").toString());
-                }
-            } else if (json.get("code").toString().equals("1")) {
-                Looper.prepare();
-                RechargeDialog rechargeDialog = new RechargeDialog(context, json.get("message").toString().replaceAll("\\\\n", "\n"));
-                rechargeDialog.show();
-                Looper.loop();
-            } else {
-                listener.onFail(json.get("message").toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void charge() {
+//        try {
+//            Response<ResponseBody> execute = RetrofitManager.getInstance(getContext()).getApiService().CreateOrder(rechargeOrder.getNumber_game(),
+//                    rechargeOrder.getMoney(), rechargeOrder.getProps_name(), rechargeOrder.getServer_id(),
+//                    rechargeOrder.getServer_name(), rechargeOrder.getRole_id(), rechargeOrder.getRole_name(), rechargeOrder.getCallback_url(),
+//                    rechargeOrder.getExtend_data()).execute();
+//            JSONObject json = FileUtil.getResponseBody(execute.body());
+//            if (json.get("code").toString().equals("0")) {
+//                OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
+//                orderNum = response.getData().getNumber();
+//                Response<ResponseBody> aliExecute = RetrofitManager.getInstance(getContext()).getApiService().AliPay(orderNum).execute();
+//                JSONObject aliJson = FileUtil.getResponseBody(aliExecute.body());
+//                if (aliJson.get("code").toString().equals("0")) {
+//                    AliPayBean aliResponse = JSONObject.toJavaObject(aliJson, AliPayBean.class);
+//                    String content = aliResponse.getData().getContent();
+//                    PayTask alipay = new PayTask(context);
+//                    Map<String, String> result = alipay.payV2(content, true);
+//                    Message msg = new Message();
+//                    msg.what = 1;
+//                    msg.obj = result;
+//                    mHandler.sendMessage(msg);
+//                    Log.i("msp", result.toString());
+//                } else if (aliJson.get("code").toString().equals("1")) {
+//                    Object data = aliJson.get("data");
+//                    JSONObject jsonObject = JSONObject.parseObject(data.toString());
+//                    Object tip = jsonObject.get("tip");
+//                    Object link = jsonObject.get("link");
+//                    Looper.prepare();
+//                    RechargeDialog rechargeDialog = new RechargeDialog(context, aliJson.get("message").toString(), tip.toString(), link.toString());
+//                    rechargeDialog.show();
+//                    Looper.loop();
+//                } else {
+//                    listener.onFail(aliJson.get("message").toString());
+//                }
+//            } else if (json.get("code").toString().equals("1")) {
+//                Looper.prepare();
+//                RechargeDialog rechargeDialog = new RechargeDialog(context, json.get("message").toString().replaceAll("\\\\n", "\n"));
+//                rechargeDialog.show();
+//                Looper.loop();
+//            } else {
+//                listener.onFail(json.get("message").toString());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     //支付宝支付
     private void charge(boolean exception) {

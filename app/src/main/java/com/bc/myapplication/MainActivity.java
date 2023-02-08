@@ -5,9 +5,9 @@ import android.util.Log;
 import android.widget.Button;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo_bckj.control.LoginListener;
-import com.example.demo_bckj.control.LoginOutListener;
-import com.example.demo_bckj.control.RechargeListener;
+import com.example.demo_bckj.control.LoginCallBack;
+import com.example.demo_bckj.control.LoginOutCallBack;
+import com.example.demo_bckj.control.RechargeCallBack;
 import com.example.demo_bckj.control.SDKManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.bean.RechargeOrder;
@@ -27,33 +27,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SDKManager.getInstance().init(MainActivity.this, "");
-        FragmentManager fm = getSupportFragmentManager();
-        HomeFragment homeFragment = HomeFragment.getInstance(new LoginListener() {
+        SDKManager.getInstance().init(MainActivity.this, "", new LoginCallBack() {
             @Override
             public void onSuccess(User user) {
-                Log.d(TAG, "default login success");
+
             }
 
             @Override
             public void onFail(String message) {
-                Log.d(TAG, "default login fail");
+
             }
-        }, new LoginOutListener() {
+        }, new LoginOutCallBack() {
             @Override
             public void onSuccess() {
-                Log.d(TAG, "default sign out success");
+
             }
 
             @Override
             public void onFail(String message) {
-                Log.d(TAG, "default sign out fail");
+
+            }
+        }, new RechargeCallBack() {
+            @Override
+            public void onSuccess(String orderNum) {
+
+            }
+
+            @Override
+            public void onFail(String message) {
+
             }
         });
-        fm.beginTransaction()
-                .replace(R.id.home, homeFragment)
-                .addToBackStack(null)
-                .commit();
 
         Button p = findViewById(R.id.pay);
         Button l = findViewById(R.id.loginServer);
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     .callback_url("https://apitest.infinite-game.cn/ping")
                     .money(1)
                     .extend_data("")
-                    .build(), new RechargeListener() {
+                    .build(), new RechargeCallBack() {
                 @Override
                 public void onSuccess(String orderNum) {
 
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         });
         Button b = findViewById(R.id.payException);
         b.setOnClickListener(v -> {
-            SDKManager.getInstance().Recharge(this, true, new RechargeListener() {
+            SDKManager.getInstance().Recharge(this, true, new RechargeCallBack() {
                 @Override
                 public void onSuccess(String orderNum) {
 
@@ -131,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, new LoginListener() {
+        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, new LoginCallBack() {
             @Override
             public void onSuccess(User user) {
 
@@ -143,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
 
-        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, new LoginOutListener() {
+        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, new LoginOutCallBack() {
             @Override
             public void onSuccess() {
                 Log.d("out", "onSuccess");

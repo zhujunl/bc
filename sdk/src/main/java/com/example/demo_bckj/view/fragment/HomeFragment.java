@@ -36,8 +36,8 @@ import android.widget.Toast;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.broadcast.NetworkConnectChangedReceiver;
-import com.example.demo_bckj.control.LoginListener;
-import com.example.demo_bckj.control.LoginOutListener;
+import com.example.demo_bckj.control.LoginCallBack;
+import com.example.demo_bckj.control.LoginOutCallBack;
 import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.TelEntity;
@@ -78,9 +78,16 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     public static HomeFragment instance;
 
-    public static HomeFragment getInstance(LoginListener loginListener, LoginOutListener loginOutListener) {
+    public static HomeFragment getInstance(LoginCallBack loginListener, LoginOutCallBack loginOutListener) {
         if (instance == null) {
             instance = new HomeFragment(loginListener,loginOutListener);
+        }
+        return instance;
+    }
+
+    public static HomeFragment getInstance() {
+        if (instance == null) {
+            instance = new HomeFragment();
         }
         return instance;
     }
@@ -115,12 +122,15 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     private String tel = null;
     SPUtils bcSP;
-    private LoginListener loginListener;
-    private LoginOutListener loginOutListener;
+    private LoginCallBack loginListener;
+    private LoginOutCallBack loginOutListener;
 
-    public HomeFragment(LoginListener loginListener, LoginOutListener loginOutListener) {
+    public HomeFragment(LoginCallBack loginListener, LoginOutCallBack loginOutListener) {
         this.loginListener = loginListener;
         this.loginOutListener=loginOutListener;
+    }
+
+    public HomeFragment() {
     }
 
     @Override
@@ -136,7 +146,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        HttpManager.getInstance().setListener(loginListener,loginOutListener, this, this, getActivity());
+        HttpManager.getInstance().setListener( this, this, getActivity());
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d("tag==", getDeviceId());
         IntentFilter filter = new IntentFilter();
@@ -1128,6 +1138,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
+        getActivity().getFragmentManager();
+
         FragmentManager fm = getActivity().getSupportFragmentManager();
         WebFragment webFragment = new WebFragment(this, fm, isDialog,0);
         fm.beginTransaction()
