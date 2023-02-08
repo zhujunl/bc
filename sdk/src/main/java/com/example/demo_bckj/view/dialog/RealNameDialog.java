@@ -24,6 +24,7 @@ import com.example.demo_bckj.model.utility.StrUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.service.TimeService;
 import com.example.demo_bckj.view.fragment.PersonFragment;
+import com.example.demo_bckj.view.round.RoundView;
 
 import androidx.annotation.NonNull;
 import okhttp3.ResponseBody;
@@ -123,6 +124,7 @@ public class RealNameDialog extends Dialog {
         });
         back.setOnClickListener(v -> {
             dismiss();
+            RoundView.getInstance().closeRoundView(getContext());
             HttpManager.getInstance().loginOut(context, false, true);
             if (mLogoutListener != null) {
                 mLogoutListener.out(true);

@@ -76,7 +76,7 @@ public class HttpManager {
     private RechargeCallBack rechargeListener;
     private Context context;
     private HomePresenter homePresenter;
-    private String orderNum;
+    private RechargeOrder rechargeOrder;
 
     private static HttpManager instance;
 
@@ -119,12 +119,12 @@ public class HttpManager {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
                             //                            Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
                             if (getRechargeCallBack() != null)
-                                getRechargeCallBack().onSuccess(context.getString(R.string.orderNum) + orderNum);
+                                getRechargeCallBack().onSuccess(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game());
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
                             //                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
                             if (getRechargeCallBack() != null)
-                                getRechargeCallBack().onFail(context.getString(R.string.orderNum) + orderNum + context.getString(R.string.pay_failed) + payResult.getMemo());
+                                getRechargeCallBack().onFail(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game() + context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
                         break;
                     default:
@@ -132,6 +132,14 @@ public class HttpManager {
                 }
             }
         };
+    }
+
+    public RechargeOrder getRechargeOrder() {
+        return rechargeOrder;
+    }
+
+    public void setRechargeOrder(RechargeOrder rechargeOrder) {
+        this.rechargeOrder = rechargeOrder;
     }
 
     public void setListener(ClickListener clickListener, LogoutListener logoutListener, Context context) {
@@ -640,6 +648,7 @@ public class HttpManager {
     public void charge(Activity context, @NonNull RechargeOrder rechargeOrder, RechargeCallBack rechargeListener) {
         if (rechargeListener != null)
             this.rechargeListener = rechargeListener;
+        setRechargeOrder(rechargeOrder);
         try {
             Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().CreateOrder(rechargeOrder.getNumber_game(),
                     rechargeOrder.getMoney(), rechargeOrder.getProps_name(), rechargeOrder.getServer_id(),
@@ -648,7 +657,7 @@ public class HttpManager {
             JSONObject json = FileUtil.getResponseBody(execute.body());
             if (json.get("code").toString().equals("0")) {
                 OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
-                orderNum = response.getData().getNumber();
+                String orderNum = response.getData().getNumber();
                 Response<ResponseBody> aliExecute = RetrofitManager.getInstance(context).getApiService().AliPay(orderNum).execute();
                 JSONObject aliJson = FileUtil.getResponseBody(aliExecute.body());
                 if (aliJson.get("code").toString().equals("0")) {
