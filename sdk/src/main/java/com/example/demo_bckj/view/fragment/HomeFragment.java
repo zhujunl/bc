@@ -67,8 +67,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
-import static com.example.demo_bckj.model.utility.DeviceIdUtil.getDeviceId;
-
 /**
  * @author ZJL
  * @date 2023/1/3 10:38
@@ -141,7 +139,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     protected void initData() {
         HttpManager.getInstance().setListener( this, this, getActivity());
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Log.d("tag==", getDeviceId());
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
@@ -474,8 +471,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         TextView play = inflate.findViewById(R.id.try_play);
         back.setVisibility(isAccount ? View.VISIBLE : View.INVISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
+        List<TelEntity> telEntities = DBManager.getInstance(getContext()).queryTel();
+        if (telEntities.size()!=0){
+            popupLogin.setText(telEntities.get(0).getTelNumber());
+        }
         spinnerImg.setOnClickListener(view -> {
-            List<TelEntity> telEntities = DBManager.getInstance(getContext()).queryTel();
             if (telEntities.size() == 0)
                 return;
             PopupTel popupTel = new PopupTel(getActivity(), telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true);
@@ -618,16 +618,18 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         }
         popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
+        List<AccountLoginEntity> query = DBManager.getInstance(getContext()).query();
         spinnerImg.setOnClickListener(view -> {
-            List<AccountLoginEntity> query = DBManager.getInstance(getContext()).query();
             if (query.size() == 0)
                 return;
             PopupTel popupTel = new PopupTel(getActivity(), query,
                     popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
-        popupLogin.setText(account);
-        popup_et_pw.setText(password);
+        if (query.size()!=0){
+            popupLogin.setText(query.get(0).getAccount());
+            popup_et_pw.setText(query.get(0).getPassword());
+        }
         //返回
         popup_back.setOnClickListener(view -> {
             popupLoginCode(bcSP.getBoolean("isAccount"));

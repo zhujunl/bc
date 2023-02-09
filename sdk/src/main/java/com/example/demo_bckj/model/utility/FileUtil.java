@@ -64,6 +64,8 @@ public class FileUtil {
     public static JSONObject getResponseBody(ResponseBody responseBody) {
 
         Charset UTF8 = Charset.forName("UTF-8");
+        if (responseBody.source()==null)
+            return null;
         BufferedSource source = responseBody.source();
         try {
             source.request(Long.MAX_VALUE); // Buffer the entire body.

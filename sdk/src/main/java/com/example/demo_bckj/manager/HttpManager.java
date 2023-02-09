@@ -156,6 +156,8 @@ public class HttpManager {
         Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().init().execute();
         ResponseBody body = execute.body();
         JSONObject json = FileUtil.getResponseBody(body);
+        if (json==null)
+            return false;
         Object code = json.get("code");
         if (code.toString().equals("0")) {
             Object data = json.get("data");

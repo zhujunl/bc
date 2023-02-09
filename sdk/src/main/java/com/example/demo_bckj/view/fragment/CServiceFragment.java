@@ -3,6 +3,8 @@ package com.example.demo_bckj.view.fragment;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,6 +13,7 @@ import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.model.bean.ChatBean;
 import com.example.demo_bckj.presenter.CServicePresenter;
+import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.adapter.CSAdapter;
 
 import java.util.ArrayList;
@@ -44,6 +47,7 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
     private Map<Integer, String> map = new HashMap<>();
     private List<ChatBean> datas = new ArrayList<>();
     private DrawerLayout drawerLayout;
+    private WebView webView;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -93,6 +97,7 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
         img = v.findViewById(R.id.csImg);
         rv = v.findViewById(R.id.cs_rv);
         submit = v.findViewById(R.id.cs_btn);
+        webView=v.findViewById(R.id.webView);
 
         submit.setOnClickListener(v -> {
             if (!TextUtils.isEmpty(edit.getText().toString().trim())) {
@@ -101,6 +106,15 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
                 edit.setText("");
             }
         });
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient(){
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        webView.loadUrl(Constants.CUSTOMER_SERVICE);
     }
 
     @Override
