@@ -8,10 +8,10 @@ package com.example.demo_bckj.model.bean;
  * @updateDes
  */
 public class RoleBean {
-    private String serverID;
-    private String serverName;
-    private String roleId;
-    private String roleName;
+    private String server_id;
+    private String server_name;
+    private String role_id;
+    private String role_name;
 
     public RoleBean(Builder builder) {
         setServerID(builder.serverID);
@@ -21,35 +21,35 @@ public class RoleBean {
     }
 
     private void setServerID(String serverID) {
-        this.serverID = serverID;
+        this.server_id = serverID;
     }
 
     private void setServerName(String serverName) {
-        this.serverName = serverName;
+        this.server_name = serverName;
     }
 
     private void setRoleId(String roleId) {
-        this.roleId = roleId;
+        this.role_id = roleId;
     }
 
     private void setRoleName(String roleName) {
-        this.roleName = roleName;
+        this.role_name = roleName;
     }
 
     public String getServerID() {
-        return serverID;
+        return server_id;
     }
 
     public String getServerName() {
-        return serverName;
+        return server_name;
     }
 
     public String getRoleId() {
-        return roleId;
+        return role_id;
     }
 
     public String getRoleName() {
-        return roleName;
+        return role_name;
     }
 
     public static class Builder {
@@ -89,10 +89,10 @@ public class RoleBean {
     @Override
     public String toString() {
         return "RoleBean{" +
-                "serverID='" + serverID + '\'' +
-                ", serverName='" + serverName + '\'' +
-                ", roleId='" + roleId + '\'' +
-                ", roleName='" + roleName + '\'' +
+                "server_id='" + server_id + '\'' +
+                ", server_name='" + server_name + '\'' +
+                ", role_id='" + role_id + '\'' +
+                ", role_name='" + role_name + '\'' +
                 '}';
     }
 }

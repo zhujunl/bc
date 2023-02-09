@@ -174,10 +174,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Log.d(TAG, "Crash:" +sb.toString() );
                 CrashEntity crashEntity = new CrashEntity();
                 crashEntity.log=sb.toString();
                 HttpManager.getInstance().CrashLog(mContext,crashEntity);
+
 //                String path = "/sdcard/crash/";
 //                File dir = new File(path);
 //                if (!dir.exists()) {

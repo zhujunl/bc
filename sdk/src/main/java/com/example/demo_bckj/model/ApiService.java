@@ -1,6 +1,17 @@
 package com.example.demo_bckj.model;
 
 import com.example.demo_bckj.crash.CrashEntity;
+import com.example.demo_bckj.model.bean.RechargeOrder;
+import com.example.demo_bckj.model.bean.RoleBean;
+import com.example.demo_bckj.model.request.LoginPwLoRequest;
+import com.example.demo_bckj.model.request.LoginPwReRequest;
+import com.example.demo_bckj.model.request.PhoneLoginRequest;
+import com.example.demo_bckj.model.request.SDkRequest;
+import com.example.demo_bckj.model.request.BindPhoneRequest;
+import com.example.demo_bckj.model.request.ModifyBindPhoneRequest;
+import com.example.demo_bckj.model.request.ModifyPwdRequest;
+import com.example.demo_bckj.model.request.RealNameRequest;
+import com.example.demo_bckj.model.request.ResetPwdRequest;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -30,25 +41,21 @@ public interface ApiService {
     Call<ResponseBody> getSdk();
 
     @POST("sdk/v1/game/activation")
-    Call<ResponseBody> getSdk(@Query("id") int id);
+    Call<ResponseBody> getSdk(@Body SDkRequest SDkRequest);
 
     //手机号登录(发送验证码)
     @GET("sdk/v1/sms/login")
     Call<ResponseBody> getPhoneLoginCode(@Query("tel") String tel);
     //手机号登录
     @POST("sdk/v1/login/tel")
-    Call<ResponseBody> getPhoneLogin(@Query("tel")String tel,
-                                           @Query("code")String code);
+    Call<ResponseBody> getPhoneLogin(@Body PhoneLoginRequest phoneLoginRequest);
 
     //账号密码注册
     @POST("sdk/v1/register/pwd")
-    Call<ResponseBody> getLoginPwRe(@Query("account")String username,
-                                          @Query("password")String password,
-                                          @Query("password_confirmation")String password_confirmation);
+    Call<ResponseBody> getLoginPwRe(@Body LoginPwReRequest loginPwReRequest);
     //账号密码登录
     @POST("sdk/v1/login")
-    Call<ResponseBody> getLoginPwLo(@Query("username")String username,
-                                          @Query("password")String password);
+    Call<ResponseBody> getLoginPwLo(@Body LoginPwLoRequest loginPwLoRequest);
 
     //随机账号密码
     @GET("sdk/v1/register/account")
@@ -69,32 +76,25 @@ public interface ApiService {
     Call<ResponseBody> IsRealName();
     //实名认证
     @POST("sdk/v1/user/realname")
-    Call<ResponseBody> setRealName(@Query("id_code") String idCode,
-                                   @Query("realname") String realname);
+    Call<ResponseBody> setRealName(@Body RealNameRequest realNameRequest);
     //用户在线
     @GET("sdk/v1/user/online")
     Call<ResponseBody> isOnline();
     //修改密码
     @POST("sdk/v1/user/pwd")
-    Call<ResponseBody> modifyPwd(@Query("password_old") String passwordOld,
-                                 @Query("password") String password,
-                                 @Query("password_confirmation") String passwordConfirmation);
+    Call<ResponseBody> modifyPwd(@Body ModifyPwdRequest modifyPwdRequest);
     //忘记密码
     @GET("sdk/v1/sms/pwd")
     Call<ResponseBody> forgetPwd(@Query("tel") String number);
     //重置密码
     @POST("/sdk/v1/user/pwd/reset")
-    Call<ResponseBody> resetPwd(@Query("tel") String tel,
-                                @Query("code") String code,
-                                @Query("password") String password,
-                                @Query("password_confirmation") String passwordConfirmation);
+    Call<ResponseBody> resetPwd(@Body ResetPwdRequest resetPwdRequest);
     //绑定手机-发送验证码
     @GET("sdk/v1/sms/user/tel")
     Call<ResponseBody> BindPhoneCode(@Query("tel") String tel);
     //绑定手机-绑定手机
     @POST("sdk/v1/user/tel")
-    Call<ResponseBody> BindPhone(@Query("tel") String tel,
-                                 @Query("code") String code);
+    Call<ResponseBody> BindPhone(@Body BindPhoneRequest bindPhoneRequest);
     //换绑手机-发送验证码到原手机
     @GET("sdk/v1/sms/user/tel/old")
     Call<ResponseBody> modifyBind();
@@ -103,23 +103,13 @@ public interface ApiService {
     Call<ResponseBody> modifyBindCode(@Query("tel") String tel);
     //换绑手机-换绑手机
     @POST("sdk/v1/user/tel/modify")
-    Call<ResponseBody> modifyBindPhone(@Query("code_old") String codeOld,
-                                       @Query("code_new") String codeNew,
-                                       @Query("tel") String tel);
+    Call<ResponseBody> modifyBindPhone(@Body ModifyBindPhoneRequest modifyBindPhoneRequest);
 
 
     /**=========================================订单信息======================================================================*/
     //创建订单
     @POST("sdk/v1/order")
-    Call<ResponseBody> CreateOrder(@Query("number_game") String number_game,
-                                   @Query("money") int money,
-                                   @Query("props_name") String props_name,
-                                   @Query("server_id") String server_id,
-                                   @Query("server_name") String server_name,
-                                   @Query("role_id") String role_id,
-                                   @Query("role_name") String role_name,
-                                   @Query("callback_url") String callback_url,
-                                   @Query("extend_data") String extend_data);
+    Call<ResponseBody> CreateOrder(@Body RechargeOrder rechargeOrder);
     //支付宝-原生支付
     @POST("sdk/v1/order/pay/ali/app")
     Call<ResponseBody> AliPay(@Query("number") String number);
@@ -139,16 +129,10 @@ public interface ApiService {
     /****************************************游戏角色*******************************************************/
     //用户创角
     @POST("sdk/v1/role")
-    Call<ResponseBody> CreateRole(@Query("server_id") String server_id,
-                                  @Query("server_name") String server_name,
-                                  @Query("role_id") String role_id,
-                                  @Query("role_name") String role_name);
+    Call<ResponseBody> CreateRole(@Body RoleBean request);
     //角色登录区服
     @POST("sdk/v1/role/login")
-    Call<ResponseBody> LoginServer(@Query("server_id") String server_id,
-                                   @Query("server_name") String server_name,
-                                   @Query("role_id") String role_id,
-                                   @Query("role_name") String role_name);
+    Call<ResponseBody> LoginServer(@Body RoleBean request);
 
     //崩溃日志
     @POST("sdk/v1/crash")

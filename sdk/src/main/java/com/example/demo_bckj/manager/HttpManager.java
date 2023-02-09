@@ -40,6 +40,14 @@ import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.URLBean;
 import com.example.demo_bckj.model.bean.User;
+import com.example.demo_bckj.model.request.LoginPwLoRequest;
+import com.example.demo_bckj.model.request.LoginPwReRequest;
+import com.example.demo_bckj.model.request.PhoneLoginRequest;
+import com.example.demo_bckj.model.request.SDkRequest;
+import com.example.demo_bckj.model.request.BindPhoneRequest;
+import com.example.demo_bckj.model.request.ModifyBindPhoneRequest;
+import com.example.demo_bckj.model.request.ModifyPwdRequest;
+import com.example.demo_bckj.model.request.ResetPwdRequest;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
@@ -205,9 +213,10 @@ public class HttpManager {
 
     //数据上报
     public void getSdk(Context context, BasePresenter presenter, int id) {
+        SDkRequest sDkRequest = new SDkRequest(id);
         RetrofitManager.getInstance(context)
                 .getApiService()
-                .getSdk(id)
+                .getSdk(sDkRequest)
                 .enqueue(new MyCallback<ResponseBody>() {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
@@ -260,9 +269,10 @@ public class HttpManager {
 
     //手机号登录
     public void getPhoneLogin(Context context, String tel, String code) {
+        PhoneLoginRequest phoneLoginRequest = new PhoneLoginRequest(tel, code);
         RetrofitManager.getInstance(context)
                 .getApiService()
-                .getPhoneLogin(tel, code).enqueue(new MyCallback<ResponseBody>(context) {
+                .getPhoneLogin(phoneLoginRequest).enqueue(new MyCallback<ResponseBody>(context) {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
@@ -292,9 +302,10 @@ public class HttpManager {
 
     //账号密码注册
     public void getLoginPwRe(Context context, String number, String pass, String pass2, AlertDialog alertDialog, Thread thread) {
+        LoginPwReRequest loginPwReRequest = new LoginPwReRequest(number, pass, pass2);
         RetrofitManager.getInstance(context)
                 .getApiService()
-                .getLoginPwRe(number, pass, pass2).enqueue(new MyCallback<ResponseBody>(context) {
+                .getLoginPwRe(loginPwReRequest).enqueue(new MyCallback<ResponseBody>(context) {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
@@ -327,9 +338,10 @@ public class HttpManager {
 
     //账号密码登录
     public void getLoginPwLo(Context context, String name, String password) {
+        LoginPwLoRequest loginPwLoRequest = new LoginPwLoRequest(name, password);
         RetrofitManager.getInstance(context)
                 .getApiService()
-                .getLoginPwLo(name, password).enqueue(new MyCallback<ResponseBody>(context) {
+                .getLoginPwLo(loginPwLoRequest).enqueue(new MyCallback<ResponseBody>(context) {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
                         AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
@@ -402,7 +414,8 @@ public class HttpManager {
 
     //重置密码
     public void resetPwd(Context context, String tel, String code, String password, String passwordConfirmation, Dialog dialog, boolean isLogin) {
-        RetrofitManager.getInstance(context).getApiService().resetPwd(tel, code, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
+        ResetPwdRequest resetPwdRequest = new ResetPwdRequest(tel, code, password, passwordConfirmation);
+        RetrofitManager.getInstance(context).getApiService().resetPwd(resetPwdRequest).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 Object message = jsStr.get("message");
@@ -474,7 +487,8 @@ public class HttpManager {
 
     //绑定手机
     public void BindPhone(Context context, String tel, String code, BindNewPhoneDialog bindNewPhoneDialog, BasePresenter presenter) {
-        RetrofitManager.getInstance(context).getApiService().BindPhone(tel, code).enqueue(new MyCallback<ResponseBody>() {
+        BindPhoneRequest bindPhoneRequest = new BindPhoneRequest(tel, code);
+        RetrofitManager.getInstance(context).getApiService().BindPhone(bindPhoneRequest).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 bindNewPhoneDialog.dismiss();
@@ -527,7 +541,8 @@ public class HttpManager {
     //换绑手机-换绑手机
     public void modifyBindPhone(Context context, String codeOld, String codeNew, String tel, VerifyPhoneDialog dialog,
                                 BindNewPhoneDialog bindNewPhoneDialog, BasePresenter presenter) {
-        RetrofitManager.getInstance(context).getApiService().modifyBindPhone(codeOld, codeNew, tel).enqueue(new MyCallback<ResponseBody>() {
+        ModifyBindPhoneRequest modifyBindPhoneRequest = new ModifyBindPhoneRequest(codeOld,codeNew,tel);
+        RetrofitManager.getInstance(context).getApiService().modifyBindPhone(modifyBindPhoneRequest).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 dialog.dismiss();
@@ -573,7 +588,8 @@ public class HttpManager {
 
     //修改密码
     public void modifyPwd(Context context, String passwordOld, String password, String passwordConfirmation, ModifyPWDialog modifyPWDialog) {
-        RetrofitManager.getInstance(context).getApiService().modifyPwd(passwordOld, password, passwordConfirmation).enqueue(new MyCallback<ResponseBody>() {
+        ModifyPwdRequest modifyPwdRequest = new ModifyPwdRequest(passwordOld, password, passwordConfirmation);
+        RetrofitManager.getInstance(context).getApiService().modifyPwd(modifyPwdRequest).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 modifyPWDialog.dismiss();
@@ -653,10 +669,7 @@ public class HttpManager {
             this.rechargeListener = rechargeListener;
         setRechargeOrder(rechargeOrder);
         try {
-            Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().CreateOrder(rechargeOrder.getNumber_game(),
-                    rechargeOrder.getMoney(), rechargeOrder.getProps_name(), rechargeOrder.getServer_id(),
-                    rechargeOrder.getServer_name(), rechargeOrder.getRole_id(), rechargeOrder.getRole_name(), rechargeOrder.getCallback_url(),
-                    rechargeOrder.getExtend_data()).execute();
+            Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().CreateOrder(rechargeOrder).execute();
             JSONObject json = FileUtil.getResponseBody(execute.body());
             if (json.get("code").toString().equals("0")) {
                 OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
@@ -703,8 +716,7 @@ public class HttpManager {
 
     //用户创角
     public void CreateRole(Context context, RoleBean roleBean, GameCallBack callback) {
-        RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean.getRoleId(), roleBean.getServerName(),
-                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+        RetrofitManager.getInstance(context).getApiService().CreateRole(roleBean).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 if (callback != null)
@@ -721,8 +733,7 @@ public class HttpManager {
 
     //角色登录区服
     public void LoginServer(Context context, RoleBean roleBean, GameCallBack callback) {
-        RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean.getRoleId(), roleBean.getServerName(),
-                roleBean.getRoleId(), roleBean.getRoleName()).enqueue(new MyCallback<ResponseBody>() {
+        RetrofitManager.getInstance(context).getApiService().LoginServer(roleBean).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 if (callback != null)

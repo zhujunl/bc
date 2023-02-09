@@ -20,6 +20,7 @@ import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
 import com.example.demo_bckj.model.bean.AccountPwBean;
+import com.example.demo_bckj.model.request.RealNameRequest;
 import com.example.demo_bckj.model.utility.StrUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.service.TimeService;
@@ -134,7 +135,8 @@ public class RealNameDialog extends Dialog {
 
     //实名认证
     public void setRealName(Context context, String idCode, String realName) {
-        RetrofitManager.getInstance(context).getApiService().setRealName(idCode, realName).enqueue(new MyCallback<ResponseBody>() {
+        RealNameRequest realNameRequest = new RealNameRequest(idCode, realName);
+        RetrofitManager.getInstance(context).getApiService().setRealName(realNameRequest).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
