@@ -78,11 +78,10 @@ public class SDKManager {
 
         HomeFragment homeFragment = HomeFragment.getInstance();
         FragmentManager fm = ((FragmentActivity) activity).getSupportFragmentManager();
+        homeFragment.setFm(fm);
         fm.beginTransaction()
-                .replace(R.id.home, homeFragment)
-                .addToBackStack(null)
+                .add(R.id.home,homeFragment,"homeFragment")
                 .commit();
-
     }
 
     private boolean hasGame(Map<String, String> map) {

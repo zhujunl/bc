@@ -66,6 +66,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * @author ZJL
@@ -78,6 +79,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     private final String TAG = "HomeFragment";
 
     public static HomeFragment instance;
+    private FragmentManager fm;
 
 
     public static HomeFragment getInstance() {
@@ -122,6 +124,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
 
     public HomeFragment() {
+    }
+
+    public FragmentManager getFm() {
+        return fm;
+    }
+
+    public void setFm(FragmentManager fm) {
+        this.fm = fm;
     }
 
     @Override
@@ -1155,14 +1165,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        getActivity().getFragmentManager();
-
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        WebFragment webFragment = new WebFragment(this, fm, isDialog,0);
-        fm.beginTransaction()
-                .replace(R.id.home,webFragment)
-                .addToBackStack("webFragment")
-                .commit();
+        showWeb(dialog,isDialog,"user");
     }
 
     /**
@@ -1172,12 +1175,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        WebFragment webFragment = new WebFragment(this, fm, isDialog,1);
-        fm.beginTransaction()
-                .replace(R.id.home,webFragment)
-                .addToBackStack("webFragment")
-                .commit();
+        showWeb(dialog,isDialog,"privacy");
     }
 
     /**
@@ -1187,14 +1185,25 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
+        showWeb(dialog,isDialog,"customer");
+    }
+
+    public void showWeb(Dialog dialog, boolean isDialog,String tag){
         if (!isDialog){
             RoundView.getInstance().closeRoundView(getContext());
         }
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        WebFragment webFragment = new WebFragment(this, fm, isDialog,2);
-        fm.beginTransaction()
-                .replace(R.id.home,webFragment)
-                .addToBackStack("webFragment")
-                .commit();
+        FragmentTransaction ft = fm.beginTransaction();
+        WebFragment webFragment= new WebFragment(this, dialog,fm, isDialog,tag);
+        ft.add(R.id.home,webFragment,tag);
+        ft.addToBackStack(tag);
+        hide();
+        ft.show(webFragment);
+        ft.commit();
+    }
+
+    public void hide(){
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.hide(this);
+        transaction.commit();
     }
 }

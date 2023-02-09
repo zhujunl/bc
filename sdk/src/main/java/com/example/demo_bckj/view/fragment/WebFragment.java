@@ -1,7 +1,8 @@
 package com.example.demo_bckj.view.fragment;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,12 @@ import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.round.RoundView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * @author ZJL
@@ -34,14 +37,28 @@ public class WebFragment extends Fragment {
     private ClickListener click;
     private FragmentManager fm;
     private boolean isDialog;
-    private int style;
+    private String  style;
+    private Dialog dialog;
 
-    public WebFragment(ClickListener click, FragmentManager fm, boolean isDialog, int style) {
+    public WebFragment(ClickListener click, Dialog dialog, FragmentManager fm, boolean isDialog, String style) {
         this.click=click;
+        this.dialog=dialog;
         this.fm=fm;
         this.isDialog=isDialog;
         this.style=style;
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
+        });
+    }
+
 
     @Nullable
     @Override
@@ -52,23 +69,23 @@ public class WebFragment extends Fragment {
         tittle=inflate.findViewById(R.id.tittle);
         show(style);
         btn.setOnClickListener(v->{
-            fm.popBackStack("webFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            finish();
         });
         return inflate;
     }
 
-    public void show(int style){
+    public void show(String  style){
         String uri= Constants.REGISTER;
         switch (style) {
-            case 0:
+            case "user":
                 uri= Constants.REGISTER;
                 tittle.setText("无限游戏用户协议");
                 break;
-            case 1:
+            case "privacy":
                 uri= Constants.PRIVACY;
                 tittle.setText("无限游戏用户隐私政策");
                 break;
-            case 2:
+            case "customer":
                 uri= Constants.CUSTOMER_SERVICE;
                 tittle.setText("客服");
                 break;
@@ -82,12 +99,28 @@ public class WebFragment extends Fragment {
         });
         webView.loadUrl(uri);
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d("WebFragment", "onDestroyView"  );
+
+    public void finish(){
+        Fragment home = fm.findFragmentByTag("homeFragment");
+        FragmentTransaction ft = fm.beginTransaction();
+        if (home==null){
+            home=HomeFragment.getInstance();
+            ft.add(R.id.home,home,"homeFragment");
+        }
+        hide();
+        ft.show(home);
+        ft.commit();
         if (!isDialog){
             RoundView.getInstance().showSmallwin(getActivity(), click, 0);
+        }else {
+            dialog.show();
         }
+    }
+
+    public void hide(){
+        FragmentTransaction transaction = fm.beginTransaction();
+//        transaction.hide(this);
+        fm.popBackStack();
+        transaction.commit();
     }
 }
