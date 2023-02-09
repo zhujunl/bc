@@ -1,7 +1,10 @@
 package com.example.demo_bckj.model;
 
+import com.example.demo_bckj.crash.CrashEntity;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -146,4 +149,8 @@ public interface ApiService {
                                    @Query("server_name") String server_name,
                                    @Query("role_id") String role_id,
                                    @Query("role_name") String role_name);
+
+    //崩溃日志
+    @POST("sdk/v1/crash")
+    Call<ResponseBody> CrashLog(@Body CrashEntity entity);
 }

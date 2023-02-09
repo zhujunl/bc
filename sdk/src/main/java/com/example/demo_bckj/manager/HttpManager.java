@@ -21,6 +21,7 @@ import com.example.demo_bckj.control.GameCallBack;
 import com.example.demo_bckj.control.LoginCallBack;
 import com.example.demo_bckj.control.LoginOutCallBack;
 import com.example.demo_bckj.control.RechargeCallBack;
+import com.example.demo_bckj.crash.CrashEntity;
 import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
@@ -732,6 +733,21 @@ public class HttpManager {
             public void onError(String message) {
                 if (callback != null)
                     callback.onFail(message);
+            }
+        });
+    }
+
+    //崩溃日志上报
+    public void CrashLog(Context context, CrashEntity log){
+        RetrofitManager.getInstance(context).getApiService().CrashLog(log).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
             }
         });
     }
