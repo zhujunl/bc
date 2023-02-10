@@ -3,15 +3,15 @@ package com.example.demo_bckj.model;
 import com.example.demo_bckj.crash.CrashEntity;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
+import com.example.demo_bckj.model.request.BindPhoneRequest;
 import com.example.demo_bckj.model.request.LoginPwLoRequest;
 import com.example.demo_bckj.model.request.LoginPwReRequest;
-import com.example.demo_bckj.model.request.PhoneLoginRequest;
-import com.example.demo_bckj.model.request.SDkRequest;
-import com.example.demo_bckj.model.request.BindPhoneRequest;
 import com.example.demo_bckj.model.request.ModifyBindPhoneRequest;
 import com.example.demo_bckj.model.request.ModifyPwdRequest;
+import com.example.demo_bckj.model.request.PhoneLoginRequest;
 import com.example.demo_bckj.model.request.RealNameRequest;
 import com.example.demo_bckj.model.request.ResetPwdRequest;
+import com.example.demo_bckj.model.request.SDkRequest;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

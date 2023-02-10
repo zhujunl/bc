@@ -19,14 +19,12 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            zipAlignEnabled false // Zipalign优化
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'version', '"1.0"'
             buildConfigField 'String','baseUrl','"https://apitest.infinite-game.cn"'
         }
         release {
             minifyEnabled true
-            zipAlignEnabled true // Zipalign优化
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'version', '"1.0"'
             buildConfigField 'String','baseUrl','"https://apitest.infinite-game.cn"'

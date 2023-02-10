@@ -165,7 +165,7 @@ public class HttpManager {
         Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().init().execute();
         ResponseBody body = execute.body();
         JSONObject json = FileUtil.getResponseBody(body);
-        if (json==null)
+        if (json == null)
             return false;
         Object code = json.get("code");
         if (code.toString().equals("0")) {
@@ -258,6 +258,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
+                        Toast.makeText(context, "获取验证码失败，" + message, Toast.LENGTH_SHORT).show();
                         IBaseView view = presenter.getView();
                         if (view != null) {
                             view.onError(message);
@@ -295,6 +296,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
+                        Toast.makeText(context, "登录失败，" + message, Toast.LENGTH_SHORT).show();
                         loginListener.onFail("登录失败，" + message);
                     }
                 });
@@ -331,6 +333,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
+                        Toast.makeText(context, "登录失败，" + message, Toast.LENGTH_SHORT).show();
                         loginListener.onFail("登录失败，" + message);
                     }
                 });
@@ -364,6 +367,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
+                        Toast.makeText(context, "登录失败，" + message, Toast.LENGTH_SHORT).show();
                         loginListener.onFail("登录失败，" + message);
                     }
                 });
@@ -387,6 +391,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
+                        Toast.makeText(context, "快速生成账号密码失败，" + message, Toast.LENGTH_SHORT).show();
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -541,7 +546,7 @@ public class HttpManager {
     //换绑手机-换绑手机
     public void modifyBindPhone(Context context, String codeOld, String codeNew, String tel, VerifyPhoneDialog dialog,
                                 BindNewPhoneDialog bindNewPhoneDialog, BasePresenter presenter) {
-        ModifyBindPhoneRequest modifyBindPhoneRequest = new ModifyBindPhoneRequest(codeOld,codeNew,tel);
+        ModifyBindPhoneRequest modifyBindPhoneRequest = new ModifyBindPhoneRequest(codeOld, codeNew, tel);
         RetrofitManager.getInstance(context).getApiService().modifyBindPhone(modifyBindPhoneRequest).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
@@ -749,7 +754,7 @@ public class HttpManager {
     }
 
     //崩溃日志上报
-    public void CrashLog(Context context, CrashEntity log){
+    public void CrashLog(Context context, CrashEntity log) {
         RetrofitManager.getInstance(context).getApiService().CrashLog(log).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {

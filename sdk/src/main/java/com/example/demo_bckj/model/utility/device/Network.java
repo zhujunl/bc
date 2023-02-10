@@ -12,7 +12,7 @@ import com.example.demo_bckj.model.utility.DeviceIdUtil;
 
 
 public class Network {
-    private String  code;
+    private String code;
     private String intranet_ip;
     private String mac;
     private String name;
@@ -30,7 +30,7 @@ public class Network {
         setType(build.type);
     }
 
-    public String  getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -110,12 +110,11 @@ public class Network {
     @Override
     public String toString() {
         return "{" +
-                "\"code\": " + code + "," +
+                "\"code\": \"" + code + "\"," +
                 "\"intranet_ip\": \"" + intranet_ip + "\"," +
                 "\"mac\": \"" + mac + "\"," +
                 "\"name\": \"" + name + "\"," +
                 "\"type\": \"" + type + "\"" +
                 '}';
     }
-
 }

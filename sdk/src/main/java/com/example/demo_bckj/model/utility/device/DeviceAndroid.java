@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 /**
  * @author ZJL
  * @date 2023/1/16 10:50
@@ -35,20 +33,20 @@ public class DeviceAndroid {
     private String sdk_package_name;
     private String sdk_version;
     private String serial;
-    private List<String> sim_serial;
+    private List<Object> sim_serial;
 
     public DeviceAndroid(Context context) {
         system_version = DeviceIdUtil.getSystemVersion();
         android_id = DeviceIdUtil.getAndroidId(context);
-        id=DeviceIdUtil.getBasebandVersion();
-        android_q=new DeviceAndroidQ();
-        imei =new ArrayList<>(Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context)));
+        id = DeviceIdUtil.getBasebandVersion();
+        android_q = new DeviceAndroidQ();
+        imei = new ArrayList<>(Arrays.asList(DeviceIdUtil.getIMEI_1(context), DeviceIdUtil.getIMEI_2(context)));
         imsi = DeviceIdUtil.getIMSI(context);
         model = Build.MODEL;
         product = Build.MANUFACTURER;
         brand = Build.BRAND;
-        game_package_name=DeviceIdUtil.getTopPackage(context);
-        game_version=DeviceIdUtil.getVersionName(context);
+        game_package_name = DeviceIdUtil.getTopPackage(context);
+        game_version = DeviceIdUtil.getVersionName(context);
         sdk_package_name = "com.infinite.game";
         sdk_version = BuildConfig.version;
         serial = DeviceIdUtil.getSERIAL();
@@ -129,7 +127,7 @@ public class DeviceAndroid {
         this.serial = serial;
     }
 
-    public void setSim_serial(List<String> sim_serial) {
+    public void setSim_serial(List<Object> sim_serial) {
         this.sim_serial = sim_serial;
     }
 
@@ -189,7 +187,7 @@ public class DeviceAndroid {
         return serial;
     }
 
-    public List<String> getSim_serial() {
+    public List<Object> getSim_serial() {
         return sim_serial;
     }
 
@@ -208,7 +206,7 @@ public class DeviceAndroid {
         private String sdk_package_name;
         private String sdk_version;
         private String serial;
-        private List<String> sim_serial;
+        private List<Object> sim_serial;
 
         public Builder system_version(String val) {
             this.system_version = val;
@@ -280,7 +278,7 @@ public class DeviceAndroid {
             return this;
         }
 
-        public Builder sim_serial(List<String> val) {
+        public Builder sim_serial(List<Object> val) {
             this.sim_serial = val;
             return this;
         }
@@ -290,7 +288,6 @@ public class DeviceAndroid {
         }
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "{" +
@@ -298,7 +295,7 @@ public class DeviceAndroid {
                 "\"android_id\": \"" + android_id + "\"," +
                 "\"android_q\":" + android_q + "," +
                 "\"id\": \"" + id + "\"," +
-                "\"imei\": " + imei + "," +
+                "\"imei\": " + ListToString(imei) + "," +
                 "\"imsi\": \"" + imsi + "\"," +
                 "\"model\": \"" + model + "\"," +
                 "\"product\": \"" + product + "\"," +
@@ -308,7 +305,21 @@ public class DeviceAndroid {
                 "\"sdk_package_name\": \"" + sdk_package_name + "\"," +
                 "\"sdk_version\": \"" + sdk_version + "\"," +
                 "\"serial\": \"" + serial + "\"," +
-                "\"sim_serial\": " + sim_serial + "" +
+                "\"sim_serial\": " + ListToString(sim_serial) + "" +
                 "}";
+    }
+
+
+    public String ListToString(List<Object> lists) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("[");
+        for (int i = 0; i < lists.size(); i++) {
+            Object o = lists.get(i);
+            stringBuffer.append("\"").append(o.toString()).append("\"");
+            if (i < lists.size() - 1)
+                stringBuffer.append(",");
+        }
+        stringBuffer.append("]");
+        return stringBuffer.toString();
     }
 }

@@ -209,9 +209,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 } else {
                     boolean refresh = false;
                     try {
-                        if (!isInit)
-                            refresh = presenter.refreshToken(getActivity());
-                        isInit=true;
+                        refresh = presenter.refreshToken(getActivity());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -829,6 +827,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
             presenter.forgetPwd(getActivity(), trim1, popupTvCode);
         });
+        //用户协议
+        popupUser.setOnClickListener(view -> UserAgreement(alertDialog, true));
+        //隐私协议
+        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
     //重置密码
