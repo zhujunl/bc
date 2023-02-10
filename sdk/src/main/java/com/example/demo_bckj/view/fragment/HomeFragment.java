@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,7 +33,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
@@ -50,6 +50,7 @@ import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.model.utility.ToastUtil;
 import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
@@ -106,7 +107,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     AlertDialog.Builder AutoBuilder;
 
 
-
     private CServiceFragment cs;
     private PersonFragment pf;
     private WelfareFragment wp;
@@ -147,7 +147,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initData() {
-        HttpManager.getInstance().setListener( this, this, getActivity());
+        HttpManager.getInstance().setListener(this, this, getActivity());
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -182,7 +182,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 return true;
             }
         });
-
 
 
         //       //沉浸式状态栏
@@ -223,6 +222,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     protected void initView() {
+        cs = CServiceFragment.getInstance(DrawerLayout);
+        pf = PersonFragment.getInstance(DrawerLayout);
+
         DrawerLayout = (androidx.drawerlayout.widget.DrawerLayout) v.findViewById(R.id.DrawerLayout);
         leftLayout = (LinearLayout) v.findViewById(R.id.left_layout);
         userHead = (ImageView) v.findViewById(R.id.user_head);
@@ -248,10 +250,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         welfareBtn.setOnClickListener(view -> {
             Welfare(false);
         });
-        cServiceBtn.setOnClickListener(view -> {
+        cServiceLin.setOnClickListener(view -> {
             CService(false);
         });
-        personBtn.setOnClickListener(view -> {
+        PersonLin.setOnClickListener(view -> {
             Personal(false, true);
         });
     }
@@ -273,7 +275,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     @Override
     public void onError(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        ToastUtil.show(getActivity(), msg);
     }
 
     @Override
@@ -292,7 +294,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void CService(boolean show) {
         Log.d(TAG, "CService");
-        cs = CServiceFragment.getInstance( DrawerLayout);
+        if (cs == null)
+            cs = CServiceFragment.getInstance(DrawerLayout);
         if (show)
             DrawerLayout.openDrawer(Gravity.LEFT);
         changeStyle(1);
@@ -303,7 +306,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
     @Override
     public void Personal(boolean show, boolean isAuthenticated) {
         Log.d(TAG, "Personal");
-        pf = PersonFragment.getInstance(DrawerLayout);
+        if (pf == null)
+            pf = PersonFragment.getInstance(DrawerLayout);
         if (pf.getListener() == null) {
             pf.setListener(new PersonFragment.privacyListener() {
                 @Override
@@ -480,7 +484,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         back.setVisibility(isAccount ? View.VISIBLE : View.INVISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         List<TelEntity> telEntities = DBManager.getInstance(getContext()).queryTel();
-        if (telEntities.size()!=0){
+        if (telEntities.size() != 0) {
             popupLogin.setText(telEntities.get(0).getTelNumber());
         }
         spinnerImg.setOnClickListener(view -> {
@@ -494,6 +498,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             alertDialog.setView(inflate);
             alertDialog.show();
         }
+        setDialogSize(alertDialog,320,295);
         back.setOnClickListener(v1 -> popupForgetPassword());
 
         //跳转注册
@@ -566,7 +571,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(popupTvCode, 60000, 1000);
                 countDownTimerUtils.start();
             } else {
-                Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请输入正确的手机号");
             }
         });
         //用户协议
@@ -574,12 +579,15 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         //隐私协议
         popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
         popupSubmit.setOnClickListener(view -> {
+            if (Constants.isFastDoubleClick(getContext())) {
+                return;
+            }
             if (popupRb.isChecked()) {
                 String number = popupLogin.getText().toString().trim();
                 String code = popupEtCode.getText().toString().trim();
                 presenter.getPhoneLogin(getActivity(), number, code);
             } else {
-                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请先勾选用户协议");
             }
         });
 
@@ -624,6 +632,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             alertDialog.setView(inflate);
             alertDialog.show();
         }
+        setDialogSize(alertDialog,320,295);
         popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.pop_tel_list, null);
         List<AccountLoginEntity> query = DBManager.getInstance(getContext()).query();
@@ -634,7 +643,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                     popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
-        if (query.size()!=0){
+        if (query.size() != 0) {
             popupLogin.setText(query.get(0).getAccount());
             popup_et_pw.setText(query.get(0).getPassword());
         }
@@ -650,10 +659,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         });
         //账号密码登录
         popupSubmit.setOnClickListener(view -> {
+            if (Constants.isFastDoubleClick(getContext())) {
+                return;
+            }
             if (popupRb.isChecked()) {
                 presenter.getLoginPwLo(getActivity(), popupLogin.getText().toString().trim(), popup_et_pw.getText().toString().trim());
             } else {
-                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请先勾选用户协议");
             }
         });
         popupLogin.addTextChangedListener(new TextWatcher() {
@@ -734,22 +746,26 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
+        setDialogSize(alertDialog,320,285);
         //验证
         popupSubmit.setOnClickListener(view -> {
+            if (Constants.isFastDoubleClick(getContext())) {
+                return;
+            }
             if (popupRb.isChecked()) {
                 String trim1 = popupLogin.getText().toString().trim();
                 String trim2 = popupEtCode.getText().toString().trim();
                 if (TextUtils.isEmpty(trim1) || TextUtils.isEmpty(trim2)) {
-                    Toast.makeText(getActivity(), "请输入手机号与验证码", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getActivity(), "请输入手机号与验证码");
                     return;
                 }
                 if (!DeviceIdUtil.isMobileNO(trim1)) {
-                    Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getActivity(), "请输入正确的手机号");
                     return;
                 }
                 popupResetPassword(trim1, trim2);
             } else {
-                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请先勾选用户协议");
             }
         });
         //返回上一级
@@ -818,11 +834,11 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         popupTvCode.setOnClickListener(view -> {
             String trim1 = popupLogin.getText().toString().trim();
             if (TextUtils.isEmpty(trim1)) {
-                Toast.makeText(getActivity(), "请输入手机号", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请输入手机号");
                 return;
             }
             if (!DeviceIdUtil.isMobileNO(trim1)) {
-                Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请输入正确的手机号");
                 return;
             }
             presenter.forgetPwd(getActivity(), trim1, popupTvCode);
@@ -844,9 +860,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-
+        setDialogSize(alertDialog,320,270);
         //确认重置密码
         popupSubmit.setOnClickListener(view -> {
+            if (Constants.isFastDoubleClick(getContext())) {
+                return;
+            }
             String trim1 = popup_new_password.getText().toString().trim();
             String trim2 = popup_password_pw.getText().toString().trim();
             presenter.resetPwd(getActivity(), n, c, trim1, trim2);
@@ -931,6 +950,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         alertDialog.setContentView(inflate);
+        setDialogSize(alertDialog,320,320);
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
@@ -945,6 +965,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             }
         });
         popupSubmit.setOnClickListener(view -> {
+            if (Constants.isFastDoubleClick(getContext())) {
+                return;
+            }
             String number = popup_number.getText().toString().trim();
             String pass = popup_password.getText().toString().trim();
             String pass2 = popup_password_pw.getText().toString().trim();
@@ -952,10 +975,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                 if (TextUtils.equals(pass, pass2)) {
                     presenter.getLoginPwRe(getActivity(), number, pass, pass2, alertDialog, getActivity());
                 } else {
-                    Toast.makeText(getActivity(), "两次密码不正确", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getActivity(), "两次密码不正确");
                 }
             } else {
-                Toast.makeText(getActivity(), "请先勾选用户协议", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getActivity(), "请先勾选用户协议");
             }
         });
         popup_number.addTextChangedListener(new TextWatcher() {
@@ -1159,6 +1182,21 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
 
     }
 
+    private void setDialogSize(AlertDialog dialog,int width,int height){
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+
+        lp.width = dp2px(getContext(), width);
+        lp.height = dp2px(getContext(), height);
+        window.setGravity(Gravity.CENTER);
+        window.setAttributes(lp);
+    }
+
+    private int dp2px(Context context, float dpVal) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                dpVal, context.getResources().getDisplayMetrics());
+    }
+
 
     /**
      * 弹出用户协议
@@ -1167,7 +1205,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        showWeb(dialog,isDialog,"user");
+        showWeb(dialog, isDialog, "user");
     }
 
     /**
@@ -1177,7 +1215,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        showWeb(dialog,isDialog,"privacy");
+        showWeb(dialog, isDialog, "privacy");
     }
 
     /**
@@ -1187,23 +1225,23 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        showWeb(dialog,isDialog,"customer");
+        showWeb(dialog, isDialog, "customer");
     }
 
-    public void showWeb(Dialog dialog, boolean isDialog,String tag){
-        if (!isDialog){
+    public void showWeb(Dialog dialog, boolean isDialog, String tag) {
+        if (!isDialog) {
             RoundView.getInstance().closeRoundView(getContext());
         }
         FragmentTransaction ft = fm.beginTransaction();
-        WebFragment webFragment= new WebFragment(this, dialog,fm, isDialog,tag);
-        ft.add(R.id.home,webFragment,tag);
+        WebFragment webFragment = new WebFragment(this, dialog, fm, isDialog, tag);
+        ft.add(R.id.home, webFragment, tag);
         ft.addToBackStack(tag);
         hide();
         ft.show(webFragment);
         ft.commit();
     }
 
-    public void hide(){
+    public void hide() {
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.hide(this);
         transaction.commit();

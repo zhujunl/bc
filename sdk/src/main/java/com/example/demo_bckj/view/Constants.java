@@ -1,8 +1,10 @@
 package com.example.demo_bckj.view;
 
 import android.Manifest;
+import android.content.Context;
 
 import com.example.demo_bckj.BuildConfig;
+import com.example.demo_bckj.model.utility.ToastUtil;
 import com.example.demo_bckj.model.utility.device.DeviceInfo;
 
 import java.util.HashMap;
@@ -45,4 +47,17 @@ public class Constants {
     }
 
     public static DeviceInfo DEVICEINFO;
+
+    private static long lastClickTime=0L;
+
+    public static boolean isFastDoubleClick(Context context) {
+        long time = System.currentTimeMillis();
+        if ( time - lastClickTime < 500) {
+            lastClickTime = time;
+            ToastUtil.show(context,"请勿重复点击");
+            return true;
+        }
+        lastClickTime = time;
+        return false;
+    }
 }

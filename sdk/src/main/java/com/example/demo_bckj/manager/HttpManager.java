@@ -11,7 +11,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
@@ -40,17 +39,18 @@ import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
 import com.example.demo_bckj.model.bean.URLBean;
 import com.example.demo_bckj.model.bean.User;
+import com.example.demo_bckj.model.request.BindPhoneRequest;
 import com.example.demo_bckj.model.request.LoginPwLoRequest;
 import com.example.demo_bckj.model.request.LoginPwReRequest;
-import com.example.demo_bckj.model.request.PhoneLoginRequest;
-import com.example.demo_bckj.model.request.SDkRequest;
-import com.example.demo_bckj.model.request.BindPhoneRequest;
 import com.example.demo_bckj.model.request.ModifyBindPhoneRequest;
 import com.example.demo_bckj.model.request.ModifyPwdRequest;
+import com.example.demo_bckj.model.request.PhoneLoginRequest;
 import com.example.demo_bckj.model.request.ResetPwdRequest;
+import com.example.demo_bckj.model.request.SDkRequest;
 import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.model.utility.ToastUtil;
 import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.service.TimeService;
 import com.example.demo_bckj.view.Constants;
@@ -126,12 +126,12 @@ public class HttpManager {
                         // 判断resultStatus 为9000则代表支付成功
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                            //                            Toast.makeText(context, context.getString(R.string.pay_success), Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(context, context.getString(R.string.pay_success));
                             if (getRechargeCallBack() != null)
                                 getRechargeCallBack().onSuccess(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game());
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                            //                            Toast.makeText(context, context.getString(R.string.pay_failed) + payResult.getMemo(), Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(context, context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game() + context.getString(R.string.pay_failed) + payResult.getMemo());
                             if (getRechargeCallBack() != null)
                                 getRechargeCallBack().onFail(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game() + context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
@@ -258,7 +258,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, "获取验证码失败，" + message, Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(context, "获取验证码失败，" + message);
                         IBaseView view = presenter.getView();
                         if (view != null) {
                             view.onError(message);
@@ -296,7 +296,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, "登录失败，" + message, Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(context, "登录失败，" + message);
                         loginListener.onFail("登录失败，" + message);
                     }
                 });
@@ -333,7 +333,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, "登录失败，" + message, Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(context, "登录失败，" + message);
                         loginListener.onFail("登录失败，" + message);
                     }
                 });
@@ -367,7 +367,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, "登录失败，" + message, Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(context, "登录失败，" + message);
                         loginListener.onFail("登录失败，" + message);
                     }
                 });
@@ -391,8 +391,7 @@ public class HttpManager {
 
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(context, "快速生成账号密码失败，" + message, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(context, "快速生成账号密码失败，" + message);
                     }
                 });
 
@@ -405,14 +404,14 @@ public class HttpManager {
         RetrofitManager.getInstance(context).getApiService().forgetPwd(number).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-                Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "发送成功");
                 CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(popupTvCode, 60000, 1000);
                 countDownTimerUtils.start();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -424,7 +423,7 @@ public class HttpManager {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 Object message = jsStr.get("message");
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message.toString());
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -437,7 +436,7 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -465,7 +464,6 @@ public class HttpManager {
                         .token(authorization.getAuthorization())
                         .build();
                 loginListener.onSuccess(user);
-                Log.d(TAG, "refreshToken" + "Thread==" + Thread.currentThread().getName());
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
             }
@@ -478,14 +476,14 @@ public class HttpManager {
         RetrofitManager.getInstance(context).getApiService().BindPhoneCode(tel).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-                Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "发送成功");
                 CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(TCode, 60000, 1000);
                 countDownTimerUtils.start();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -498,13 +496,13 @@ public class HttpManager {
             public void onSuccess(JSONObject jsStr) {
                 bindNewPhoneDialog.dismiss();
                 DBManager.getInstance(context).BindPhone(tel);
-                Toast.makeText(context, "绑定成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "绑定成功");
                 presenter.getView().onSuccess("");
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -514,14 +512,14 @@ public class HttpManager {
         RetrofitManager.getInstance(context).getApiService().modifyBind().enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-                Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "发送成功");
                 CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(TCode, 60000, 1000);
                 countDownTimerUtils.start();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -531,14 +529,14 @@ public class HttpManager {
         RetrofitManager.getInstance(context).getApiService().modifyBindCode(tel).enqueue(new MyCallback<ResponseBody>() {
             @Override
             public void onSuccess(JSONObject jsStr) {
-                Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "发送成功");
                 CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(TCode, 60000, 1000);
                 countDownTimerUtils.start();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -560,7 +558,7 @@ public class HttpManager {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -586,7 +584,7 @@ public class HttpManager {
                 if (!TimeService.isRun()) {
                     return;
                 }
-                //                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }
@@ -598,13 +596,13 @@ public class HttpManager {
             @Override
             public void onSuccess(JSONObject jsStr) {
                 modifyPWDialog.dismiss();
-                Toast.makeText(context, "密码修改成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "密码修改成功");
                 loginOut(context, false, true);
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, message);
             }
         });
     }

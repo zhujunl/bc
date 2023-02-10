@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
+import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.fragment.PersonFragment;
 
 import androidx.annotation.NonNull;
@@ -69,6 +70,9 @@ public class VerifyPhoneDialog extends Dialog {
             }
         });
         submit.setOnClickListener(v -> {
+            if (Constants.isFastDoubleClick(getContext())){
+                return;
+            }
             if (TextUtils.isEmpty(phone.getText().toString().trim())||TextUtils.isEmpty(code.getText().toString().trim())
             ||!DeviceIdUtil.isMobileNO(phone.getText().toString().trim())){
                 Toast.makeText(getContext(), "请输入手机号与验证码", Toast.LENGTH_SHORT).show();

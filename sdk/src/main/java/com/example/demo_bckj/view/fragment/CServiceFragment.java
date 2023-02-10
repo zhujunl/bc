@@ -108,6 +108,7 @@ public class CServiceFragment extends BaseFragment<CServicePresenter> {
         });
 
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
         webView.setWebViewClient(new WebViewClient(){
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);

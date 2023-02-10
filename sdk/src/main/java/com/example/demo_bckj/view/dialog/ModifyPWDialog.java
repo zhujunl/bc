@@ -22,6 +22,7 @@ import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
+import com.example.demo_bckj.view.Constants;
 
 import androidx.annotation.NonNull;
 
@@ -67,6 +68,9 @@ public class ModifyPWDialog extends Dialog {
             dismiss();
         });
         submit.setOnClickListener(v -> {
+            if (Constants.isFastDoubleClick(getContext())){
+                return;
+            }
             String trim = pw.getText().toString().trim();
             String trim1 = newPw.getText().toString().trim();
             String trim2 = newPwA.getText().toString().trim();

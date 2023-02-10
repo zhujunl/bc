@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
+import com.example.demo_bckj.view.Constants;
 
 import androidx.annotation.NonNull;
 
@@ -75,6 +76,9 @@ public class BindNewPhoneDialog extends Dialog {
             }
         });
         submit.setOnClickListener(v->{
+            if (Constants.isFastDoubleClick(getContext())){
+                return;
+            }
             if (TextUtils.isEmpty(code.getText().toString().trim())){
                 Toast.makeText(context, "请输入验证码", Toast.LENGTH_SHORT).show();
                 return;
