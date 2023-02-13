@@ -60,12 +60,10 @@ public class SDKManager {
         this.context = activity;
         Map<String, String> map = new HashMap<>();
         map.put("game", gameId); // 游戏唯一标识
+        map.put("type", Constants.TYPE);
         boolean fileExists = FileUtil.isFileExists(context, "bc_sdk_config.json");
         if (!fileExists) {
-            if (map != null && !TextUtils.isEmpty(gameId)) {
-                if (!hasGame(map)) {
-                    map.put("game", Constants.GAME);
-                }
+            if (!TextUtils.isEmpty(gameId)) {
                 Constants.DEVICEINFO = new DeviceInfo(map, new Device(context));
             } else {
                 Constants.DEVICEINFO = new DeviceInfo(Constants.MAP, new Device(context));
