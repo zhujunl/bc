@@ -280,7 +280,6 @@ public class HttpManager {
                         DBManager.getInstance(context).insertAccount(data, "");
                         ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
                         User user = new User.Builder()
-                                .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
                                 .age(data.getData().getAge())
@@ -316,7 +315,6 @@ public class HttpManager {
                             TimeService.start(context);
                         ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
                         User user = new User.Builder()
-                                .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
                                 .age(data.getData().getAge())
@@ -352,7 +350,6 @@ public class HttpManager {
                         TimeService.start(context);
                         ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
                         User user = new User.Builder()
-                                .account(data.getData().getAccount())
                                 .slug(data.getData().getSlug())
                                 .isAuthenticated(data.getData().getAuthenticated())
                                 .age(data.getData().getAge())
@@ -457,7 +454,6 @@ public class HttpManager {
                 TimeService.start(context);
                 ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
                 User user = new User.Builder()
-                        .account(data.getData().getAccount())
                         .slug(data.getData().getSlug())
                         .isAuthenticated(data.getData().getAuthenticated())
                         .age(data.getData().getAge())

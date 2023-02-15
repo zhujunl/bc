@@ -20,13 +20,13 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'version', '"1.0"'
+            buildConfigField 'String', 'version', '"1.0.1"'
             buildConfigField 'String','baseUrl','"https://apitest.infinite-game.cn"'
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'version', '"1.0"'
+            buildConfigField 'String', 'version', '"1.0.1"'
             buildConfigField 'String','baseUrl','"https://api.infinite-game.cn"'
         }
     }

@@ -8,23 +8,23 @@ package com.example.demo_bckj.model.bean;
  * @updateDes
  */
 public class User {
-    private String account;//账号
+//    private String account;//账号
     private String slug;//账号唯一标识
     private boolean isAuthenticated;//是否实名
     private Integer age;//年龄
     private String token;//token
 
     public User(Builder builder) {
-        setAccount(builder.account);
+//        setAccount(builder.account);
         setSlug(builder.slug);
         setAuthenticated(builder.isAuthenticated);
         setAge(builder.age);
         setToken(builder.token);
     }
 
-    private void setAccount(String account) {
-        this.account = account;
-    }
+//    private void setAccount(String account) {
+//        this.account = account;
+//    }
 
     private void setSlug(String slug) {
         this.slug = slug;
@@ -42,9 +42,9 @@ public class User {
         this.token = token;
     }
 
-    public String getAccount() {
-        return account;
-    }
+//    public String getAccount() {
+//        return account;
+//    }
 
     public String getSlug() {
         return slug;
@@ -58,12 +58,12 @@ public class User {
         return age;
     }
 
-    public String getToken(boolean isBearer) {
-        return isBearer?"Bearer "+token:token;
+    public String getToken() {
+        return "Bearer "+token;
     }
 
     public static class Builder{
-        private String account;
+//        private String account;
         private String slug;
         private boolean isAuthenticated;
         private Integer age;
@@ -72,10 +72,10 @@ public class User {
         public Builder() {
         }
 
-        public Builder account(String var){
-            account=var;
-            return this;
-        }
+//        public Builder account(String var){
+//            account=var;
+//            return this;
+//        }
         public Builder slug(String var){
             slug=var;
             return this;
@@ -101,8 +101,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "account='" + account + '\'' +
-                ", slug='" + slug + '\'' +
+//                "account='" + account + '\'' +
+                " slug='" + slug + '\'' +
                 ", isAuthenticated=" + isAuthenticated +
                 ", age=" + age +
                 ", token='" + token + '\'' +
