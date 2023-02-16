@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.demo_bckj.base.BasePresenter;
 import com.example.demo_bckj.db.entity.AccountEntity;
+import com.example.demo_bckj.listener.LoginCallback;
 import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
@@ -29,6 +30,12 @@ import java.io.IOException;
  */
 public class HomePresenter extends BasePresenter {
 
+    private LoginCallback loginCallback;
+
+    public HomePresenter(LoginCallback loginCallback) {
+        HttpManager.getInstance().setHomePresenter(this);
+        this.loginCallback=loginCallback;
+    }
 
     public HomePresenter() {
         HttpManager.getInstance().setHomePresenter(this);
@@ -125,14 +132,14 @@ public class HomePresenter extends BasePresenter {
     }
 
     public void Login(Context context) {
-        if (view != null) {
+        if (this.loginCallback != null) {
             AccountEntity account = DBManager.getInstance(context).getAccount();
             if (account != null) {
                 Toast.makeText(context, "请先退出登录账号", Toast.LENGTH_SHORT).show();
                 return;
             }
             SPUtils bcSP = SPUtils.getInstance(context, "bcSP");
-            view.Login(bcSP.getBoolean("isAccount"));
+            this.loginCallback.login(bcSP.getBoolean("isAccount"));
         }
     }
 

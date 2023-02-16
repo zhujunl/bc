@@ -101,15 +101,15 @@ public class WebFragment extends Fragment {
     }
 
     public void finish(){
-        Fragment home = fm.findFragmentByTag("homeFragment");
-        FragmentTransaction ft = fm.beginTransaction();
-        if (home==null){
-            home=HomeFragment.getInstance();
-            ft.add(R.id.home,home,"homeFragment");
-        }
+//        Fragment home = fm.findFragmentByTag("homeFragment");
+//        FragmentTransaction ft = fm.beginTransaction();
+//        if (home==null){
+//            home=HomeFragment.getInstance();
+//            ft.add(R.id.home,home,"homeFragment");
+//        }
         hide();
-        ft.show(home);
-        ft.commit();
+//        ft.show(home);
+//        ft.commit();
         if (!isDialog){
             RoundView.getInstance().showSmallwin(getActivity(), click, 0);
         }else {

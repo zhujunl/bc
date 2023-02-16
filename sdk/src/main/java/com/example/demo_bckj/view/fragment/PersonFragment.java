@@ -1,11 +1,9 @@
 package com.example.demo_bckj.view.fragment;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,6 +11,7 @@ import com.example.demo_bckj.R;
 import com.example.demo_bckj.base.BaseFragment;
 import com.example.demo_bckj.db.dao.AccountDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
+import com.example.demo_bckj.listener.privacyListener;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.dialog.BindNewPhoneDialog;
@@ -40,7 +39,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
     private RelativeLayout modifyPw, phoneRe, realName, userAgree, privacy;
     private Button quit;
     private String tel, nickName;
-    private ImageView header;
     private privacyListener listener;
     private AccountDao dao;
     private DrawerLayout drawerLayout;
@@ -80,7 +78,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         privacy = v.findViewById(R.id.PrivacyRe);
         quit = v.findViewById(R.id.user_quit_login);
         phoneRe = v.findViewById(R.id.phoneRe);
-        header = v.findViewById(R.id.user_head);
 
         click();
 
@@ -176,9 +173,6 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         quit.setOnClickListener(v -> {
             presenter.loginOut(getContext());
         });
-        header.setOnClickListener(v -> {
-
-        });
     }
 
     @Override
@@ -208,12 +202,5 @@ public class PersonFragment extends BaseFragment<PersonPresenter> {
         return listener;
     }
 
-    public interface privacyListener {
-        void user();
-
-        void privacy();
-
-        void cs(Dialog dialog);
-    }
 
 }

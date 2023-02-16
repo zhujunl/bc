@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.demo_bckj">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".view.activity.MyApplication"
         android:allowBackup="true"
@@ -19,9 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Demo_bckj">
 
-        <service android:name=".service.TimeService"
-            android:enabled="true">
-        </service>
+        <service
+            android:name=".service.TimeService"
+            android:enabled="true" />
+
         <meta-data
             android:name="design_width_in_dp"
             android:value="360" />

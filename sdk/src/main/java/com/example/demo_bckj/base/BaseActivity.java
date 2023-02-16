@@ -72,4 +72,11 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
                 .addToBackStack(null)
                 .commit();
     }
+
+    public void nvTo(Fragment fragment,String name){
+//        fm.beginTransaction()
+//                .replace(R.id.container, fragment)
+//                .addToBackStack(name)
+//                .commit();
+    }
 }

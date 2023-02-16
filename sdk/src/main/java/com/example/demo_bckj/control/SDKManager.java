@@ -3,9 +3,8 @@ package com.example.demo_bckj.control;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.example.demo_bckj.R;
+import com.example.demo_bckj.manager.DialogManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.bean.RechargeOrder;
 import com.example.demo_bckj.model.bean.RoleBean;
@@ -14,17 +13,9 @@ import com.example.demo_bckj.model.utility.device.Device;
 import com.example.demo_bckj.model.utility.device.DeviceInfo;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.RechargeSubDialog;
-import com.example.demo_bckj.view.fragment.HomeFragment;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 /**
  * @author ZJL
@@ -74,39 +65,10 @@ public class SDKManager {
         HttpManager.getInstance().init(loginCallBack, loginOutCallBack);
         HttpManager.getInstance().setRecharge();
 
-        HomeFragment homeFragment = HomeFragment.getInstance();
-        FragmentManager fm = ((FragmentActivity) activity).getSupportFragmentManager();
-        homeFragment.setFm(fm);
-        fm.beginTransaction()
-                .add(R.id.home,homeFragment,"homeFragment")
-                .commit();
+        DialogManager.getInstance().init(activity);
+
     }
 
-    private boolean hasGame(Map<String, String> map) {
-        boolean flag = false;
-        Iterator<String> iterator = map.keySet().iterator();
-        do {
-            String next = iterator.next();
-            if (next.equals("game")) {
-                flag = true;
-                break;
-            }
-        } while (iterator.hasNext());
-        return flag;
-    }
-
-    private boolean hasType(Map<String, String> map) {
-        boolean flag = false;
-        Iterator<String> iterator = map.keySet().iterator();
-        do {
-            String next = iterator.next();
-            if (next.equals("type")) {
-                flag = true;
-                break;
-            }
-        } while (iterator.hasNext());
-        return flag;
-    }
 
     /**
      * 用户创角
@@ -161,33 +123,6 @@ public class SDKManager {
      */
     public void LoginOut(boolean isDestroy, boolean isLoginShow, LoginOutCallBack callBack) {
         HttpManager.getInstance().loginOut(context, isDestroy, isLoginShow, callBack);
-    }
-
-    private String getValue(JSONObject json) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        try {
-            Iterator<String> iterator = json.keys();
-            while (iterator.hasNext()) {
-                String next = iterator.next();
-                Object o = null;
-                o = json.get(next);
-                if (o instanceof String) {
-                    sb.append("\"").append(next).append("\":\"").append(o.toString()).append("\",");
-                    Log.d("getValue", "String==" + sb.toString());
-                } else {
-                    JSONObject jsonObject = new JSONObject(o.toString());
-                    String value = getValue(jsonObject);
-                    sb.append("\"").append(next).append("\":").append(value).append(",");
-                    Log.d("getValue", "Object==" + sb.toString());
-                }
-            }
-            Log.d("getValue", "sb=" + sb.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        sb.append("}");
-        return sb.toString();
     }
 
 }

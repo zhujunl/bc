@@ -10,10 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.demo_bckj.R;
+import com.example.demo_bckj.listener.privacyListener;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.presenter.PersonPresenter;
 import com.example.demo_bckj.view.Constants;
-import com.example.demo_bckj.view.fragment.PersonFragment;
 
 import androidx.annotation.NonNull;
 
@@ -33,7 +33,7 @@ public class VerifyPhoneDialog extends Dialog {
     private Context context;
     private BindNewPhoneDialog bindDialog;
     private PersonPresenter presenter;
-    private PersonFragment.privacyListener pListener;
+    private privacyListener pListener;
 
 
 
@@ -90,7 +90,7 @@ public class VerifyPhoneDialog extends Dialog {
         });
     }
 
-    public void setListener(PersonFragment.privacyListener pListener){
+    public void setListener(privacyListener pListener){
         this.pListener=pListener;
     }
 }

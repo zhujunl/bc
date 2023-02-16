@@ -25,6 +25,7 @@ import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
 import com.example.demo_bckj.listener.IBaseView;
 import com.example.demo_bckj.listener.LogoutListener;
+import com.example.demo_bckj.listener.PfRefreshCallBack;
 import com.example.demo_bckj.listener.PlayInterface;
 import com.example.demo_bckj.model.MyCallback;
 import com.example.demo_bckj.model.RetrofitManager;
@@ -86,6 +87,7 @@ public class HttpManager {
     private Context context;
     private HomePresenter homePresenter;
     private RechargeOrder rechargeOrder;
+    private PfRefreshCallBack refreshCallback;
 
     private static HttpManager instance;
 
@@ -106,6 +108,10 @@ public class HttpManager {
 
     private RechargeCallBack getRechargeCallBack() {
         return rechargeListener;
+    }
+
+    public void setRefreshCallback(PfRefreshCallBack refreshCallback) {
+        this.refreshCallback = refreshCallback;
     }
 
     public void setRecharge() {
@@ -493,7 +499,7 @@ public class HttpManager {
                 bindNewPhoneDialog.dismiss();
                 DBManager.getInstance(context).BindPhone(tel);
                 ToastUtil.show(context, "绑定成功");
-                presenter.getView().onSuccess("");
+                refreshCallback.refresh();
             }
 
             @Override
@@ -548,7 +554,7 @@ public class HttpManager {
                 bindNewPhoneDialog.dismiss();
                 AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
                 DBManager.getInstance(context).insertAccount(data, "");
-                presenter.getView().onSuccess("");
+                refreshCallback.refresh();
                 RoundView.getInstance().showSmallwin(context, listener, 0);
             }
 

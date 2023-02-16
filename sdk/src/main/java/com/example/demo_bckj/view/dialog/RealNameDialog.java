@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.listener.LogoutListener;
+import com.example.demo_bckj.listener.PfRefreshCallBack;
 import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.MyCallback;
@@ -48,12 +49,23 @@ public class RealNameDialog extends Dialog {
     private PersonFragment personFragment;
     private String n, c;
     private LogoutListener mLogoutListener;
+    private PfRefreshCallBack callBack;
 
     public RealNameDialog(@NonNull Context context, boolean isCancelable, PersonFragment personFragment, LogoutListener mLogoutListener) {
         super(context);
         setContentView(R.layout.popup_autonym);
         this.context = context;
         this.personFragment = personFragment;
+        this.mLogoutListener = mLogoutListener;
+        setCancelable(isCancelable);
+        initView();
+    }
+
+    public RealNameDialog(@NonNull Context context, boolean isCancelable, PfRefreshCallBack callBack, LogoutListener mLogoutListener) {
+        super(context);
+        setContentView(R.layout.popup_autonym);
+        this.context = context;
+        this.callBack = callBack;
         this.mLogoutListener = mLogoutListener;
         setCancelable(isCancelable);
         initView();
@@ -148,7 +160,10 @@ public class RealNameDialog extends Dialog {
                     RealNameRegisterDialog r = new RealNameRegisterDialog(context);
                     r.show();
                 }
-                personFragment.onSuccess("");
+                if (personFragment!=null)
+                    personFragment.onSuccess("");
+                if (callBack!=null)
+                    callBack.refresh();
             }
 
             @Override

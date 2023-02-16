@@ -60,5 +60,5 @@ dependencies {
 
     // 支付宝 SDK AAR 包所需的配置
     api 'com.alipay.sdk:alipaysdk-android:+@aar'
-
+    api 'com.yanzhenjie:permission:2.0.3'
 }
