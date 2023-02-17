@@ -60,9 +60,7 @@ import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 
 /**
  * @author ZJL
@@ -78,8 +76,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
     private HomePresenter presenter;
 
     private Activity activity;
-
-    private FragmentManager fm;
 
     private SPUtils bcSP;
 
@@ -100,8 +96,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
     public void init(Activity activity) {
         this.activity = activity;
-        AppCompatActivity activity1 = (AppCompatActivity) activity;
-        fm = activity1.getSupportFragmentManager();
         presenter = new HomePresenter(this);
         HttpManager.getInstance().setListener(this, this, activity);
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
