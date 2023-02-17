@@ -29,6 +29,11 @@
         <meta-data
             android:name="design_height_in_dp"
             android:value="640" />
+        <activity android:name="com.example.demo_bckj.view.fragment.AgreementActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"/>
+        <activity
+            android:name="com.example.demo_bckj.permission.PermissionActivity"
+            android:theme="@style/Translucent" />
     </application>
 
 </manifest>

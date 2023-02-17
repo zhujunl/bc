@@ -28,8 +28,7 @@
                 android:value="" />
         </activity>
 
-        <activity android:name="com.example.demo_bckj.view.fragment.AgreementActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"/>
+
     </application>
 
 </manifest>

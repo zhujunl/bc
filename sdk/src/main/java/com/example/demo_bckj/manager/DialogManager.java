@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -47,6 +45,9 @@ import com.example.demo_bckj.model.utility.CountDownTimerUtils;
 import com.example.demo_bckj.model.utility.DeviceIdUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 import com.example.demo_bckj.model.utility.ToastUtil;
+import com.example.demo_bckj.permission.PermissionCallback;
+import com.example.demo_bckj.permission.PermissionUtil;
+import com.example.demo_bckj.permission.RequestBean;
 import com.example.demo_bckj.presenter.HomePresenter;
 import com.example.demo_bckj.view.Constants;
 import com.example.demo_bckj.view.dialog.RealNameDialog;
@@ -54,7 +55,6 @@ import com.example.demo_bckj.view.fragment.AgreementActivity;
 import com.example.demo_bckj.view.pop.PopupTel;
 import com.example.demo_bckj.view.round.MyDrawerLayout;
 import com.example.demo_bckj.view.round.RoundView;
-import com.yanzhenjie.permission.AndPermission;
 
 import java.io.IOException;
 import java.util.List;
@@ -216,32 +216,48 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         popup_agree.setOnClickListener(v -> {
             bcSP.put("isFirst", true);
             AgreementDialog.dismiss();
-            AndPermission.with(activity)
-                    .runtime()
-                    .permission(Constants.PermissionString)
-                    .onGranted(permissions -> {
-                        // Storage permission are allowed.
-                        Log.d("AndPermission", "onGranted");
-                        PackageManager packageManager = activity.getPackageManager();
-                        PermissionInfo permissionInfo = null;
-                        for (int i = 0; i < permissions.size(); i++) {
-                            try {
-                                permissionInfo = packageManager.getPermissionInfo(permissions.get(i), 0);
-                            } catch (PackageManager.NameNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                            CharSequence permissionName = permissionInfo.loadLabel(packageManager);
-                            if (i == permissions.size() - 1) {
-                                presenter.getSdk(activity, true);
-                                popupLoginCode(bcSP.getBoolean("isAccount"));
-                            }
-                        }
-                    })
-                    .onDenied(permissions -> {
-                        // Storage permission are not allowed.
-                        Log.d("AndPermission", "onGranted");
-                    })
-                    .start();
+            PermissionUtil.request(activity, Constants.PermissionString, new PermissionCallback() {
+                @Override
+                public void onPermissionGranted() {
+                    popupLoginCode(bcSP.getBoolean("isAccount"));
+                }
+
+                @Override
+                public void shouldShowRational(RequestBean requestBean, String[] rationalPermissons, boolean before) {
+
+                }
+
+                @Override
+                public void onPermissonReject(String[] rejectPermissons) {
+
+                }
+            });
+//            AndPermission.with(activity)
+//                    .runtime()
+//                    .permission(Constants.PermissionString)
+//                    .onGranted(permissions -> {
+//                        // Storage permission are allowed.
+//                        Log.d("AndPermission", "onGranted");
+//                        PackageManager packageManager = activity.getPackageManager();
+//                        PermissionInfo permissionInfo = null;
+//                        for (int i = 0; i < permissions.size(); i++) {
+//                            try {
+//                                permissionInfo = packageManager.getPermissionInfo(permissions.get(i), 0);
+//                            } catch (PackageManager.NameNotFoundException e) {
+//                                e.printStackTrace();
+//                            }
+//                            CharSequence permissionName = permissionInfo.loadLabel(packageManager);
+//                            if (i == permissions.size() - 1) {
+//                                presenter.getSdk(activity, true);
+//                                popupLoginCode(bcSP.getBoolean("isAccount"));
+//                            }
+//                        }
+//                    })
+//                    .onDenied(permissions -> {
+//                        // Storage permission are not allowed.
+//                        Log.d("AndPermission", "onGranted");
+//                    })
+//                    .start();
         });
         //不同意协议
         popup_disagree.setOnClickListener(v -> System.exit(0));
