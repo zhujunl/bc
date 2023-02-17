@@ -1211,13 +1211,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         if (!isDialog) {
             RoundView.getInstance().closeRoundView(getContext());
         }
-        FragmentTransaction ft = fm.beginTransaction();
-        WebFragment webFragment = new WebFragment(this, dialog, fm, isDialog, tag);
-        ft.add(R.id.home, webFragment, tag);
-        ft.addToBackStack(tag);
-        hide();
-        ft.show(webFragment);
-        ft.commit();
+//        FragmentTransaction ft = fm.beginTransaction();
+//        WebFragment webFragment = new WebFragment(this, dialog, fm, isDialog, tag);
+//        ft.add(R.id.home, webFragment, tag);
+//        ft.addToBackStack(tag);
+//        hide();
+//        ft.show(webFragment);
+//        ft.commit();
     }
 
     public void hide() {

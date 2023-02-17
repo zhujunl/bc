@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.demo_bckj.R;
 import com.example.demo_bckj.db.dao.AccountDao;
 import com.example.demo_bckj.db.entity.AccountEntity;
+import com.example.demo_bckj.listener.DrawGoListener;
 import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.listener.PfRefreshCallBack;
 import com.example.demo_bckj.listener.privacyListener;
@@ -52,7 +53,8 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
     private Context context;
 
     private ConstraintLayout csModel;
-    private LinearLayout pfModel;
+    private LinearLayout pfModel,drawerLine;
+    private DrawGoListener goListener;
 
     public MyDrawerLayout(@NonNull Context context) {
         super(context);
@@ -92,6 +94,7 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
         personTxt = findViewById(R.id.person_txt);
         csModel = findViewById(R.id.cs_model);
         pfModel = findViewById(R.id.pf_model);
+        drawerLine=findViewById(R.id.drawerLine);
         pfModel.setVisibility(View.VISIBLE);
         csModel.setVisibility(View.INVISIBLE);
 
@@ -129,6 +132,10 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
 
     }
 
+    public void setGoListener(DrawGoListener goListener) {
+        this.goListener = goListener;
+    }
+
     private void click() {
         cServiceLin.setOnClickListener(view -> {
             Log.d(TAG, "点击cServiceLin");
@@ -138,6 +145,7 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
             Log.d(TAG, "点击PersonLin");
             changeStyle(0);
         });
+        drawerLine.setOnClickListener(v->goListener.go());
     }
 
     private WebView webView;

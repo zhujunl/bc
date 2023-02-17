@@ -6,68 +6,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/left_layout"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#F7F7F7">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="7">
+                <include layout="@layout/fragment_person"/>
+                <include layout="@layout/fragment_cs"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="70dp">
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/cservice_lin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <Button
+                        android:id="@+id/cservice_btn"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"/>
+                    <TextView
+                        android:id="@+id/cservice_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="10sp"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/nor"
+                        android:text="客服"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/person_lin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <Button
+                        android:id="@+id/person_btn"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"/>
+                    <TextView
+                        android:id="@+id/person_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="10sp"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/nor"
+                        android:text="我的"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/drawerLine"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/left_layout"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#F7F7F7"
-        android:layout_gravity="left">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="7">
-            <include layout="@layout/fragment_person"/>
-            <include layout="@layout/fragment_cs"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="70dp">
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/cservice_lin"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-                <Button
-                    android:id="@+id/cservice_btn"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"/>
-                <TextView
-                    android:id="@+id/cservice_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/nor"
-                    android:text="客服"/>
-            </androidx.appcompat.widget.LinearLayoutCompat>
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/person_lin"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-                <Button
-                    android:id="@+id/person_btn"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"/>
-                <TextView
-                    android:id="@+id/person_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/nor"
-                    android:text="我的"/>
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.appcompat.widget.LinearLayoutCompat>
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

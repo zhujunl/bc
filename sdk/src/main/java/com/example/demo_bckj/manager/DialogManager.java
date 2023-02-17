@@ -38,6 +38,7 @@ import com.example.demo_bckj.db.entity.AccountEntity;
 import com.example.demo_bckj.db.entity.AccountLoginEntity;
 import com.example.demo_bckj.db.entity.TelEntity;
 import com.example.demo_bckj.listener.ClickListener;
+import com.example.demo_bckj.listener.DrawGoListener;
 import com.example.demo_bckj.listener.LoginCallback;
 import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.listener.PlayInterface;
@@ -909,7 +910,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                         windowManager.addView(myDrawerLayout, mLayoutParams);
                     }
                     isAdd = true;
-                    drawerLayout.openDrawer(Gravity.LEFT);
                     myDrawerLayout.changeStyle(1);
                 }
             }
@@ -933,7 +933,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                         windowManager.addView(myDrawerLayout, mLayoutParams);
                     }
                     isAdd = true;
-                    drawerLayout.openDrawer(Gravity.LEFT);
                     myDrawerLayout.changeStyle(0);
                 }
             }
@@ -987,7 +986,14 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         myDrawerLayout = new MyDrawerLayout(activity);
         drawerLayout = myDrawerLayout.getDrawerLayout();
         myDrawerLayout.setListener(this);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        myDrawerLayout.setGoListener(new DrawGoListener() {
+            @Override
+            public void go() {
+                windowManager.removeView(myDrawerLayout);
+                isAdd = false;
+            }
+        });
+        //        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
