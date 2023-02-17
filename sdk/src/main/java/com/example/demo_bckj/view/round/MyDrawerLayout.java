@@ -40,7 +40,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
  * @updateAuthor
  * @updateDes
  */
-public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack , LogoutListener {
+public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, LogoutListener {
     final String TAG = "MyDrawerLayout";
 
     private androidx.drawerlayout.widget.DrawerLayout drawerLayout;
@@ -65,7 +65,6 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack , 
 
         csInitView();
         pfInitView();
-        pfInitData();
         pfClick();
     }
 
@@ -230,9 +229,9 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack , 
         });
         if (realName.isClickable()) {
             realName.setOnClickListener(v -> {
-                    //实名认证
-                    RealNameDialog realNameDialog = new RealNameDialog(context, true, this, null);
-                    realNameDialog.show();
+                //实名认证
+                RealNameDialog realNameDialog = new RealNameDialog(context, true, this, null);
+                realNameDialog.show();
 
             });
         }

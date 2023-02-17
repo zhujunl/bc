@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.PixelFormat;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
@@ -71,12 +70,12 @@ import androidx.fragment.app.FragmentManager;
  * @updateAuthor
  * @updateDes
  */
-public class DialogManager  implements ClickListener, LogoutListener , LoginCallback , privacyListener {
-    final String TAG="DialogManager";
+public class DialogManager implements ClickListener, LogoutListener, LoginCallback, privacyListener {
+    final String TAG = "DialogManager";
     private AlertDialog alertDialog, AgreementDialog;
 
     private HomePresenter presenter;
-    
+
     private Activity activity;
 
     private FragmentManager fm;
@@ -88,9 +87,9 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
 
     private static DialogManager instance;
 
-    public static DialogManager getInstance(){
-        if (instance==null){
-            instance=new DialogManager();
+    public static DialogManager getInstance() {
+        if (instance == null) {
+            instance = new DialogManager();
         }
         return instance;
     }
@@ -98,14 +97,15 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
     public DialogManager() {
     }
 
-    public void init(Activity activity){
-        this.activity=activity;
+    public void init(Activity activity) {
+        this.activity = activity;
         AppCompatActivity activity1 = (AppCompatActivity) activity;
-        fm=activity1.getSupportFragmentManager();
-        presenter=new HomePresenter(this);
+        fm = activity1.getSupportFragmentManager();
+        presenter = new HomePresenter(this);
         HttpManager.getInstance().setListener(this, this, activity);
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         bcSP = SPUtils.getInstance(activity, "bcSP");
+        createDrawLayout(activity);
         new Thread(() -> {
             try {
                 boolean init = presenter.init(activity);
@@ -128,7 +128,6 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
                 return true;
             }
         });
-        createDrawLayout(activity);
     }
 
 
@@ -216,36 +215,32 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
         popup_agree.setOnClickListener(v -> {
             bcSP.put("isFirst", true);
             AgreementDialog.dismiss();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                activity.requestPermissions(Constants.PermissionString, 1);
-                AndPermission.with(activity)
-                        .runtime()
-                        .permission(Constants.PermissionString)
-                        .onGranted(permissions -> {
-                            // Storage permission are allowed.
-                            Log.d("AndPermission", "onGranted" );
-                            PackageManager packageManager = activity.getPackageManager();
-                            PermissionInfo permissionInfo = null;
-                            for (int i = 0; i < permissions.size(); i++) {
-                                try {
-                                    permissionInfo = packageManager.getPermissionInfo(permissions.get(i), 0);
-                                } catch (PackageManager.NameNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                                CharSequence permissionName = permissionInfo.loadLabel(packageManager);
-                                if (i == permissions.size() - 1) {
-                                    presenter.getSdk(activity, true);
-                                    popupLoginCode(bcSP.getBoolean("isAccount"));
-                                }
+            AndPermission.with(activity)
+                    .runtime()
+                    .permission(Constants.PermissionString)
+                    .onGranted(permissions -> {
+                        // Storage permission are allowed.
+                        Log.d("AndPermission", "onGranted");
+                        PackageManager packageManager = activity.getPackageManager();
+                        PermissionInfo permissionInfo = null;
+                        for (int i = 0; i < permissions.size(); i++) {
+                            try {
+                                permissionInfo = packageManager.getPermissionInfo(permissions.get(i), 0);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                e.printStackTrace();
                             }
-                        })
-                        .onDenied(permissions -> {
-                            // Storage permission are not allowed.
-                            Log.d("AndPermission", "onGranted" );
-                        })
-                        .start();
-
-            }
+                            CharSequence permissionName = permissionInfo.loadLabel(packageManager);
+                            if (i == permissions.size() - 1) {
+                                presenter.getSdk(activity, true);
+                                popupLoginCode(bcSP.getBoolean("isAccount"));
+                            }
+                        }
+                    })
+                    .onDenied(permissions -> {
+                        // Storage permission are not allowed.
+                        Log.d("AndPermission", "onGranted");
+                    })
+                    .start();
         });
         //不同意协议
         popup_disagree.setOnClickListener(v -> System.exit(0));
@@ -285,7 +280,7 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        setDialogSize(alertDialog,320,295);
+        setDialogSize(alertDialog, 320, 295);
         back.setOnClickListener(v1 -> popupForgetPassword());
 
         //跳转注册
@@ -419,7 +414,7 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        setDialogSize(alertDialog,320,295);
+        setDialogSize(alertDialog, 320, 295);
         popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(activity).inflate(R.layout.pop_tel_list, null);
         List<AccountLoginEntity> query = DBManager.getInstance(activity).query();
@@ -533,7 +528,7 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog,320,285);
+        setDialogSize(alertDialog, 320, 285);
         //验证
         popupSubmit.setOnClickListener(view -> {
             if (Constants.isFastDoubleClick(activity)) {
@@ -647,7 +642,7 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog,320,270);
+        setDialogSize(alertDialog, 320, 270);
         //确认重置密码
         popupSubmit.setOnClickListener(view -> {
             if (Constants.isFastDoubleClick(activity)) {
@@ -737,7 +732,7 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog,320,320);
+        setDialogSize(alertDialog, 320, 320);
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
@@ -857,7 +852,7 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
         popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
-    private void setDialogSize(AlertDialog dialog,int width,int height){
+    private void setDialogSize(AlertDialog dialog, int width, int height) {
         Window window = dialog.getWindow();
         WindowManager.LayoutParams lp = window.getAttributes();
 
@@ -897,34 +892,53 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
     public void showWeb(Dialog dialog, boolean isDialog, String tag) {
 
         Intent intent = new Intent(activity, AgreementActivity.class);
-        intent.putExtra("style",tag);
+        intent.putExtra("style", tag);
         activity.startActivity(intent);
     }
+
+    private boolean isAdd = false;
 
     @Override
     public void CService(boolean isShow) {
         Log.d(TAG, "CService");
-        if (isShow) {
-            windowManager.addView(myDrawerLayout,mLayoutParams);
-            drawerLayout.openDrawer(Gravity.LEFT);
-            myDrawerLayout.changeStyle(1);
-        }
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isShow) {
+                    if (!isAdd) {
+                        windowManager.addView(myDrawerLayout, mLayoutParams);
+                    }
+                    isAdd = true;
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                    myDrawerLayout.changeStyle(1);
+                }
+            }
+        });
     }
 
     @Override
     public void Personal(boolean isShow, boolean isAuthenticated) {
         Log.d(TAG, "Personal");
-        if (alertDialog.isShowing())
-            alertDialog.dismiss();
-        if (!isAuthenticated) {
-            RealNameDialog realNameDialog = new RealNameDialog(activity, false, myDrawerLayout, this);
-            realNameDialog.show();
-        }
-        if (isShow) {
-            windowManager.addView(myDrawerLayout,mLayoutParams);
-            drawerLayout.openDrawer(Gravity.LEFT);
-            myDrawerLayout.changeStyle(0);
-        }
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (alertDialog.isShowing())
+                    alertDialog.dismiss();
+                if (!isAuthenticated) {
+                    RealNameDialog realNameDialog = new RealNameDialog(activity, false, myDrawerLayout, DialogManager.this);
+                    realNameDialog.show();
+                }
+                if (isShow) {
+                    if (!isAdd) {
+                        windowManager.addView(myDrawerLayout, mLayoutParams);
+                    }
+                    isAdd = true;
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                    myDrawerLayout.changeStyle(0);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -954,44 +968,47 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
     public void login(boolean isAccount) {
         loginSelect(isAccount);
     }
+
     MyDrawerLayout myDrawerLayout;
-    WindowManager  windowManager;
+    WindowManager windowManager;
     WindowManager.LayoutParams mLayoutParams;
     DrawerLayout drawerLayout;
-    private void createDrawLayout(Activity activity){
-        windowManager= (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-        mLayoutParams =new WindowManager.LayoutParams();
+
+    private void createDrawLayout(Activity activity) {
+        windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        mLayoutParams = new WindowManager.LayoutParams();
         mLayoutParams.format = PixelFormat.RGBA_8888;// 解决带Alpha的32位png图片失真问题
         mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        mLayoutParams.gravity=Gravity.LEFT;
+        mLayoutParams.gravity = Gravity.LEFT;
         mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG; //设置悬浮窗的层次
         mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         mLayoutParams.x = 0;
-        myDrawerLayout=new MyDrawerLayout(activity);
+        myDrawerLayout = new MyDrawerLayout(activity);
         drawerLayout = myDrawerLayout.getDrawerLayout();
         myDrawerLayout.setListener(this);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-                Log.d(TAG, "drawerLayout==onDrawerSlide" );
+                Log.d(TAG, "drawerLayout==onDrawerSlide");
             }
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
-                Log.d(TAG, "drawerLayout==onDrawerOpened" );
+                Log.d(TAG, "drawerLayout==onDrawerOpened");
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
-                Log.d(TAG, "drawerLayout==onDrawerClosed" );
+                Log.d(TAG, "drawerLayout==onDrawerClosed");
                 windowManager.removeView(myDrawerLayout);
+                isAdd = false;
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-                Log.d(TAG, "drawerLayout==onDrawerStateChanged newState=="+newState );
+                Log.d(TAG, "drawerLayout==onDrawerStateChanged newState==" + newState);
             }
         });
 
@@ -999,25 +1016,32 @@ public class DialogManager  implements ClickListener, LogoutListener , LoginCall
 
     @Override
     public void user() {
-        Log.d(TAG, "user"  );
+        Log.d(TAG, "user");
         Intent intent = new Intent(activity, AgreementActivity.class);
-        intent.putExtra("style","user");
+        intent.putExtra("style", "user");
         activity.startActivity(intent);
     }
 
     @Override
     public void privacy() {
-        Log.d(TAG, "privacy"  );
+        Log.d(TAG, "privacy");
         Intent intent = new Intent(activity, AgreementActivity.class);
-        intent.putExtra("style","privacy");
+        intent.putExtra("style", "privacy");
         activity.startActivity(intent);
     }
 
     @Override
     public void cs(Dialog dialog) {
-        Log.d(TAG, "cs"  );
+        Log.d(TAG, "cs");
         Intent intent = new Intent(activity, AgreementActivity.class);
-        intent.putExtra("style","customer");
+        intent.putExtra("style", "customer");
         activity.startActivity(intent);
+    }
+
+    public void cancellation() {
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+        RoundView.getInstance().closeRoundView(activity);
     }
 }

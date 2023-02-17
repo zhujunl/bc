@@ -296,6 +296,7 @@ public class HttpManager {
                         DBManager.getInstance(context).insertTel(tel);
                         SPUtils.getInstance(context, "bcSP").put("isAccount", false);
                         RoundView.getInstance().showRoundView(context, listener);
+                        refreshCallback.refresh();
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
 
@@ -332,6 +333,7 @@ public class HttpManager {
                         alertDialog.dismiss();
                         RoundView.getInstance().showRoundView(context, listener);
                         thread.start();
+                        refreshCallback.refresh();
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
 
@@ -365,6 +367,7 @@ public class HttpManager {
                         SPUtils.getInstance(context, "bcSP").put("isAccount", true);
                         DBManager.getInstance(context).insertAccount(name, password);
                         RoundView.getInstance().showRoundView(context, listener);
+                        refreshCallback.refresh();
                         listener.Personal(false, data.getData().getAuthenticated());
                     }
 
@@ -466,6 +469,7 @@ public class HttpManager {
                         .token(authorization.getAuthorization())
                         .build();
                 loginListener.onSuccess(user);
+                refreshCallback.refresh();
                 RoundView.getInstance().showRoundView(context, listener);
                 return true;
             }

@@ -8,7 +8,6 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.demo_bckj.base.BasePresenter;
 import com.example.demo_bckj.db.entity.AccountEntity;
@@ -18,6 +17,7 @@ import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
+import com.example.demo_bckj.model.utility.ToastUtil;
 
 import java.io.IOException;
 
@@ -135,7 +135,7 @@ public class HomePresenter extends BasePresenter {
         if (this.loginCallback != null) {
             AccountEntity account = DBManager.getInstance(context).getAccount();
             if (account != null) {
-                Toast.makeText(context, "请先退出登录账号", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context,"请先退出登录账号");
                 return;
             }
             SPUtils bcSP = SPUtils.getInstance(context, "bcSP");

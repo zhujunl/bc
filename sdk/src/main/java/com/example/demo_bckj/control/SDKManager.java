@@ -2,8 +2,11 @@ package com.example.demo_bckj.control;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.text.TextUtils;
+import android.view.WindowManager;
 
+import com.example.demo_bckj.broadcast.NetworkConnectChangedReceiver;
 import com.example.demo_bckj.manager.DialogManager;
 import com.example.demo_bckj.manager.HttpManager;
 import com.example.demo_bckj.model.bean.RechargeOrder;
@@ -28,6 +31,9 @@ public class SDKManager {
 
     private static SDKManager instance;
     private Context context;
+    private Activity activity;
+
+    private NetworkConnectChangedReceiver networkChange;
 
     public static SDKManager getInstance() {
         if (instance == null) {
@@ -49,6 +55,7 @@ public class SDKManager {
      */
     public void init(Activity activity, String gameId, LoginCallBack loginCallBack, LoginOutCallBack loginOutCallBack) {
         this.context = activity;
+        this.activity = activity;
         Map<String, String> map = new HashMap<>();
         map.put("game", gameId); // 游戏唯一标识
         map.put("type", Constants.TYPE);
@@ -64,9 +71,20 @@ public class SDKManager {
         }
         HttpManager.getInstance().init(loginCallBack, loginOutCallBack);
         HttpManager.getInstance().setRecharge();
-
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         DialogManager.getInstance().init(activity);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        networkChange = new NetworkConnectChangedReceiver();
+        activity.registerReceiver(networkChange, filter);
+    }
 
+    public void cancellation() {
+        DialogManager.getInstance().cancellation();
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        activity.unregisterReceiver(networkChange);
     }
 
 
