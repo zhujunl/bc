@@ -951,7 +951,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
     @Override
     public void out(boolean isLoginShow) {
-        drawerLayout.closeDrawers();
+        mDrawGoListener.go();
         RoundView.getInstance().closeRoundView(activity);
         if (isLoginShow)
             activity.runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
@@ -967,6 +967,16 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
     WindowManager.LayoutParams mLayoutParams;
     DrawerLayout drawerLayout;
 
+    DrawGoListener mDrawGoListener=new DrawGoListener() {
+        @Override
+        public void go() {
+            if (isAdd){
+                windowManager.removeView(myDrawerLayout);
+                isAdd = false;
+            }
+        }
+    };
+
     private void createDrawLayout(Activity activity) {
         windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
         mLayoutParams = new WindowManager.LayoutParams();
@@ -980,13 +990,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         myDrawerLayout = new MyDrawerLayout(activity);
         drawerLayout = myDrawerLayout.getDrawerLayout();
         myDrawerLayout.setListener(this);
-        myDrawerLayout.setGoListener(new DrawGoListener() {
-            @Override
-            public void go() {
-                windowManager.removeView(myDrawerLayout);
-                isAdd = false;
-            }
-        });
+        myDrawerLayout.setGoListener(mDrawGoListener);
         //        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
