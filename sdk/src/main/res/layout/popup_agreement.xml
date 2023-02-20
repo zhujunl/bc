@@ -4,7 +4,7 @@
     android:layout_height="302dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_vertical"
-    android:background="@drawable/background_bg"
+    android:background="@drawable/infinite_game_background_bg"
     android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="19dp"
                 android:layout_marginRight="19dp"
-                android:background="@drawable/background_white"
+                android:background="@drawable/infinite_game_background_white"
                 android:orientation="vertical">
 
                 <TextView
@@ -72,7 +72,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="19dp"
                 android:layout_marginRight="19dp"
-                android:background="@drawable/background_white"
+                android:background="@drawable/infinite_game_background_white"
                 android:orientation="vertical">
 
                 <TextView
@@ -102,7 +102,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="19dp"
                 android:layout_marginRight="19dp"
-                android:background="@drawable/background_white"
+                android:background="@drawable/infinite_game_background_white"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="match_parent"
@@ -131,7 +131,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="19dp"
                 android:layout_marginRight="19dp"
-                android:background="@drawable/background_white"
+                android:background="@drawable/infinite_game_background_white"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="match_parent"
@@ -182,7 +182,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginRight="18dp"
             android:layout_weight="1"
-            android:background="@drawable/background_login"
+            android:background="@drawable/infinite_game_background_login"
             android:text="同意"
             android:textStyle="bold"
             android:textColor="#fff"

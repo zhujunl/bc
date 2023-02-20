@@ -15,8 +15,8 @@
     </style>
 
     <style name="popwindowAnimStyle" parent="android:Animation">
-        <item name="android:windowEnterAnimation">@anim/anim_popup_show</item>
-        <item name="android:windowExitAnimation">@anim/anim_popup_exit</item>
+        <item name="android:windowEnterAnimation">@anim/infinite_game_anim_popup_show</item>
+        <item name="android:windowExitAnimation">@anim/infinite_game_anim_popup_exit</item>
     </style>
 
 

@@ -4,7 +4,7 @@
     android:layout_height="324dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/background_bg">
+    android:background="@drawable/infinite_game_background_bg">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
             android:id="@+id/popup_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/login_back"
+            android:src="@mipmap/infinite_game_login_back"
             android:layout_marginLeft="20dp"
 
             />
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@mipmap/logo" />
+            android:src="@mipmap/infinite_game_logo" />
     </RelativeLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -40,14 +40,14 @@
             android:layout_marginRight="18dp"
             android:paddingLeft="15dp"
             android:inputType="number"
-            android:background="@drawable/background_white"
+            android:background="@drawable/infinite_game_background_white"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintTop_toBottomOf="parent"/>
         <ImageView
             android:id="@+id/popup_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/removes_login"
+            android:src="@mipmap/infinite_game_removes_login"
             android:layout_centerInParent="true"
             android:visibility="invisible"
             app:layout_constraintTop_toTopOf="@id/spinnerImg"
@@ -57,7 +57,7 @@
             android:id="@+id/spinnerImg"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/dropdown"
+            android:background="@drawable/infinite_game_dropdown"
             app:layout_constraintTop_toTopOf="@id/popup_login"
             app:layout_constraintEnd_toEndOf="@id/popup_login"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -74,13 +74,13 @@
             android:paddingLeft="15dp"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="18dp"
-            android:background="@drawable/background_white"
+            android:background="@drawable/infinite_game_background_white"
             />
         <ImageView
             android:id="@+id/popup_remove_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/removes_login"
+            android:src="@mipmap/infinite_game_removes_login"
             android:layout_centerInParent="true"
             android:layout_toLeftOf="@+id/popup_Tv_code"
             android:layout_marginRight="18dp"
@@ -108,7 +108,7 @@
             android:id="@+id/popup_Rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@drawable/selector_radio_check"
+            android:button="@drawable/infinite_game_selector_radio_check"
             android:layout_marginTop="2dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:textSize="10dp"
             android:text="用户协议 "
-            android:background="@drawable/text_underline"
+            android:background="@drawable/infinite_game_text_underline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/agree_txt"/>
@@ -148,7 +148,7 @@
             android:textSize="10dp"
             android:text="隐私政策"
             android:layout_marginLeft="15dp"
-            android:background="@drawable/text_underline"
+            android:background="@drawable/infinite_game_text_underline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/popup_user"/>
@@ -175,7 +175,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
-        android:background="@drawable/background_login"
+        android:background="@drawable/infinite_game_background_login"
         android:layout_marginBottom="10dp"
         />
     <RelativeLayout

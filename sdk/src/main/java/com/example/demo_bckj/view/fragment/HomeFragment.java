@@ -1130,27 +1130,27 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             public void run() {
                 switch (style) {
                     case 0:
-                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
+                        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_highlight);
                         personTxt.setTextColor(getResources().getColor(R.color.selected));
-                        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
-                        welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
+                        welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare_nor);
                         welfareTxt.setTextColor(getResources().getColor(R.color.nor));
                         break;
                     case 1:
-                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                         personTxt.setTextColor(getResources().getColor(R.color.nor));
-                        cServiceBtn.setBackgroundResource(R.mipmap.personal);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.selected));
-                        welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
+                        welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare_nor);
                         welfareTxt.setTextColor(getResources().getColor(R.color.nor));
                         break;
                     case 2:
-                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                         personTxt.setTextColor(getResources().getColor(R.color.nor));
-                        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
-                        welfareBtn.setBackgroundResource(R.mipmap.welfare);
+                        welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare);
                         welfareTxt.setTextColor(getResources().getColor(R.color.selected));
                         break;
                     default:

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="30dp"
-    android:background="@drawable/item_selected"
+    android:background="@drawable/infinite_game_item_selected"
     android:id="@+id/tel_item">
     <TextView
         android:id="@+id/tel"
@@ -20,5 +20,5 @@
         android:layout_height="20dp"
         android:layout_gravity="center"
         android:layout_marginRight="10dp"
-        android:background="@drawable/tel_delete"/>
+        android:background="@drawable/infinite_game_tel_delete"/>
 </LinearLayout>

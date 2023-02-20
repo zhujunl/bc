@@ -11,7 +11,7 @@
             android:id="@+id/iv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/suspended_solids" />
+            android:src="@drawable/infinite_game_suspended_solids" />
 
     </RelativeLayout>
     <LinearLayout
@@ -19,13 +19,13 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/point_bg"
+        android:background="@drawable/infinite_game_point_bg"
         android:orientation="vertical"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:background="@drawable/point_gray_bg"
+            android:background="@drawable/infinite_game_point_gray_bg"
             >
             <TextView
                 android:id="@+id/userAccount"
@@ -49,7 +49,7 @@
                 android:paddingRight="7dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:background="@drawable/background_auth"
+                android:background="@drawable/infinite_game_background_auth"
                 />
         </LinearLayout>
         <LinearLayout
@@ -69,7 +69,7 @@
                     style="@style/Sj_MyButton"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/point_ser_style" />
+                    android:background="@drawable/infinite_game_point_ser_style" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -82,7 +82,7 @@
                     style="@style/Sj_MyButton"
                     android:layout_width="45.0dip"
                     android:layout_height="45.0dip"
-                    android:background="@drawable/point_ac_style"
+                    android:background="@drawable/infinite_game_point_ac_style"
                     android:layout_marginLeft="5dp"/>
             </RelativeLayout>
 
