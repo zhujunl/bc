@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="311dp"
+    android:layout_height="244dp"
     android:orientation="vertical"
     android:background="@drawable/infinite_game_background_bg"
     >
@@ -95,44 +95,7 @@
             android:textSize="13dp"
             android:textStyle="bold" />
     </RelativeLayout>
-    <LinearLayout
-        android:id="@+id/verifyPhone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        >
-        <CheckBox
-            android:id="@+id/popup_Rb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/infinite_game_selector_radio_check"
-            android:layout_marginTop="2dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:text="已同意"/>
-        <TextView
-            android:id="@+id/popup_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:text="用户协议 "
-            android:background="@drawable/infinite_game_text_underline"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:text="和 "/>
-        <TextView
-            android:id="@+id/popup_privacy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:text="隐私政策"
-            android:background="@drawable/infinite_game_text_underline"/>
-    </LinearLayout>
+
     <Button
         android:id="@+id/popup_submit"
         android:layout_width="270dp"

@@ -23,7 +23,6 @@ import com.example.demo_bckj.control.RechargeCallBack;
 import com.example.demo_bckj.crash.CrashEntity;
 import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.ClickListener;
-import com.example.demo_bckj.listener.DrawGoListener;
 import com.example.demo_bckj.listener.IBaseView;
 import com.example.demo_bckj.listener.LogoutListener;
 import com.example.demo_bckj.listener.PfRefreshCallBack;

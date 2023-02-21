@@ -516,9 +516,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         ImageView popup_remove = inflate.findViewById(R.id.popup_remove);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         ImageView popup_remove_code = inflate.findViewById(R.id.popup_remove_code);
-        CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
-        TextView popupUser = inflate.findViewById(R.id.popup_user);
-        TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
@@ -529,21 +526,17 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             if (Constants.isFastDoubleClick(activity)) {
                 return;
             }
-            if (popupRb.isChecked()) {
-                String trim1 = popupLogin.getText().toString().trim();
-                String trim2 = popupEtCode.getText().toString().trim();
-                if (TextUtils.isEmpty(trim1) || TextUtils.isEmpty(trim2)) {
-                    ToastUtil.show(activity, "请输入手机号与验证码");
-                    return;
-                }
-                if (!DeviceIdUtil.isMobileNO(trim1)) {
-                    ToastUtil.show(activity, "请输入正确的手机号");
-                    return;
-                }
-                popupResetPassword(trim1, trim2);
-            } else {
-                ToastUtil.show(activity, "请先勾选用户协议");
+            String trim1 = popupLogin.getText().toString().trim();
+            String trim2 = popupEtCode.getText().toString().trim();
+            if (TextUtils.isEmpty(trim1) || TextUtils.isEmpty(trim2)) {
+                ToastUtil.show(activity, "请输入手机号与验证码");
+                return;
             }
+            if (!DeviceIdUtil.isMobileNO(trim1)) {
+                ToastUtil.show(activity, "请输入正确的手机号");
+                return;
+            }
+            popupResetPassword(trim1, trim2);
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
@@ -620,10 +613,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             }
             presenter.forgetPwd(activity, trim1, popupTvCode);
         });
-        //用户协议
-        popupUser.setOnClickListener(view -> UserAgreement(alertDialog, true));
-        //隐私协议
-        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
     //重置密码

@@ -31,7 +31,6 @@ import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
@@ -52,7 +51,7 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
 
     private Context context;
 
-    private ConstraintLayout csModel;
+    private LinearLayout csModel;
     private LinearLayout pfModel,drawerLine;
     private DrawGoListener goListener;
 
