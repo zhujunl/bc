@@ -268,11 +268,12 @@ public class RoundView {
             smallWindow.measure(w, h);// 测量
 
             int width = smallWindow.getMeasuredWidth();// 获得视图实际宽度（测量宽度）
-            hideWindow = RoundWindowHideView.getInstance(context, click);
-            if (!isNearLeft) {
+            if (isNearLeft) {
+                hideWindow = new RoundWindowHideView(context,click);
+            } else {
+                hideWindow = new RoundWindowHideView(context,click);
                 mLayoutParams.x = mLayoutParams.x + width / 2;
             }
-
         }
         try {
             mWindowManager.addView(hideWindow, mLayoutParams);
