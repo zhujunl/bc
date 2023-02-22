@@ -19,12 +19,10 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -275,7 +273,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        setDialogSize(alertDialog, 320, 295);
         back.setOnClickListener(v1 -> popupForgetPassword());
 
         //跳转注册
@@ -409,7 +406,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        setDialogSize(alertDialog, 320, 295);
         popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(activity).inflate(R.layout.pop_tel_list, null);
         List<AccountLoginEntity> query = DBManager.getInstance(activity).query();
@@ -520,7 +516,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog, 320, 285);
         //验证
         popupSubmit.setOnClickListener(view -> {
             if (Constants.isFastDoubleClick(activity)) {
@@ -626,7 +621,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog, 320, 270);
         //确认重置密码
         popupSubmit.setOnClickListener(view -> {
             if (Constants.isFastDoubleClick(activity)) {
@@ -716,7 +710,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog, 320, 320);
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
@@ -836,20 +829,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
-    private void setDialogSize(AlertDialog dialog, int width, int height) {
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
-
-        lp.width = dp2px(activity, width);
-        lp.height = dp2px(activity, height);
-        window.setGravity(Gravity.CENTER);
-        window.setAttributes(lp);
-    }
-
-    private int dp2px(Context context, float dpVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                dpVal, context.getResources().getDisplayMetrics());
-    }
 
     /**
      * 弹出用户协议
