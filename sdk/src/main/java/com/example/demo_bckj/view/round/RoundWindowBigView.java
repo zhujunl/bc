@@ -47,7 +47,7 @@ public class RoundWindowBigView extends LinearLayout {
         String nickName = account.getNickName();
         String tel = account.getTel();
         this.account = TextUtils.isEmpty(tel)?nickName:tel;
-        String s = this.account.substring(0,3)+"****"+ this.account.substring(7, this.account.length());
+        String s = !TextUtils.isEmpty(tel)?tel.substring(0,3)+"****"+ tel.substring(7, tel.length()):nickName;
         userAccount.setText(s);
         accountSwitch=(TextView)findViewById(FileUtil.getResIdFromFileName(context,"id","account_switch"));
         accountSwitch.setOnClickListener(v->click.Switch());
