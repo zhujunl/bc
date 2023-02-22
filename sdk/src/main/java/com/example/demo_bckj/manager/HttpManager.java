@@ -665,7 +665,7 @@ public class HttpManager {
         if (loginListener != null)
             this.loginListener = loginListener;
         if (homePresenter != null) {
-            homePresenter.Login(context);
+            homePresenter.Login(context,loginListener);
         }
     }
 
