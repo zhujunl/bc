@@ -36,7 +36,7 @@ public class HomePresenter extends BasePresenter {
 
     public HomePresenter(LoginCallback loginCallback) {
         HttpManager.getInstance().setHomePresenter(this);
-        this.loginCallback=loginCallback;
+        this.loginCallback = loginCallback;
     }
 
     public HomePresenter() {
@@ -144,7 +144,8 @@ public class HomePresenter extends BasePresenter {
                         .age(account.getAge())
                         .token(authorization.getAuthorization())
                         .build();
-                loginListener.onSuccess(user);
+                if (loginListener != null)
+                    loginListener.onSuccess(user);
                 return;
             }
             SPUtils bcSP = SPUtils.getInstance(context, "bcSP");
