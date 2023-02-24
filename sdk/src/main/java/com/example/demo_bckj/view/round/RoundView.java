@@ -151,7 +151,21 @@ public class RoundView {
     public void closeRoundView(Context context) {
         isShow = false;
         isMsg = false;
+        switch (winStatus) {
+            case WIN_SMALL:
+                mWindowManager.removeViewImmediate(smallWindow);
+                break;
+            case WIN_BIG:
+                mWindowManager.removeViewImmediate(bigWindow);
+                break;
+            case WIN_HIDE:
+                mWindowManager.removeViewImmediate(hideWindow);
+                break;
+            default:
+                break;
+        }
         winStatus = WIN_NONE;
+        mWindowManager=null;
         removeSmallWindow(context);
         removeBigWindow(context);
         removeHideWindow(context);

@@ -109,7 +109,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler = new Handler(mHandlerThread.getLooper());
-        handler.postDelayed(runnable, 50);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(false);
         alertDialog = builder.create();
@@ -927,7 +926,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
     @Override
     public void login(boolean isAccount) {
-        loginSelect(isAccount);
+        handler.postDelayed(runnable, 50);
     }
 
     MyDrawerLayout myDrawerLayout;

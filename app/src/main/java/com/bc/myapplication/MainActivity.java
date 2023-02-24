@@ -110,29 +110,9 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, new LoginCallBack() {
-            @Override
-            public void onSuccess(User user) {
-                Log.d(TAG, "登录成功" );
-            }
+        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, null));
 
-            @Override
-            public void onFail(String message) {
-                Log.d(TAG, "登录失败" );
-            }
-        }));
-
-        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, new LoginOutCallBack() {
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "退出成功" );
-            }
-
-            @Override
-            public void onFail(String message) {
-                Log.d(TAG, "退出失败" );
-            }
-        }));
+        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, null));
     }
 
     @Override

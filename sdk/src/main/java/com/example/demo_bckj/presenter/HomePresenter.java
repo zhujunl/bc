@@ -11,13 +11,9 @@ import android.widget.TextView;
 
 import com.example.demo_bckj.base.BasePresenter;
 import com.example.demo_bckj.control.LoginCallBack;
-import com.example.demo_bckj.db.entity.AccountEntity;
-import com.example.demo_bckj.db.entity.ConfigEntity;
 import com.example.demo_bckj.listener.LoginCallback;
 import com.example.demo_bckj.listener.PlayInterface;
-import com.example.demo_bckj.manager.DBManager;
 import com.example.demo_bckj.manager.HttpManager;
-import com.example.demo_bckj.model.bean.User;
 import com.example.demo_bckj.model.utility.FileUtil;
 import com.example.demo_bckj.model.utility.SPUtils;
 
@@ -135,19 +131,19 @@ public class HomePresenter extends BasePresenter {
 
     public void Login(Context context, LoginCallBack loginListener) {
         if (this.loginCallback != null) {
-            AccountEntity account = DBManager.getInstance(context).getAccount();
-            if (account != null) {
-                ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
-                User user = new User.Builder()
-                        .slug(account.getSlug())
-                        .isAuthenticated(account.getAuthenticated())
-                        .age(account.getAge())
-                        .token(authorization.getAuthorization())
-                        .build();
-                if (loginListener != null)
-                    loginListener.onSuccess(user);
-                return;
-            }
+//            AccountEntity account = DBManager.getInstance(context).getAccount();
+//            if (account != null) {
+//                ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
+//                User user = new User.Builder()
+//                        .slug(account.getSlug())
+//                        .isAuthenticated(account.getAuthenticated())
+//                        .age(account.getAge())
+//                        .token(authorization.getAuthorization())
+//                        .build();
+//                if (loginListener != null)
+//                    loginListener.onSuccess(user);
+//                return;
+//            }
             SPUtils bcSP = SPUtils.getInstance(context, "bcSP");
             this.loginCallback.login(bcSP.getBoolean("isAccount"));
         }
