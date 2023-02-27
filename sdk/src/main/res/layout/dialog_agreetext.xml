@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/background_bg">
+    android:background="@drawable/infinite_game_background_bg">
     <com.example.demo_bckj.view.round.MyWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"

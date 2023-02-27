@@ -7,7 +7,7 @@
         android:id="@+id/hide_float_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/bc_img_left"
+        android:src="@drawable/infinite_game_bc_img_left"
         />
 
 </RelativeLayout>

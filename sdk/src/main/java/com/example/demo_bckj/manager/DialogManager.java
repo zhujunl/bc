@@ -9,6 +9,7 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -17,12 +18,10 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -111,7 +110,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler = new Handler(mHandlerThread.getLooper());
-        handler.postDelayed(runnable, 50);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(false);
         alertDialog = builder.create();
@@ -283,15 +281,16 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         spinnerImg.setOnClickListener(view -> {
             if (telEntities.size() == 0)
                 return;
-            PopupTel popupTel = new PopupTel(activity, telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true);
-            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
+            spinnerImg.setBackgroundResource(R.mipmap.infinite_game_caret_up);
+            PopupTel popupTel = new PopupTel(activity, telEntities,
+                    popupLogin, popupEtCode, v, popupLogin.getWidth(),  telEntities.size()<4?WindowManager.LayoutParams.WRAP_CONTENT:200, true,spinnerImg);
+            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 10));
         });
         alertDialog.setContentView(inflate);
         if (!alertDialog.isShowing()) {
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        setDialogSize(alertDialog, 320, 295);
         back.setOnClickListener(v1 -> popupForgetPassword());
 
         //跳转注册
@@ -302,6 +301,10 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             }
         });
         //输入框监听
+        if (!TextUtils.isEmpty(popupLogin.getText().toString().trim())){
+            popup_remove.setVisibility(View.VISIBLE);
+            popupLogin.setSelection(popupLogin.getText().length());
+        }
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -415,6 +418,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         TextView popupUser = inflate.findViewById(R.id.popup_user);
         ImageView popup_remove = inflate.findViewById(R.id.popup_remove);
         ImageView popup_remove_pw = inflate.findViewById(R.id.popup_remove_pw);
+        ImageView popup_pw_type=inflate.findViewById(R.id.popup_pw_type);
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         TextView popupRegister = inflate.findViewById(R.id.popup_register);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
@@ -425,16 +429,16 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        setDialogSize(alertDialog, 320, 295);
         popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(activity).inflate(R.layout.pop_tel_list, null);
         List<AccountLoginEntity> query = DBManager.getInstance(activity).query();
         spinnerImg.setOnClickListener(view -> {
             if (query.size() == 0)
                 return;
+            spinnerImg.setBackgroundResource(R.mipmap.infinite_game_caret_up);
             PopupTel popupTel = new PopupTel(activity, query,
-                    popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true);
-            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
+                    popupLogin, popup_et_pw, v, popupLogin.getWidth(), query.size()<4?WindowManager.LayoutParams.WRAP_CONTENT:200, true,spinnerImg);
+            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 10));
         });
         if (query.size() != 0) {
             popupLogin.setText(query.get(0).getAccount());
@@ -461,6 +465,10 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                 ToastUtil.show(activity, "请先勾选用户协议");
             }
         });
+        if (!TextUtils.isEmpty(popupLogin.getText().toString().trim())){
+            popup_remove.setVisibility(View.VISIBLE);
+            popupLogin.setSelection(popupLogin.getText().length());
+        }
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -486,6 +494,18 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                 } else {
                     popup_remove.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+        if (!TextUtils.isEmpty(popup_et_pw.getText().toString().trim())){
+            popup_remove_pw.setVisibility(View.VISIBLE);
+        }
+        popup_pw_type.setOnClickListener(v1 -> {
+            if (popup_et_pw.getInputType()==129){
+                popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT);
+                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_open);
+            }else {
+                popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_close);
             }
         });
         //密码输入监听
@@ -532,34 +552,26 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         ImageView popup_remove = inflate.findViewById(R.id.popup_remove);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         ImageView popup_remove_code = inflate.findViewById(R.id.popup_remove_code);
-        CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
-        TextView popupUser = inflate.findViewById(R.id.popup_user);
-        TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog, 320, 285);
         //验证
         popupSubmit.setOnClickListener(view -> {
             if (Constants.isFastDoubleClick(activity)) {
                 return;
             }
-            if (popupRb.isChecked()) {
-                String trim1 = popupLogin.getText().toString().trim();
-                String trim2 = popupEtCode.getText().toString().trim();
-                if (TextUtils.isEmpty(trim1) || TextUtils.isEmpty(trim2)) {
-                    ToastUtil.show(activity, "请输入手机号与验证码");
-                    return;
-                }
-                if (!DeviceIdUtil.isMobileNO(trim1)) {
-                    ToastUtil.show(activity, "请输入正确的手机号");
-                    return;
-                }
-                popupResetPassword(trim1, trim2);
-            } else {
-                ToastUtil.show(activity, "请先勾选用户协议");
+            String trim1 = popupLogin.getText().toString().trim();
+            String trim2 = popupEtCode.getText().toString().trim();
+            if (TextUtils.isEmpty(trim1) || TextUtils.isEmpty(trim2)) {
+                ToastUtil.show(activity, "请输入手机号与验证码");
+                return;
             }
+            if (!DeviceIdUtil.isMobileNO(trim1)) {
+                ToastUtil.show(activity, "请输入正确的手机号");
+                return;
+            }
+            popupResetPassword(trim1, trim2);
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
@@ -636,10 +648,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             }
             presenter.forgetPwd(activity, trim1, popupTvCode);
         });
-        //用户协议
-        popupUser.setOnClickListener(view -> UserAgreement(alertDialog, true));
-        //隐私协议
-        popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
     //重置密码
@@ -653,7 +661,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog, 320, 270);
         //确认重置密码
         popupSubmit.setOnClickListener(view -> {
             if (Constants.isFastDoubleClick(activity)) {
@@ -743,7 +750,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         alertDialog.setContentView(inflate);
-        setDialogSize(alertDialog, 320, 320);
         popup_number.setText(user);
         popup_password.setText(password);
         popup_password_pw.setText(password);
@@ -863,20 +869,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         popupPrivacy.setOnClickListener(view -> PrivacyAgreement(alertDialog, true));
     }
 
-    private void setDialogSize(AlertDialog dialog, int width, int height) {
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
-
-        lp.width = dp2px(activity, width);
-        lp.height = dp2px(activity, height);
-        window.setGravity(Gravity.CENTER);
-        window.setAttributes(lp);
-    }
-
-    private int dp2px(Context context, float dpVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                dpVal, context.getResources().getDisplayMetrics());
-    }
 
     /**
      * 弹出用户协议
@@ -967,7 +959,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
     @Override
     public void out(boolean isLoginShow) {
-        drawerLayout.closeDrawers();
+        mDrawGoListener.go();
         RoundView.getInstance().closeRoundView(activity);
         if (isLoginShow)
             activity.runOnUiThread(() -> loginSelect(bcSP.getBoolean("isAccount")));
@@ -975,13 +967,23 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
     @Override
     public void login(boolean isAccount) {
-        loginSelect(isAccount);
+        handler.postDelayed(runnable, 50);
     }
 
     MyDrawerLayout myDrawerLayout;
     WindowManager windowManager;
     WindowManager.LayoutParams mLayoutParams;
     DrawerLayout drawerLayout;
+
+    DrawGoListener mDrawGoListener=new DrawGoListener() {
+        @Override
+        public void go() {
+            if (isAdd){
+                windowManager.removeView(myDrawerLayout);
+                isAdd = false;
+            }
+        }
+    };
 
     private void createDrawLayout(Activity activity) {
         windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
@@ -996,13 +998,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         myDrawerLayout = new MyDrawerLayout(activity);
         drawerLayout = myDrawerLayout.getDrawerLayout();
         myDrawerLayout.setListener(this);
-        myDrawerLayout.setGoListener(new DrawGoListener() {
-            @Override
-            public void go() {
-                windowManager.removeView(myDrawerLayout);
-                isAdd = false;
-            }
-        });
+        myDrawerLayout.setGoListener(mDrawGoListener);
         //        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override

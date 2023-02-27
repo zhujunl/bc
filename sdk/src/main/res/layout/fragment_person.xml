@@ -14,13 +14,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="116dp"
-                android:background="@mipmap/user_background"
+                android:background="@mipmap/infinite_game_user_background"
                 >
                 <ImageView
                     android:id="@+id/user_head"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/head"
+                    android:src="@mipmap/infinite_game_head"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
                     />
@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:orientation="vertical"
-                android:background="@drawable/background_bg"
+                android:background="@drawable/infinite_game_background_bg"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp">
                 <RelativeLayout
@@ -49,14 +49,14 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:background="@drawable/item_selected"
+                    android:background="@drawable/infinite_game_item_selected"
                     android:clickable="true"
                     android:focusable="true">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:src="@mipmap/phones"/>
+                        android:src="@mipmap/infinite_game_phones"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:src="@mipmap/more"
+                        android:src="@mipmap/infinite_game_more"
                         android:layout_marginRight="17dp"
                         android:layout_marginTop="2dp"
                         />
@@ -91,14 +91,14 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:background="@drawable/item_selected"
+                    android:background="@drawable/infinite_game_item_selected"
                     android:clickable="true"
                     android:focusable="true">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:src="@mipmap/password"/>
+                        android:src="@mipmap/infinite_game_password"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:src="@mipmap/more"
+                        android:src="@mipmap/infinite_game_more"
                         android:layout_marginRight="17dp"
                         android:layout_marginTop="2dp"
                         />
@@ -123,14 +123,14 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:background="@drawable/item_selected"
+                    android:background="@drawable/infinite_game_item_selected"
                     android:clickable="true"
                     android:focusable="true">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:src="@mipmap/autonym"/>
+                        android:src="@mipmap/infinite_game_autonym"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:orientation="vertical"
-                android:background="@drawable/background_bg"
+                android:background="@drawable/infinite_game_background_bg"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="15dp"
@@ -166,14 +166,14 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:background="@drawable/item_selected"
+                    android:background="@drawable/infinite_game_item_selected"
                     android:clickable="true"
                     android:focusable="true">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:src="@mipmap/agreement"/>
+                        android:src="@mipmap/infinite_game_agreement"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -188,7 +188,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:src="@mipmap/more"
+                        android:src="@mipmap/infinite_game_more"
                         android:layout_marginRight="17dp"
                         android:layout_marginTop="2dp"
                         />
@@ -199,14 +199,14 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:background="@drawable/item_selected"
+                    android:background="@drawable/infinite_game_item_selected"
                     android:clickable="true"
                     android:focusable="true">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:src="@mipmap/privacy"/>
+                        android:src="@mipmap/infinite_game_privacy"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -220,7 +220,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:src="@mipmap/more"
+                        android:src="@mipmap/infinite_game_more"
                         android:layout_marginRight="17dp"
                         android:layout_marginTop="2dp"
                         />
@@ -231,7 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/background_bg"
+                android:background="@drawable/infinite_game_background_bg"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="15dp"

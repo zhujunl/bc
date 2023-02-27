@@ -2,6 +2,6 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:width="20dp"
-    android:height="20dp"
-    android:drawable="@mipmap/radio_green_un_check"/>
+        android:height="20dp"
+        android:drawable="@mipmap/infinite_game_radio_green_check"/>
 </layer-list>

@@ -16,12 +16,13 @@ import com.example.demo_bckj.model.bean.User;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    String TAG = "MainActivity";
+    String TAG = "MainActivity===";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate");
 
         SDKManager.getInstance().init(MainActivity.this, "", new LoginCallBack() {
             @Override
@@ -109,35 +110,39 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, new LoginCallBack() {
-            @Override
-            public void onSuccess(User user) {
-                Log.d(TAG, "登录成功" );
-            }
+        login.setOnClickListener(v -> SDKManager.getInstance().Login(MainActivity.this, null));
 
-            @Override
-            public void onFail(String message) {
-                Log.d(TAG, "登录失败" );
-            }
-        }));
-
-        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, new LoginOutCallBack() {
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "退出成功" );
-            }
-
-            @Override
-            public void onFail(String message) {
-                Log.d(TAG, "退出失败" );
-            }
-        }));
+        out.setOnClickListener(v -> SDKManager.getInstance().LoginOut(false, false, null));
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart" );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume" );
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause" );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop" );
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy");
         SDKManager.getInstance().cancellation();
     }
 }

@@ -31,7 +31,6 @@ import com.example.demo_bckj.view.dialog.VerifyPhoneDialog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
@@ -52,7 +51,7 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
 
     private Context context;
 
-    private ConstraintLayout csModel;
+    private LinearLayout csModel;
     private LinearLayout pfModel,drawerLine;
     private DrawGoListener goListener;
 
@@ -98,9 +97,9 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
         pfModel.setVisibility(View.VISIBLE);
         csModel.setVisibility(View.INVISIBLE);
 
-        personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
+        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_highlight);
         personTxt.setTextColor(getResources().getColor(R.color.selected));
-        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
     }
 
@@ -113,17 +112,17 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
             case 0:
                 pfModel.setVisibility(View.VISIBLE);
                 csModel.setVisibility(View.INVISIBLE);
-                personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
+                personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_highlight);
                 personTxt.setTextColor(getResources().getColor(R.color.selected));
-                cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
                 cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
                 break;
             case 1:
                 pfModel.setVisibility(View.INVISIBLE);
                 csModel.setVisibility(View.VISIBLE);
-                personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                 personTxt.setTextColor(getResources().getColor(R.color.nor));
-                cServiceBtn.setBackgroundResource(R.mipmap.personal);
+                cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
                 cServiceTxt.setTextColor(getResources().getColor(R.color.selected));
                 break;
             default:

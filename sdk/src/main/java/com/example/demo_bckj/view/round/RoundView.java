@@ -151,7 +151,21 @@ public class RoundView {
     public void closeRoundView(Context context) {
         isShow = false;
         isMsg = false;
+        switch (winStatus) {
+            case WIN_SMALL:
+                mWindowManager.removeViewImmediate(smallWindow);
+                break;
+            case WIN_BIG:
+                mWindowManager.removeViewImmediate(bigWindow);
+                break;
+            case WIN_HIDE:
+                mWindowManager.removeViewImmediate(hideWindow);
+                break;
+            default:
+                break;
+        }
         winStatus = WIN_NONE;
+        mWindowManager=null;
         removeSmallWindow(context);
         removeBigWindow(context);
         removeHideWindow(context);
@@ -268,11 +282,12 @@ public class RoundView {
             smallWindow.measure(w, h);// 测量
 
             int width = smallWindow.getMeasuredWidth();// 获得视图实际宽度（测量宽度）
-            hideWindow = RoundWindowHideView.getInstance(context, click);
-            if (!isNearLeft) {
+            if (isNearLeft) {
+                hideWindow = new RoundWindowHideView(context,click);
+            } else {
+                hideWindow = new RoundWindowHideView(context,click);
                 mLayoutParams.x = mLayoutParams.x + width / 2;
             }
-
         }
         try {
             mWindowManager.addView(hideWindow, mLayoutParams);

@@ -7,20 +7,19 @@
     app:cardCornerRadius="24dp"
     app:cardElevation="0dp"
     app:cardUseCompatPadding="false">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:background="@color/black">
         <ImageView
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@drawable/suspended_solids"
-            android:layout_marginLeft="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:src="@drawable/infinite_game_suspended_solids"
+            android:layout_marginLeft="20dp"/>
         <TextView
             android:id="@+id/login_account"
             android:layout_width="wrap_content"
@@ -30,11 +29,7 @@
             android:text="12345679801"
             android:textSize="14sp"
             android:textColor="@color/white"
-            android:layout_marginRight="130dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_marginRight="90dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,17 +38,14 @@
             android:text="登录中..."
             android:textSize="14sp"
             android:textColor="@color/white"
-            android:layout_marginLeft="50dp"
-            app:layout_constraintLeft_toRightOf="@id/login_account"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_marginLeft="50dp"/>
         <TextView
             android:id="@+id/login_switch"
             android:layout_width="64dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:background="@drawable/bg_logining"
+            android:background="@drawable/infinite_game_bg_logining"
             android:text="切换账号"
             android:textSize="12dp"
             android:textColor="#5293FF"
@@ -62,5 +54,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

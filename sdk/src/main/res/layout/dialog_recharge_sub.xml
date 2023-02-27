@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/background_bg"
+    android:background="@drawable/infinite_game_background_bg"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -84,7 +84,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
-        android:background="@drawable/background_login"
+        android:background="@drawable/infinite_game_background_login"
         android:layout_marginBottom="10dp"
         />
 </LinearLayout>

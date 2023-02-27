@@ -49,16 +49,16 @@ public class RechargeAdapter extends RecyclerView.Adapter<RechargeAdapter.MyView
             notifyDataSetChanged();
         });
         if (p==position){
-            holder.select.setImageResource(R.mipmap.selected);
+            holder.select.setImageResource(R.mipmap.infinite_game_selected);
         }else {
-            holder.select.setImageResource(R.mipmap.unselect);
+            holder.select.setImageResource(R.mipmap.infinite_game_unselect);
         }
         switch (position) {
             case 0:
-                holder.log.setImageResource(R.mipmap.wechatpay);
+                holder.log.setImageResource(R.mipmap.infinite_game_wechatpay);
                 break;
             case 1:
-                holder.log.setImageResource(R.mipmap.alipay);
+                holder.log.setImageResource(R.mipmap.infinite_game_alipay);
                 break;
 
             default:

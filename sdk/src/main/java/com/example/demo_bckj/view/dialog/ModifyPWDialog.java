@@ -8,10 +8,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +35,7 @@ public class ModifyPWDialog extends Dialog {
 
     private String TAG = "ModifyPWDialog";
     private Context context;
-    private ImageView back, remove, AMove;
+    private ImageView back;
     private EditText pw, newPw, newPwA;
     private TextView forget;
     private Button submit;
@@ -54,8 +52,6 @@ public class ModifyPWDialog extends Dialog {
     private void initView() {
         submit = findViewById(R.id.popup_submit);
         back = findViewById(R.id.popup_back);
-        remove = findViewById(R.id.popup_remove_code);
-        AMove = findViewById(R.id.pwAgain_remove);
         pw = findViewById(R.id.popup_login);
         newPw = findViewById(R.id.popup_Et_code);
         newPwA = findViewById(R.id.pwAgain);
@@ -100,13 +96,9 @@ public class ModifyPWDialog extends Dialog {
         ImageView popup_remove = inflate.findViewById(R.id.popup_remove);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
         ImageView popup_remove_code = inflate.findViewById(R.id.popup_remove_code);
-        CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
-        TextView popup_service = inflate.findViewById(R.id.popup_service);
         TextView popup_loginPw = inflate.findViewById(R.id.popup_loginPw);
         RelativeLayout verifyCode = inflate.findViewById(R.id.verifyCode);
-        LinearLayout verifyPhone = inflate.findViewById(R.id.verifyPhone);
-        verifyPhone.setVisibility(View.INVISIBLE);
         verifyCode.setVisibility(View.INVISIBLE);
         setContentView(inflate);
         //验证

@@ -469,7 +469,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         spinnerImg.setOnClickListener(view -> {
             if (telEntities.size() == 0)
                 return;
-            PopupTel popupTel = new PopupTel(getActivity(), telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true);
+            PopupTel popupTel = new PopupTel(getActivity(), telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true,spinnerImg);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         alertDialog.setContentView(inflate);
@@ -619,7 +619,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (query.size() == 0)
                 return;
             PopupTel popupTel = new PopupTel(getActivity(), query,
-                    popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true);
+                    popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true,spinnerImg);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         if (query.size() != 0) {
@@ -1130,27 +1130,27 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             public void run() {
                 switch (style) {
                     case 0:
-                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_highlight);
+                        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_highlight);
                         personTxt.setTextColor(getResources().getColor(R.color.selected));
-                        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
-                        welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
+                        welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare_nor);
                         welfareTxt.setTextColor(getResources().getColor(R.color.nor));
                         break;
                     case 1:
-                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                         personTxt.setTextColor(getResources().getColor(R.color.nor));
-                        cServiceBtn.setBackgroundResource(R.mipmap.personal);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.selected));
-                        welfareBtn.setBackgroundResource(R.mipmap.welfare_nor);
+                        welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare_nor);
                         welfareTxt.setTextColor(getResources().getColor(R.color.nor));
                         break;
                     case 2:
-                        personBtn.setBackgroundResource(R.mipmap.tabbar_me_default);
+                        personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                         personTxt.setTextColor(getResources().getColor(R.color.nor));
-                        cServiceBtn.setBackgroundResource(R.mipmap.personal_nor);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
-                        welfareBtn.setBackgroundResource(R.mipmap.welfare);
+                        welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare);
                         welfareTxt.setTextColor(getResources().getColor(R.color.selected));
                         break;
                     default:

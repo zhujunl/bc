@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="311dp"
+    android:layout_height="244dp"
     android:orientation="vertical"
-    android:background="@drawable/background_bg"
+    android:background="@drawable/infinite_game_background_bg"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
             android:id="@+id/popup_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/login_back"
+            android:src="@mipmap/infinite_game_login_back"
             android:layout_marginLeft="20dp"
 
             />
@@ -45,13 +45,13 @@
             android:inputType="number"
             android:maxLength="11"
             android:paddingLeft="15dp"
-            android:background="@drawable/background_white"
+            android:background="@drawable/infinite_game_background_white"
             />
         <ImageView
             android:id="@+id/popup_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/removes_login"
+            android:src="@mipmap/infinite_game_removes_login"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
             android:layout_marginRight="28dp"
@@ -71,13 +71,13 @@
             android:paddingLeft="15dp"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="18dp"
-            android:background="@drawable/background_white"
+            android:background="@drawable/infinite_game_background_white"
             />
         <ImageView
             android:id="@+id/popup_remove_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/removes_login"
+            android:src="@mipmap/infinite_game_removes_login"
             android:layout_centerInParent="true"
             android:layout_toLeftOf="@+id/popup_Tv_code"
             android:layout_marginRight="18dp"
@@ -107,7 +107,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
-        android:background="@drawable/background_login"
+        android:background="@drawable/infinite_game_background_login"
         android:layout_marginBottom="10dp"
         />
     <RelativeLayout

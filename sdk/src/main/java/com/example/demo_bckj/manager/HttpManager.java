@@ -137,7 +137,6 @@ public class HttpManager {
                                 getRechargeCallBack().onSuccess(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game());
                         } else {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-                            ToastUtil.show(context, context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game() + context.getString(R.string.pay_failed) + payResult.getMemo());
                             if (getRechargeCallBack() != null)
                                 getRechargeCallBack().onFail(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game() + context.getString(R.string.pay_failed) + payResult.getMemo());
                         }
@@ -666,7 +665,7 @@ public class HttpManager {
         if (loginListener != null)
             this.loginListener = loginListener;
         if (homePresenter != null) {
-            homePresenter.Login(context);
+            homePresenter.Login(context,loginListener);
         }
     }
 

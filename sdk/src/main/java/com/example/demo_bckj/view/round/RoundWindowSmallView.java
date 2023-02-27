@@ -264,9 +264,9 @@ public class RoundWindowSmallView extends LinearLayout {
     public void hidePop(){
         Animation mAnimation = null;
         if (RoundView.isNearLeft) {
-            mAnimation = AnimationUtils.loadAnimation(context, FileUtil.getResIdFromFileName(context, "anim", "slide_out_left"));
+            mAnimation = AnimationUtils.loadAnimation(context, FileUtil.getResIdFromFileName(context, "anim", "infinite_game_slide_out_left"));
         } else {
-            mAnimation = AnimationUtils.loadAnimation(context, FileUtil.getResIdFromFileName(context, "anim", "slide_out_right"));
+            mAnimation = AnimationUtils.loadAnimation(context, FileUtil.getResIdFromFileName(context, "anim", "infinite_game_slide_out_right"));
         }
         view.startAnimation(mAnimation);
         mAnimation.setAnimationListener(new Animation.AnimationListener() {
