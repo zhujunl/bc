@@ -2,6 +2,7 @@ package com.example.demo_bckj.view.pop;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 
@@ -29,11 +30,7 @@ public class PopupTel<T> extends PopupWindow implements TAdapter.telListener {
     private EditText edit, edit2;
     private int style = 0;
 
-    //    public synchronized  PopupTel getInstance(Context context, List<T> lists, EditText edit, View v, int width, int height, boolean focusable,int style) {
-    //        return new PopupTel(context, lists, edit, v, width, height, focusable);
-    //    }
-
-    public PopupTel(Context context, List<T> lists, EditText edit, EditText edit2 ,View v, int width, int height, boolean focusable) {
+    public PopupTel(Context context, List<T> lists, EditText edit, EditText edit2 , View v, int width, int height, boolean focusable, Button spinnerImg) {
         super(v, width, height, focusable);
         this.context = context;
         this.list = lists;
@@ -44,6 +41,10 @@ public class PopupTel<T> extends PopupWindow implements TAdapter.telListener {
         rv.setLayoutManager(new LinearLayoutManager(context));
         adapter = new TAdapter(context, lists, this);
         rv.setAdapter(adapter);
+
+        setOnDismissListener(() -> {
+            spinnerImg.setBackgroundResource(R.mipmap.infinite_game_caret_down);
+        });
     }
 
     @Override
@@ -52,9 +53,5 @@ public class PopupTel<T> extends PopupWindow implements TAdapter.telListener {
         edit.setText(tel);
         edit.setSelection(tel.length());
         edit2.setText(password);
-    }
-
-    public void setStyle(int style) {
-        this.style = style;
     }
 }

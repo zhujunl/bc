@@ -469,7 +469,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
         spinnerImg.setOnClickListener(view -> {
             if (telEntities.size() == 0)
                 return;
-            PopupTel popupTel = new PopupTel(getActivity(), telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true);
+            PopupTel popupTel = new PopupTel(getActivity(), telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true,spinnerImg);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         alertDialog.setContentView(inflate);
@@ -619,7 +619,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
             if (query.size() == 0)
                 return;
             PopupTel popupTel = new PopupTel(getActivity(), query,
-                    popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true);
+                    popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true,spinnerImg);
             popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
         });
         if (query.size() != 0) {

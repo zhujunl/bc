@@ -11,6 +11,7 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -264,8 +265,10 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         spinnerImg.setOnClickListener(view -> {
             if (telEntities.size() == 0)
                 return;
-            PopupTel popupTel = new PopupTel(activity, telEntities, popupLogin, popupEtCode, v, inflate.getWidth(), 200, true);
-            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
+            spinnerImg.setBackgroundResource(R.mipmap.infinite_game_caret_up);
+            PopupTel popupTel = new PopupTel(activity, telEntities,
+                    popupLogin, popupEtCode, v, popupLogin.getWidth(),  telEntities.size()<4?WindowManager.LayoutParams.WRAP_CONTENT:200, true,spinnerImg);
+            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 10));
         });
         alertDialog.setContentView(inflate);
         if (!alertDialog.isShowing()) {
@@ -282,6 +285,10 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             }
         });
         //输入框监听
+        if (!TextUtils.isEmpty(popupLogin.getText().toString().trim())){
+            popup_remove.setVisibility(View.VISIBLE);
+            popupLogin.setSelection(popupLogin.getText().length());
+        }
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -395,6 +402,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         TextView popupUser = inflate.findViewById(R.id.popup_user);
         ImageView popup_remove = inflate.findViewById(R.id.popup_remove);
         ImageView popup_remove_pw = inflate.findViewById(R.id.popup_remove_pw);
+        ImageView popup_pw_type=inflate.findViewById(R.id.popup_pw_type);
         TextView popupPrivacy = inflate.findViewById(R.id.popup_privacy);
         TextView popupRegister = inflate.findViewById(R.id.popup_register);
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
@@ -411,9 +419,10 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         spinnerImg.setOnClickListener(view -> {
             if (query.size() == 0)
                 return;
+            spinnerImg.setBackgroundResource(R.mipmap.infinite_game_caret_up);
             PopupTel popupTel = new PopupTel(activity, query,
-                    popupLogin, popup_et_pw, v, inflate.getWidth(), 200, true);
-            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 0));
+                    popupLogin, popup_et_pw, v, popupLogin.getWidth(), query.size()<4?WindowManager.LayoutParams.WRAP_CONTENT:200, true,spinnerImg);
+            popupLogin.post(() -> popupTel.showAsDropDown(popupLogin, 0, 10));
         });
         if (query.size() != 0) {
             popupLogin.setText(query.get(0).getAccount());
@@ -440,6 +449,10 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                 ToastUtil.show(activity, "请先勾选用户协议");
             }
         });
+        if (!TextUtils.isEmpty(popupLogin.getText().toString().trim())){
+            popup_remove.setVisibility(View.VISIBLE);
+            popupLogin.setSelection(popupLogin.getText().length());
+        }
         popupLogin.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -465,6 +478,18 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                 } else {
                     popup_remove.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+        if (!TextUtils.isEmpty(popup_et_pw.getText().toString().trim())){
+            popup_remove_pw.setVisibility(View.VISIBLE);
+        }
+        popup_pw_type.setOnClickListener(v1 -> {
+            if (popup_et_pw.getInputType()==129){
+                popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT);
+                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_open);
+            }else {
+                popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_close);
             }
         });
         //密码输入监听
