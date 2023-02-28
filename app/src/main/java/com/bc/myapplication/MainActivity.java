@@ -4,14 +4,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 
-import com.example.demo_bckj.control.GameCallBack;
-import com.example.demo_bckj.control.LoginCallBack;
-import com.example.demo_bckj.control.LoginOutCallBack;
-import com.example.demo_bckj.control.RechargeCallBack;
-import com.example.demo_bckj.control.SDKManager;
-import com.example.demo_bckj.model.bean.RechargeOrder;
-import com.example.demo_bckj.model.bean.RoleBean;
-import com.example.demo_bckj.model.bean.User;
+import com.bc.sdk.control.GameCallBack;
+import com.bc.sdk.control.LoginCallBack;
+import com.bc.sdk.control.LoginOutCallBack;
+import com.bc.sdk.control.RechargeCallBack;
+import com.bc.sdk.control.SDKManager;
+import com.bc.sdk.model.bean.RechargeOrder;
+import com.bc.sdk.model.bean.RoleBean;
+import com.bc.sdk.model.bean.User;
 
 import androidx.appcompat.app.AppCompatActivity;
 
