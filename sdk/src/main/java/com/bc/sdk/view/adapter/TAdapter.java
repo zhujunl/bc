@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bc.sdk.manager.DBManager;
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.db.entity.AccountLoginEntity;
 import com.bc.sdk.db.entity.TelEntity;
+import com.bc.sdk.manager.DBManager;
 
 import java.util.List;
 

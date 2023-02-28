@@ -4,7 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.widget.Button;
 
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 
 import androidx.annotation.NonNull;
 

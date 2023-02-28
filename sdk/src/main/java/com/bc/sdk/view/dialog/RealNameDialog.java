@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bc.sdk.R;
 import com.bc.sdk.listener.LogoutListener;
 import com.bc.sdk.listener.PfRefreshCallBack;
 import com.bc.sdk.manager.DBManager;
@@ -25,7 +26,6 @@ import com.bc.sdk.model.utility.StrUtil;
 import com.bc.sdk.presenter.PersonPresenter;
 import com.bc.sdk.service.TimeService;
 import com.bc.sdk.view.fragment.PersonFragment;
-import com.example.demo_bckj.R;
 import com.bc.sdk.view.round.RoundView;
 
 import androidx.annotation.NonNull;

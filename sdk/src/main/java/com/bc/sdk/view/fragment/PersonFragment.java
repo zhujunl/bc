@@ -7,13 +7,13 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bc.sdk.listener.privacyListener;
-import com.bc.sdk.manager.DBManager;
-import com.bc.sdk.presenter.PersonPresenter;
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.base.BaseFragment;
 import com.bc.sdk.db.dao.AccountDao;
 import com.bc.sdk.db.entity.AccountEntity;
+import com.bc.sdk.listener.privacyListener;
+import com.bc.sdk.manager.DBManager;
+import com.bc.sdk.presenter.PersonPresenter;
 import com.bc.sdk.view.dialog.BindNewPhoneDialog;
 import com.bc.sdk.view.dialog.ModifyPWDialog;
 import com.bc.sdk.view.dialog.RealNameDialog;

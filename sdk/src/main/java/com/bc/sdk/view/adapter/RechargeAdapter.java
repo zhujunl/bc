@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 
 import java.util.List;
 

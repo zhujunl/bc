@@ -3,8 +3,8 @@ package com.bc.sdk.model.utility.device;
 import android.content.Context;
 import android.os.Build;
 
+import com.bc.sdk.BuildConfig;
 import com.bc.sdk.model.utility.DeviceIdUtil;
-import com.example.demo_bckj.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -44,11 +44,11 @@
 # 混淆采用的算法
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 
--keep class com.example.demo_bckj.manager.**{*;}
--keep class com.example.demo_bckj.model.**{*;}
--keep class com.example.demo_bckj.control.**{*;}
--keep class com.example.demo_bckj.view.**{*;}
--keep class com.example.demo_bckj.service.**{*;}
+-keep class com.bc.sdk.manager.**{*;}
+-keep class com.bc.sdk.model.**{*;}
+-keep class com.bc.sdk.control.**{*;}
+-keep class com.bc.sdk.view.**{*;}
+-keep class com.bc.sdk.service.**{*;}
 -keep public class * extends android.app.Fragment
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

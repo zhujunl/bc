@@ -11,8 +11,8 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bc.sdk.R;
 import com.bc.sdk.listener.ClickListener;
-import com.example.demo_bckj.R;
 import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.round.RoundView;
 

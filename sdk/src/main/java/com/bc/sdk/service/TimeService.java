@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
  */
 public class TimeService extends IntentService {
     private final String TAG = "TimeService";
-    private static final String ACTION_TIME = "com.example.demo_bckj.service.action.time";
     private Context context;
     private static boolean run;
 

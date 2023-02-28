@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bc.sdk.R;
 import com.bc.sdk.model.bean.ChatBean;
-import com.example.demo_bckj.R;
 
 import java.util.List;
 

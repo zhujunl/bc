@@ -6,7 +6,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.round.MyWebView;
 

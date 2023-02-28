@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bc.sdk.R;
 import com.bc.sdk.listener.IBaseView;
-import com.example.demo_bckj.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

@@ -3,9 +3,9 @@ package com.bc.sdk.view.fragment;
 import android.content.Context;
 import android.util.Log;
 
-import com.bc.sdk.presenter.WelfarePresenter;
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.base.BaseFragment;
+import com.bc.sdk.presenter.WelfarePresenter;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;

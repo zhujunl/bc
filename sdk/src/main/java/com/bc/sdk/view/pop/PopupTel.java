@@ -6,8 +6,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 
+import com.bc.sdk.R;
 import com.bc.sdk.view.adapter.TAdapter;
-import com.example.demo_bckj.R;
 
 import java.util.List;
 

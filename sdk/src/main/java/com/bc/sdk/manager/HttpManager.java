@@ -14,21 +14,19 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
-import com.bc.sdk.control.GameCallBack;
-import com.bc.sdk.listener.ClickListener;
-import com.bc.sdk.listener.IBaseView;
-import com.bc.sdk.listener.LogoutListener;
-import com.bc.sdk.listener.PfRefreshCallBack;
-import com.bc.sdk.listener.PlayInterface;
-import com.bc.sdk.presenter.HomePresenter;
-import com.bc.sdk.service.TimeService;
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.base.BasePresenter;
+import com.bc.sdk.control.GameCallBack;
 import com.bc.sdk.control.LoginCallBack;
 import com.bc.sdk.control.LoginOutCallBack;
 import com.bc.sdk.control.RechargeCallBack;
 import com.bc.sdk.crash.CrashEntity;
 import com.bc.sdk.db.entity.ConfigEntity;
+import com.bc.sdk.listener.ClickListener;
+import com.bc.sdk.listener.IBaseView;
+import com.bc.sdk.listener.LogoutListener;
+import com.bc.sdk.listener.PfRefreshCallBack;
+import com.bc.sdk.listener.PlayInterface;
 import com.bc.sdk.model.MyCallback;
 import com.bc.sdk.model.RetrofitManager;
 import com.bc.sdk.model.bean.AccountPwBean;
@@ -54,6 +52,8 @@ import com.bc.sdk.model.utility.CountDownTimerUtils;
 import com.bc.sdk.model.utility.FileUtil;
 import com.bc.sdk.model.utility.SPUtils;
 import com.bc.sdk.model.utility.ToastUtil;
+import com.bc.sdk.presenter.HomePresenter;
+import com.bc.sdk.service.TimeService;
 import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.dialog.BindNewPhoneDialog;
 import com.bc.sdk.view.dialog.ModifyPWDialog;
@@ -132,7 +132,6 @@ public class HttpManager {
                         // 判断resultStatus 为9000则代表支付成功
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                            ToastUtil.show(context, context.getString(R.string.pay_success));
                             if (getRechargeCallBack() != null)
                                 getRechargeCallBack().onSuccess(context.getString(R.string.orderNum) + getRechargeOrder().getNumber_game());
                         } else {

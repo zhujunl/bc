@@ -3,8 +3,8 @@ package com.bc.sdk.base;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import com.bc.sdk.R;
 import com.bc.sdk.listener.IBaseView;
-import com.example.demo_bckj.R;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

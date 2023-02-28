@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.bc.sdk.model.utility.ToastUtil;
 import com.bc.sdk.model.utility.device.DeviceInfo;
-import com.example.demo_bckj.BuildConfig;
+import com.bc.sdk.BuildConfig;
 
 import java.util.HashMap;
 import java.util.Map;

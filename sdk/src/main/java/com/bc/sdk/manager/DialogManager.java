@@ -30,8 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bc.sdk.view.round.MyDrawerLayout;
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.db.entity.AccountEntity;
 import com.bc.sdk.db.entity.AccountLoginEntity;
 import com.bc.sdk.db.entity.TelEntity;
@@ -53,6 +52,7 @@ import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.dialog.RealNameDialog;
 import com.bc.sdk.view.fragment.AgreementActivity;
 import com.bc.sdk.view.pop.PopupTel;
+import com.bc.sdk.view.round.MyDrawerLayout;
 import com.bc.sdk.view.round.RoundView;
 
 import java.io.IOException;

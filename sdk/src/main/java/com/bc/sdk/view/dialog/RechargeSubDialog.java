@@ -12,12 +12,12 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bc.sdk.R;
 import com.bc.sdk.control.RechargeCallBack;
 import com.bc.sdk.manager.HttpManager;
 import com.bc.sdk.model.bean.RechargeOrder;
 import com.bc.sdk.model.utility.StrUtil;
 import com.bc.sdk.view.adapter.RechargeAdapter;
-import com.example.demo_bckj.R;
 
 import java.util.Arrays;
 import java.util.List;

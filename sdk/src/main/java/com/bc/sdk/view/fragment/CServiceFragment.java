@@ -5,9 +5,9 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.bc.sdk.presenter.CServicePresenter;
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.base.BaseFragment;
+import com.bc.sdk.presenter.CServicePresenter;
 import com.bc.sdk.view.Constants;
 
 import java.util.HashMap;

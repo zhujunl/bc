@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.demo_bckj.R;
+import com.bc.sdk.R;
 import com.bc.sdk.db.dao.AccountDao;
 import com.bc.sdk.db.entity.AccountEntity;
 import com.bc.sdk.listener.DrawGoListener;

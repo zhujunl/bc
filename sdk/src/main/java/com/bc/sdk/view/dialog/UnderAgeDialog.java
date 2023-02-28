@@ -6,8 +6,8 @@ import android.os.CountDownTimer;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bc.sdk.R;
 import com.bc.sdk.manager.HttpManager;
-import com.example.demo_bckj.R;
 
 import androidx.annotation.NonNull;
 
