@@ -20,13 +20,13 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'version', '"1.0.2"'
+            buildConfigField 'String', 'version', '"1.0.3"'
             buildConfigField 'String','baseUrl','"https://apitest.infinite-game.cn"'
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'version', '"1.0.2"'
+            buildConfigField 'String', 'version', '"1.0.3"'
             buildConfigField 'String','baseUrl','"https://api.infinite-game.cn"'
         }
     }
@@ -45,25 +45,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-// /*OkHttp的依赖库*/
-//    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-////OkHttp日志拦截器依赖
-//    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
-///* Retrofit 依赖 */
-//    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-///* Gson转换器 依赖 */
-//    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
    // //今日头条适配
     api 'me.jessyan:autosize:1.2.1'
-
-
-//    implementation 'com.alibaba:fastjson:1.2.48'
-
-
    // // 支付宝 SDK AAR 包所需的配置
     api 'com.alipay.sdk:alipaysdk-android:+@aar'
-
-//    implementation 'com.yanzhenjie:permission:2.0.3'
 }

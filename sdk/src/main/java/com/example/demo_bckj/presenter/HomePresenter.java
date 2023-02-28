@@ -131,19 +131,6 @@ public class HomePresenter extends BasePresenter {
 
     public void Login(Context context, LoginCallBack loginListener) {
         if (this.loginCallback != null) {
-//            AccountEntity account = DBManager.getInstance(context).getAccount();
-//            if (account != null) {
-//                ConfigEntity authorization = DBManager.getInstance(context).getAuthorization();
-//                User user = new User.Builder()
-//                        .slug(account.getSlug())
-//                        .isAuthenticated(account.getAuthenticated())
-//                        .age(account.getAge())
-//                        .token(authorization.getAuthorization())
-//                        .build();
-//                if (loginListener != null)
-//                    loginListener.onSuccess(user);
-//                return;
-//            }
             SPUtils bcSP = SPUtils.getInstance(context, "bcSP");
             this.loginCallback.login(bcSP.getBoolean("isAccount"));
         }

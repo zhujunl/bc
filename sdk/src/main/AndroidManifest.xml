@@ -30,7 +30,8 @@
             android:name="design_height_in_dp"
             android:value="640" />
         <activity android:name="com.example.demo_bckj.view.fragment.AgreementActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"/>
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:theme="@style/Theme.BcTheme" />
         <activity
             android:name="com.example.demo_bckj.permission.PermissionActivity"
             android:theme="@style/Translucent" />

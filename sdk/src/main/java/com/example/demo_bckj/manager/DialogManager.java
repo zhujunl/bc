@@ -507,6 +507,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                 popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_close);
             }
+            popup_et_pw.setSelection(popup_et_pw.getText().length());
         });
         //密码输入监听
         popup_et_pw.addTextChangedListener(new TextWatcher() {
