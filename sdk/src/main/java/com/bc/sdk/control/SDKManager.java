@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.bc.sdk.broadcast.NetworkConnectChangedReceiver;
@@ -11,13 +12,20 @@ import com.bc.sdk.manager.DialogManager;
 import com.bc.sdk.manager.HttpManager;
 import com.bc.sdk.model.bean.RechargeOrder;
 import com.bc.sdk.model.bean.RoleBean;
+import com.bc.sdk.model.utility.Base64;
 import com.bc.sdk.model.utility.FileUtil;
 import com.bc.sdk.model.utility.device.Device;
 import com.bc.sdk.model.utility.device.DeviceInfo;
 import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.dialog.RechargeSubDialog;
+import com.meituan.android.walle.ChannelInfo;
+import com.meituan.android.walle.WalleChannelReader;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -59,12 +67,17 @@ public class SDKManager {
         Map<String, String> map = new HashMap<>();
         map.put("game", gameId); // 游戏唯一标识
         map.put("type", Constants.TYPE);
+        Map<String, String> channel = getChannel(activity);
         boolean fileExists = FileUtil.isFileExists(context, "bc_sdk_config.json");
         if (!fileExists) {
-            if (!TextUtils.isEmpty(gameId)) {
-                Constants.DEVICEINFO = new DeviceInfo(map, new Device(context));
-            } else {
-                Constants.DEVICEINFO = new DeviceInfo(Constants.MAP, new Device(context));
+            if (channel==null){
+                if (!TextUtils.isEmpty(gameId)) {
+                    Constants.DEVICEINFO = new DeviceInfo(map, new Device(context));
+                } else {
+                    Constants.DEVICEINFO = new DeviceInfo(Constants.MAP, new Device(context));
+                }
+            }else {
+                Constants.DEVICEINFO = new DeviceInfo(channel, new Device(context));
             }
         } else {
             Constants.DEVICEINFO = new DeviceInfo(FileUtil.getMap(context, "bc_sdk_config.json"), new Device(context));
@@ -85,6 +98,30 @@ public class SDKManager {
         DialogManager.getInstance().cancellation();
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         activity.unregisterReceiver(networkChange);
+    }
+
+    private Map<String, String> getChannel(Context context) {
+        ChannelInfo channelInfo = WalleChannelReader.getChannelInfo(context);
+        if (channelInfo == null) {
+            return null;
+        }
+        Map<String, String> extraInfo = channelInfo.getExtraInfo();
+        String sdk_config = extraInfo.get("sdk_config");
+        String decode = new String(Base64.decode(sdk_config));
+        try {
+            JSONObject jsonObject = new JSONObject(decode);
+            Log.d("getChannel", "sdk_config.json：" + jsonObject);
+            Iterator<String> iterator = jsonObject.keys();
+            Map<String, String> map = new HashMap<>();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                String value = jsonObject.getString(key);
+                map.put(key, value);
+            }
+            return map;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

@@ -20,13 +20,13 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'version', '"1.0.3"'
+            buildConfigField 'String', 'version', '"1.0.4"'
             buildConfigField 'String','baseUrl','"https://apitest.infinite-game.cn"'
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'version', '"1.0.3"'
+            buildConfigField 'String', 'version', '"1.0.4"'
             buildConfigField 'String','baseUrl','"https://api.infinite-game.cn"'
         }
     }
@@ -49,4 +49,5 @@ dependencies {
     api 'me.jessyan:autosize:1.2.1'
    // // 支付宝 SDK AAR 包所需的配置
     api 'com.alipay.sdk:alipaysdk-android:+@aar'
+    implementation 'com.github.Petterpx.walle:library:1.0.4'
 }
