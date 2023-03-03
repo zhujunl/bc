@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.bc.sdk.broadcast.NetworkConnectChangedReceiver;
@@ -110,7 +109,6 @@ public class SDKManager {
         String decode = new String(Base64.decode(sdk_config));
         try {
             JSONObject jsonObject = new JSONObject(decode);
-            Log.d("getChannel", "sdk_config.json：" + jsonObject);
             Iterator<String> iterator = jsonObject.keys();
             Map<String, String> map = new HashMap<>();
             while (iterator.hasNext()) {
