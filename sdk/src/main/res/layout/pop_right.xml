@@ -9,7 +9,7 @@
         android:background="@drawable/infinite_game_point_bg"
         android:orientation="vertical"
         >
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:background="@drawable/infinite_game_point_gray_bg"
@@ -26,19 +26,19 @@
                 />
             <TextView
                 android:id="@+id/account_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="64dp"
+                android:layout_height="24dp"
                 android:text="切换账号"
+                android:textSize="12sp"
                 android:textColor="#5293FF"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="7dp"
-                android:paddingRight="7dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:layout_marginTop="9dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true"
                 android:background="@drawable/infinite_game_background_auth"
                 />
-        </LinearLayout>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="78dp"
@@ -54,8 +54,10 @@
                 <Button
                     android:id="@+id/iv_kefu"
                     style="@style/Sj_MyButton"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="36dp"
+                    android:layout_height="54dp"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginRight="28dp"
                     android:background="@drawable/infinite_game_point_ser_style" />
             </RelativeLayout>
 
@@ -67,8 +69,8 @@
                 <Button
                     android:id="@+id/iv_account"
                     style="@style/Sj_MyButton"
-                    android:layout_width="45.0dip"
-                    android:layout_height="45.0dip"
+                    android:layout_width="36dp"
+                    android:layout_height="54dp"
                     android:background="@drawable/infinite_game_point_ac_style"
                     android:layout_marginLeft="5dp"/>
             </RelativeLayout>

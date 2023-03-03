@@ -200,7 +200,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         privacyTxt.append(agreeTxt);
         privacyTxt.append("和");
         privacyTxt.append(privacy);
-        privacyTxt.append("来帮助您了解我们为您提供的服务，及收集、处理您个人信息的相应规则。为向您提供特定服务或功能，我们会以弹窗形式、在征得您同意后获取特定权限和信息。拒绝授权仅会使得您无法使用其对应的特定服务或功能，但不影响您使用我们的其他服务。");
+        privacyTxt.append("来帮助您了解我们为您提供的服务,及收集、处理您个人信息的相应规则。 为向您提供特定服务或功能，我们会以弹窗形式、  在征得您同意后获取特定权限和信息拒绝授权仅会使得您无法使用其对应的特定服务或功能，但不影响您使用我们的其他服务。");
         //显示popupWindow
 
         AgreementDialog.show();

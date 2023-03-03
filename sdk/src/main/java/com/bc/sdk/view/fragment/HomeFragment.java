@@ -1132,7 +1132,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                     case 0:
                         personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_highlight);
                         personTxt.setTextColor(getResources().getColor(R.color.selected));
-                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
                         welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare_nor);
                         welfareTxt.setTextColor(getResources().getColor(R.color.nor));
@@ -1140,7 +1140,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                     case 1:
                         personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                         personTxt.setTextColor(getResources().getColor(R.color.nor));
-                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.selected));
                         welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare_nor);
                         welfareTxt.setTextColor(getResources().getColor(R.color.nor));
@@ -1148,7 +1148,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements ClickLi
                     case 2:
                         personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_default);
                         personTxt.setTextColor(getResources().getColor(R.color.nor));
-                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
+                        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
                         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
                         welfareBtn.setBackgroundResource(R.mipmap.infinite_game_welfare);
                         welfareTxt.setTextColor(getResources().getColor(R.color.selected));

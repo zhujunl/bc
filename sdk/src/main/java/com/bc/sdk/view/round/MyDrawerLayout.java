@@ -99,7 +99,7 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
 
         personBtn.setBackgroundResource(R.mipmap.infinite_game_tabbar_me_highlight);
         personTxt.setTextColor(getResources().getColor(R.color.selected));
-        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal_nor);
+        cServiceBtn.setBackgroundResource(R.mipmap.infinite_game_personal);
         cServiceTxt.setTextColor(getResources().getColor(R.color.nor));
     }
 

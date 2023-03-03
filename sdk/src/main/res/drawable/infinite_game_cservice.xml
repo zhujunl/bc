@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@mipmap/infinite_game_personal" android:state_selected="true" />
-    <item android:drawable="@mipmap/infinite_game_personal_nor" />
+    <item android:drawable="@mipmap/infinite_game_personal_nor" android:state_selected="true" />
+    <item android:drawable="@mipmap/infinite_game_personal" />
 </selector>
