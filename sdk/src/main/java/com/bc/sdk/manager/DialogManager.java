@@ -49,6 +49,7 @@ import com.bc.sdk.permission.PermissionUtil;
 import com.bc.sdk.permission.RequestBean;
 import com.bc.sdk.presenter.HomePresenter;
 import com.bc.sdk.view.Constants;
+import com.bc.sdk.view.dialog.MyDialog;
 import com.bc.sdk.view.dialog.RealNameDialog;
 import com.bc.sdk.view.fragment.AgreementActivity;
 import com.bc.sdk.view.pop.PopupTel;
@@ -70,7 +71,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
  */
 public class DialogManager implements ClickListener, LogoutListener, LoginCallback, privacyListener {
     final String TAG = "DialogManager";
-    private AlertDialog alertDialog, AgreementDialog;
+    private AlertDialog AgreementDialog;
+    private MyDialog alertDialog;
 
     private HomePresenter presenter;
 
@@ -110,9 +112,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         mHandlerThread = new HandlerThread("loginHandler");
         mHandlerThread.start();
         handler = new Handler(mHandlerThread.getLooper());
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setCancelable(false);
-        alertDialog = builder.create();
+        alertDialog=new MyDialog(activity);
         alertDialog.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() { // dialog 外部监听
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -260,7 +260,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         View inflate = LayoutInflater.from(activity).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
-        ImageView back = inflate.findViewById(R.id.popup_back);
         Button spinnerImg = inflate.findViewById(R.id.spinnerImg);
         TextView popupTvCode = inflate.findViewById(R.id.popup_Tv_code);
         CheckBox popupRb = inflate.findViewById(R.id.popup_Rb);
@@ -272,7 +271,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         Button popupSubmit = inflate.findViewById(R.id.popup_submit);
         TextView popupLoginPw = inflate.findViewById(R.id.popup_loginPw);
         TextView play = inflate.findViewById(R.id.try_play);
-        back.setVisibility(isAccount ? View.VISIBLE : View.INVISIBLE);
         View v = LayoutInflater.from(activity).inflate(R.layout.pop_tel_list, null);
         List<TelEntity> telEntities = DBManager.getInstance(activity).queryTel();
         if (telEntities.size() != 0) {
@@ -291,7 +289,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        back.setOnClickListener(v1 -> popupForgetPassword());
 
         //跳转注册
         popup_register.setOnClickListener(new View.OnClickListener() {
@@ -303,6 +300,12 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         //输入框监听
         if (!TextUtils.isEmpty(popupLogin.getText().toString().trim())){
             popup_remove.setVisibility(View.VISIBLE);
+            popup_remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popupLogin.setText("");
+                }
+            });
             popupLogin.setSelection(popupLogin.getText().length());
         }
         popupLogin.addTextChangedListener(new TextWatcher() {
@@ -429,7 +432,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             alertDialog.setView(inflate);
             alertDialog.show();
         }
-        popup_back.setVisibility(isAccount ? View.INVISIBLE : View.VISIBLE);
         View v = LayoutInflater.from(activity).inflate(R.layout.pop_tel_list, null);
         List<AccountLoginEntity> query = DBManager.getInstance(activity).query();
         spinnerImg.setOnClickListener(view -> {
@@ -467,6 +469,12 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         });
         if (!TextUtils.isEmpty(popupLogin.getText().toString().trim())){
             popup_remove.setVisibility(View.VISIBLE);
+            popup_remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popupLogin.setText("");
+                }
+            });
             popupLogin.setSelection(popupLogin.getText().length());
         }
         popupLogin.addTextChangedListener(new TextWatcher() {
@@ -498,14 +506,20 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         });
         if (!TextUtils.isEmpty(popup_et_pw.getText().toString().trim())){
             popup_remove_pw.setVisibility(View.VISIBLE);
+            popup_remove_pw.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popup_et_pw.setText("");
+                }
+            });
         }
         popup_pw_type.setOnClickListener(v1 -> {
             if (popup_et_pw.getInputType()==129){
                 popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT);
-                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_open);
+                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_close);
             }else {
                 popup_et_pw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_close);
+                popup_pw_type.setBackgroundResource(R.mipmap.infinite_game_preview_open);
             }
             popup_et_pw.setSelection(popup_et_pw.getText().length());
         });

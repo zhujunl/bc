@@ -10,14 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         >
-        <ImageView
-            android:id="@+id/popup_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/infinite_game_login_back"
-            android:layout_marginLeft="20dp"
-
-            />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -31,6 +23,7 @@
 
         <EditText
             android:id="@+id/popup_login"
+            style="@style/EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_centerInParent="true"
@@ -38,7 +31,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="18dp"
             android:layout_marginBottom="10dp"
-            android:textCursorDrawable="@drawable/infinite_game_my_cursor"
             android:background="@drawable/infinite_game_background_white"
             android:hint="@string/popup_login_hint"
             android:inputType="number"
@@ -72,7 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:hint="@string/popup_code_hint"
-            android:textCursorDrawable="@drawable/infinite_game_my_cursor"
+            style="@style/EditTextStyle"
+            android:maxLength="6"
             android:paddingLeft="15dp"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="18dp"
@@ -104,44 +97,57 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="18dp"
         android:layout_gravity="center"
         android:gravity="center">
         <CheckBox
             android:id="@+id/popup_Rb"
-            android:layout_width="20dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/infinite_game_selector_radio_check"
-            android:layout_marginTop="2dp" />
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginLeft="20dp"
+            />
         <TextView
-            android:id="@+id/agree_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="已同意"/>
         <TextView
             android:id="@+id/popup_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="用户协议 "
             android:background="@drawable/infinite_game_text_underline"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="和 "/>
         <TextView
             android:id="@+id/popup_privacy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="隐私政策"
             android:background="@drawable/infinite_game_text_underline"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginRight="28dp">
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
@@ -152,7 +158,8 @@
                 android:layout_height="wrap_content"
                 android:text="快速试玩"
                 android:textSize="10dp"
-                android:textColor="#FE3939"
+                android:textStyle="bold"
+                android:textColor="#BE7BFF"
                 android:layout_gravity="right"
                 />
         </LinearLayout>

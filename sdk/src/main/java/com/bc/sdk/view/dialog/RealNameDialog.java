@@ -62,7 +62,7 @@ public class RealNameDialog extends Dialog {
     }
 
     public RealNameDialog(@NonNull Context context, boolean isCancelable, PfRefreshCallBack callBack, LogoutListener mLogoutListener) {
-        super(context);
+        super(context,R.style.myDialog);
         setContentView(R.layout.popup_autonym);
         this.context = context;
         this.callBack = callBack;

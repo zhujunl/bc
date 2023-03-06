@@ -38,4 +38,29 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
+
+    <style name="EditTextStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHint">#cccccc</item>
+        <item name="android:textCursorDrawable">@drawable/infinite_game_my_cursor</item>
+    </style>
+
+    <style name="privacyStyle">
+        <item name="android:textColor">#cccccc</item>
+    </style>
+
+
+    <style name="myDialog" parent="@style/Theme.AppCompat.Dialog">
+        <!-- 窗口背景 -->
+        <item name="android:windowBackground">@drawable/infinite_game_background_bg</item>
+        <!--是否有边框 -->
+        <item name="android:windowFrame">@null</item>
+<!--        &lt;!&ndash; 是否没有标题 &ndash;&gt;-->
+<!--        <item name="android:windowNoTitle">true</item>-->
+<!--        &lt;!&ndash; 是否浮现在activity之上 &ndash;&gt;-->
+<!--        <item name="android:windowIsFloating">true</item>-->
+<!--        &lt;!&ndash; 是否半透明 &ndash;&gt;-->
+<!--        <item name="android:windowIsTranslucent">false</item>-->
+    </style>
 </resources>

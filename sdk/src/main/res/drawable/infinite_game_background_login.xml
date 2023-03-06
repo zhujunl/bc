@@ -3,7 +3,7 @@
     android:shape="rectangle">
     <item android:state_pressed="true">
         <shape>
-            <corners android:radius="10dp" />
+            <corners android:radius="8dp" />
             <!--    登录按钮颜色-->
             <gradient
                 android:angle="0"
@@ -14,7 +14,7 @@
     </item>
     <item android:state_enabled="true">
         <shape>
-            <corners android:radius="10dp" />
+            <corners android:radius="8dp" />
             <!--    登录按钮颜色-->
             <gradient
                 android:angle="0"

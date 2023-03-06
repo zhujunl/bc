@@ -39,7 +39,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:textCursorDrawable="@drawable/infinite_game_my_cursor"
+            style="@style/EditTextStyle"
             android:hint="@string/popup_register_number"
             android:maxLength="12"
             android:layout_marginLeft="18dp"
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginBottom="10dp"
-            android:textCursorDrawable="@drawable/infinite_game_my_cursor"
+            style="@style/EditTextStyle"
             android:maxLength="16"
             android:hint="@string/popup_register_pw"
             android:layout_marginLeft="18dp"
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:hint="@string/popup_register_pw_pw"
-            android:textCursorDrawable="@drawable/infinite_game_my_cursor"
+            style="@style/EditTextStyle"
             android:maxLength="16"
             android:paddingLeft="15dp"
             android:layout_marginLeft="18dp"
@@ -125,30 +125,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/infinite_game_selector_radio_check"
-            android:layout_marginTop="2dp"
+            android:layout_gravity="center"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="已同意"/>
         <TextView
             android:id="@+id/popup_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="用户协议 "
             android:background="@drawable/infinite_game_text_underline"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="和 "/>
         <TextView
             android:id="@+id/popup_privacy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            style="@style/privacyStyle"
             android:text="隐私政策"
             android:background="@drawable/infinite_game_text_underline"/>
     </LinearLayout>
