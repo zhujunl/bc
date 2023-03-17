@@ -51,7 +51,7 @@ import com.bc.sdk.presenter.HomePresenter;
 import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.dialog.MyDialog;
 import com.bc.sdk.view.dialog.RealNameDialog;
-import com.bc.sdk.view.fragment.AgreementActivity;
+import com.bc.sdk.view.activity.AgreementActivity;
 import com.bc.sdk.view.pop.PopupTel;
 import com.bc.sdk.view.round.MyDrawerLayout;
 import com.bc.sdk.view.round.RoundView;
@@ -153,9 +153,9 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
     private void loginSelect(boolean isAccount) {
         if (isAccount) {
-            popupLoginPw("", "", true);
+            popupLoginPw();
         } else {
-            popupLoginCode(false);
+            popupLoginCode();
         }
     }
 
@@ -211,7 +211,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             PermissionUtil.request(activity, Constants.PermissionString, new PermissionCallback() {
                 @Override
                 public void onPermissionGranted() {
-                    popupLoginCode(bcSP.getBoolean("isAccount"));
+                    popupLoginCode();
                 }
 
                 @Override
@@ -224,39 +224,13 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
                 }
             });
-//            AndPermission.with(activity)
-//                    .runtime()
-//                    .permission(Constants.PermissionString)
-//                    .onGranted(permissions -> {
-//                        // Storage permission are allowed.
-//                        Log.d("AndPermission", "onGranted");
-//                        PackageManager packageManager = activity.getPackageManager();
-//                        PermissionInfo permissionInfo = null;
-//                        for (int i = 0; i < permissions.size(); i++) {
-//                            try {
-//                                permissionInfo = packageManager.getPermissionInfo(permissions.get(i), 0);
-//                            } catch (PackageManager.NameNotFoundException e) {
-//                                e.printStackTrace();
-//                            }
-//                            CharSequence permissionName = permissionInfo.loadLabel(packageManager);
-//                            if (i == permissions.size() - 1) {
-//                                presenter.getSdk(activity, true);
-//                                popupLoginCode(bcSP.getBoolean("isAccount"));
-//                            }
-//                        }
-//                    })
-//                    .onDenied(permissions -> {
-//                        // Storage permission are not allowed.
-//                        Log.d("AndPermission", "onGranted");
-//                    })
-//                    .start();
         });
         //不同意协议
         popup_disagree.setOnClickListener(v -> System.exit(0));
     }
 
     //手机号验证码登录
-    private void popupLoginCode(boolean isAccount) {
+    private void popupLoginCode() {
         View inflate = LayoutInflater.from(activity).inflate(R.layout.popup_code, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         EditText popupEtCode = inflate.findViewById(R.id.popup_Et_code);
@@ -321,7 +295,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popupLogin.getText().toString() != null && !popupLogin.getText().toString().equals("")) {
+                if (!popupLogin.getText().toString().equals("")) {
                     popup_remove.setVisibility(View.VISIBLE);
                     popup_remove.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -349,7 +323,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popupEtCode.getText().toString() != null && !popupEtCode.getText().toString().equals("")) {
+                if (!popupEtCode.getText().toString().equals("")) {
                     popup_remove_code.setVisibility(View.VISIBLE);
                     popup_remove_code.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -392,7 +366,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
         //跳转
         popupLoginPw.setOnClickListener(view -> {
-            popupLoginPw("", "", isAccount);
+            popupLoginPw();
         });
 
 
@@ -412,7 +386,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
     }
 
     //账号密码登录弹窗
-    private void popupLoginPw(String account, String password, boolean isAccount) {
+    private void popupLoginPw() {
         View inflate = LayoutInflater.from(activity).inflate(R.layout.popup_pw_login, null);
         EditText popupLogin = inflate.findViewById(R.id.popup_login);
         ImageView popup_back = inflate.findViewById(R.id.popup_back);
@@ -448,7 +422,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         }
         //返回
         popup_back.setOnClickListener(view -> {
-            popupLoginCode(bcSP.getBoolean("isAccount"));
+            popupLoginCode();
         });
         //立即注册
         popupRegister.setOnClickListener(view -> popupNumberRegister("", "", true));
@@ -490,7 +464,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popupLogin.getText().toString() != null && !popupLogin.getText().toString().equals("")) {
+                if ( !popupLogin.getText().toString().equals("")) {
                     popup_remove.setVisibility(View.VISIBLE);
                     popup_remove.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -537,7 +511,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popup_et_pw.getText().toString() != null && !popup_et_pw.getText().toString().equals("")) {
+                if (!popup_et_pw.getText().toString().equals("")) {
                     popup_remove_pw.setVisibility(View.VISIBLE);
                     popup_remove_pw.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -590,7 +564,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         });
         //返回上一级
         popup_back.setOnClickListener(view -> {
-            popupLoginPw("", "", bcSP.getBoolean("isAccount"));
+            popupLoginPw();
         });
         //跳转联系客服
         popup_service.setOnClickListener(view -> CustomerServer(alertDialog, true));
@@ -608,7 +582,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popupLogin.getText().toString() != null && !popupLogin.getText().toString().equals("")) {
+                if (!popupLogin.getText().toString().equals("")) {
                     popup_remove.setVisibility(View.VISIBLE);
                     popup_remove.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -636,7 +610,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popupEtCode.getText().toString() != null && !popupEtCode.getText().toString().equals("")) {
+                if (!popupEtCode.getText().toString().equals("")) {
                     popup_remove_code.setVisibility(View.VISIBLE);
                     popup_remove_code.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -650,7 +624,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
                 }
             }
         });
-        popup_loginPw.setOnClickListener(view -> popupLoginCode(bcSP.getBoolean("isAccount")));
+        popup_loginPw.setOnClickListener(view -> popupLoginCode());
         popupTvCode.setOnClickListener(view -> {
             String trim1 = popupLogin.getText().toString().trim();
             if (TextUtils.isEmpty(trim1)) {
@@ -703,7 +677,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popup_new_password.getText().toString() != null && !popup_new_password.getText().toString().equals("")) {
+                if (!popup_new_password.getText().toString().equals("")) {
                     popup_remove.setVisibility(View.VISIBLE);
                     popup_remove.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -731,7 +705,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popup_password_pw.getText().toString() != null && !popup_password_pw.getText().toString().equals("")) {
+                if (!popup_password_pw.getText().toString().equals("")) {
                     popup_remove_pw_pw.setVisibility(View.VISIBLE);
                     popup_remove_pw_pw.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -746,7 +720,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             }
         });
         popup_loginPw.setOnClickListener(view -> {
-            popupLoginCode(bcSP.getBoolean("isAccount"));
+            popupLoginCode();
         });
     }
 
@@ -773,9 +747,9 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         //返回
         popup_back.setOnClickListener(view -> {
             if (isAccount) {
-                popupLoginPw("", "", bcSP.getBoolean("isAccount"));
+                popupLoginPw();
             } else {
-                popupLoginCode(bcSP.getBoolean("isAccount"));
+                popupLoginCode();
             }
         });
         popupSubmit.setOnClickListener(view -> {
@@ -808,7 +782,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popup_number.getText().toString() != null && !popup_number.getText().toString().equals("")) {
+                if (!popup_number.getText().toString().equals("")) {
                     popup_remove_number.setVisibility(View.VISIBLE);
                     popup_remove_number.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -836,7 +810,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popup_password.getText().toString() != null && !popup_password.getText().toString().equals("")) {
+                if (!popup_password.getText().toString().equals("")) {
                     popup_remove_pw.setVisibility(View.VISIBLE);
                     popup_remove_pw.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -864,7 +838,7 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (popup_password_pw.getText().toString() != null && !popup_password_pw.getText().toString().equals("")) {
+                if (!popup_password_pw.getText().toString().equals("")) {
                     popup_remove_pw_pw.setVisibility(View.VISIBLE);
                     popup_remove_pw_pw.setOnClickListener(new View.OnClickListener() {
                         @Override

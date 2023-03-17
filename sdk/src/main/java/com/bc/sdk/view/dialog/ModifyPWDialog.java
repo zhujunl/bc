@@ -19,8 +19,8 @@ import com.bc.sdk.db.entity.AccountEntity;
 import com.bc.sdk.manager.DBManager;
 import com.bc.sdk.manager.HttpManager;
 import com.bc.sdk.model.utility.DeviceIdUtil;
+import com.bc.sdk.model.utility.ToastUtil;
 import com.bc.sdk.presenter.PersonPresenter;
-import com.bc.sdk.view.Constants;
 
 import androidx.annotation.NonNull;
 
@@ -64,23 +64,13 @@ public class ModifyPWDialog extends Dialog {
             dismiss();
         });
         submit.setOnClickListener(v -> {
-            if (Constants.isFastDoubleClick(getContext())){
-                return;
-            }
-            String trim = pw.getText().toString().trim();
-            String trim1 = newPw.getText().toString().trim();
-            String trim2 = newPwA.getText().toString().trim();
-            if (!TextUtils.equals(trim1, trim2)) {
-                Toast.makeText(context, "两次密码不一致", Toast.LENGTH_SHORT).show();
-            } else {
-                presenter.modifyPwd(context, trim, trim1, trim2, this);
-            }
+            presenter.submitModifyPW(context,pw,newPw,newPwA,this);
         });
         forget.setOnClickListener(v -> {
             AccountEntity query = DBManager.getInstance(context).getDao().query();
             String tel = query.getTel();
             if (TextUtils.isEmpty(tel)){
-                Toast.makeText(context, "该账号未绑定手机，请绑定手机！", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(context, "该账号未绑定手机，请绑定手机！");
                 return;
             }
             popupForgetPassword();
@@ -179,16 +169,7 @@ public class ModifyPWDialog extends Dialog {
         });
         popup_loginPw.setVisibility(View.INVISIBLE);
         popupTvCode.setOnClickListener(view -> {
-            String trim1 = popupLogin.getText().toString().trim();
-            if (TextUtils.isEmpty(trim1)) {
-                Toast.makeText(context, "请输入手机号", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!DeviceIdUtil.isMobileNO(trim1)) {
-                Toast.makeText(context, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            HttpManager.getInstance().forgetPwd(context, trim1, popupTvCode);
+            presenter.forgetPW(context,popupLogin,popupTvCode);
         });
     }
 

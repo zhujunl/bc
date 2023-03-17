@@ -1,4 +1,4 @@
-package com.bc.sdk.view.fragment;
+package com.bc.sdk.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +20,7 @@ public class AgreementActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_agreement);
         Intent intent = getIntent();
         String style = intent.getStringExtra("style");
         webView=findViewById(R.id.webview);

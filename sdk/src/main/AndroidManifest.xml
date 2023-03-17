@@ -29,7 +29,7 @@
         <meta-data
             android:name="design_height_in_dp"
             android:value="640" />
-        <activity android:name="com.bc.sdk.view.fragment.AgreementActivity"
+        <activity android:name="com.bc.sdk.view.activity.AgreementActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/Theme.BcTheme" />
         <activity

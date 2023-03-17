@@ -2,18 +2,14 @@ package com.bc.sdk.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bc.sdk.R;
 import com.bc.sdk.listener.privacyListener;
-import com.bc.sdk.model.utility.DeviceIdUtil;
 import com.bc.sdk.presenter.PersonPresenter;
-import com.bc.sdk.view.Constants;
 
 import androidx.annotation.NonNull;
 
@@ -61,29 +57,11 @@ public class VerifyPhoneDialog extends Dialog {
     private void click() {
         back.setOnClickListener(v -> dismiss());
         TCode.setOnClickListener(v -> {
-            boolean mobileNO = DeviceIdUtil.isMobileNO(phone.getText().toString().trim());
-            if (!mobileNO) {
-                Toast.makeText(getContext(), "请输入合法手机号", Toast.LENGTH_SHORT).show();
-            } else {
-                //获取短信
-                presenter.modifyBind(context,TCode);
-            }
+            //获取短信
+            presenter.modifyBind(context,phone,TCode);
         });
         submit.setOnClickListener(v -> {
-            if (Constants.isFastDoubleClick(getContext())){
-                return;
-            }
-            if (TextUtils.isEmpty(phone.getText().toString().trim())||TextUtils.isEmpty(code.getText().toString().trim())
-            ||!DeviceIdUtil.isMobileNO(phone.getText().toString().trim())){
-                Toast.makeText(getContext(), "请输入手机号与验证码", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (bindDialog==null){
-                bindDialog = new BindNewPhoneDialog(context, this, presenter);
-            }
-            bindDialog.set(code.getText().toString().trim());
-            hide();
-            bindDialog.show();
+            presenter.checkCode(getContext(),phone,code,this,bindDialog);
         });
         service.setOnClickListener(v -> {
             pListener.cs(this);

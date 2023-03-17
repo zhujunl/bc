@@ -11,6 +11,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
@@ -46,6 +47,7 @@ import com.bc.sdk.model.request.LoginPwReRequest;
 import com.bc.sdk.model.request.ModifyBindPhoneRequest;
 import com.bc.sdk.model.request.ModifyPwdRequest;
 import com.bc.sdk.model.request.PhoneLoginRequest;
+import com.bc.sdk.model.request.RealNameRequest;
 import com.bc.sdk.model.request.ResetPwdRequest;
 import com.bc.sdk.model.request.SDkRequest;
 import com.bc.sdk.model.utility.CountDownTimerUtils;
@@ -57,6 +59,8 @@ import com.bc.sdk.service.TimeService;
 import com.bc.sdk.view.Constants;
 import com.bc.sdk.view.dialog.BindNewPhoneDialog;
 import com.bc.sdk.view.dialog.ModifyPWDialog;
+import com.bc.sdk.view.dialog.RealNameDialog;
+import com.bc.sdk.view.dialog.RealNameRegisterDialog;
 import com.bc.sdk.view.dialog.RechargeDialog;
 import com.bc.sdk.view.dialog.UnderAgeDialog;
 import com.bc.sdk.view.dialog.VerifyPhoneDialog;
@@ -441,6 +445,32 @@ public class HttpManager {
             @Override
             public void onError(String message) {
                 ToastUtil.show(context, message);
+            }
+        });
+    }
+
+    //实名认证
+    public void setRealName(Context context, String idCode, String realName, RealNameDialog dialog, PfRefreshCallBack callBack) {
+        RealNameRequest realNameRequest = new RealNameRequest(idCode, realName);
+        RetrofitManager.getInstance(context).getApiService().setRealName(realNameRequest).enqueue(new MyCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(JSONObject jsStr) {
+                AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
+                DBManager.getInstance(context).insertAccount(data, "");
+                Integer age = data.getData().getAge();
+                dialog.dismiss();
+                TimeService.start(context);
+                if (!(age < 18)) {
+                    RealNameRegisterDialog r = new RealNameRegisterDialog(context);
+                    r.show();
+                }
+                if (callBack!=null)
+                    callBack.refresh();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
     }

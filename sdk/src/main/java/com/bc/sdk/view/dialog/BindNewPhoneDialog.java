@@ -2,17 +2,13 @@ package com.bc.sdk.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bc.sdk.R;
-import com.bc.sdk.model.utility.DeviceIdUtil;
 import com.bc.sdk.presenter.PersonPresenter;
-import com.bc.sdk.view.Constants;
 
 import androidx.annotation.NonNull;
 
@@ -29,10 +25,11 @@ public class BindNewPhoneDialog extends Dialog {
     private ImageView back,remove,removeCode;
     private EditText phone,code;
     private Button submit;
-    private VerifyPhoneDialog dialog;
+    private VerifyPhoneDialog dialog;//dialog不为空时执行修改绑定手机
     private PersonPresenter presenter;
     private String codeOld;
 
+    //绑定新手机，用于修改绑定手机
     public BindNewPhoneDialog(@NonNull Context context, VerifyPhoneDialog dialog, PersonPresenter presenter) {
         super(context);
         this.context=context;
@@ -42,6 +39,7 @@ public class BindNewPhoneDialog extends Dialog {
         initView();
     }
 
+    //绑定手机，用于初次绑定
     public BindNewPhoneDialog(@NonNull Context context,PersonPresenter presenter) {
         super(context);
         this.context=context;
@@ -76,32 +74,10 @@ public class BindNewPhoneDialog extends Dialog {
             }
         });
         submit.setOnClickListener(v->{
-            if (Constants.isFastDoubleClick(getContext())){
-                return;
-            }
-            if (TextUtils.isEmpty(code.getText().toString().trim())){
-                Toast.makeText(context, "请输入验证码", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (dialog==null){
-                presenter.BindPhone(context,phone.getText().toString().trim(),code.getText().toString().trim(),this);
-            }else {
-                presenter.modifyBindPhone(context,codeOld,code.getText().toString().trim(),phone.getText().toString().trim(),dialog,this);
-            }
+            presenter.submitBindPhone(context,phone,code,codeOld,dialog,this);
         });
         TCode.setOnClickListener(v->{
-            String p = phone.getText().toString().trim();
-            boolean mobileNO = DeviceIdUtil.isMobileNO(p);
-            if (!mobileNO) {
-                Toast.makeText(getContext(), "请输入合法手机号", Toast.LENGTH_SHORT).show();
-            } else {
-                //获取短信
-                if (dialog==null) {
-                    presenter.BindPhoneCode(context, p, TCode);
-                }else {
-                    presenter.modifyBindCode(context,p,TCode);
-                }
-            }
+            presenter.getPhoneCode(context,phone,TCode,dialog);
 
 
         });

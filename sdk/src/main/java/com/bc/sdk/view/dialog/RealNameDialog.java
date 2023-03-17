@@ -10,26 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONObject;
 import com.bc.sdk.R;
 import com.bc.sdk.listener.LogoutListener;
 import com.bc.sdk.listener.PfRefreshCallBack;
-import com.bc.sdk.manager.DBManager;
 import com.bc.sdk.manager.HttpManager;
-import com.bc.sdk.model.MyCallback;
-import com.bc.sdk.model.RetrofitManager;
-import com.bc.sdk.model.bean.AccountPwBean;
-import com.bc.sdk.model.request.RealNameRequest;
-import com.bc.sdk.model.utility.StrUtil;
 import com.bc.sdk.presenter.PersonPresenter;
-import com.bc.sdk.service.TimeService;
-import com.bc.sdk.view.fragment.PersonFragment;
 import com.bc.sdk.view.round.RoundView;
 
 import androidx.annotation.NonNull;
-import okhttp3.ResponseBody;
 
 /**
  * @author ZJL
@@ -46,20 +35,8 @@ public class RealNameDialog extends Dialog {
     private ImageView remove, removeCode;
     private Button submit;
     private PersonPresenter presenter;
-    private PersonFragment personFragment;
-    private String n, c;
     private LogoutListener mLogoutListener;
     private PfRefreshCallBack callBack;
-
-    public RealNameDialog(@NonNull Context context, boolean isCancelable, PersonFragment personFragment, LogoutListener mLogoutListener) {
-        super(context);
-        setContentView(R.layout.popup_autonym);
-        this.context = context;
-        this.personFragment = personFragment;
-        this.mLogoutListener = mLogoutListener;
-        setCancelable(isCancelable);
-        initView();
-    }
 
     public RealNameDialog(@NonNull Context context, boolean isCancelable, PfRefreshCallBack callBack, LogoutListener mLogoutListener) {
         super(context,R.style.myDialog);
@@ -68,6 +45,7 @@ public class RealNameDialog extends Dialog {
         this.callBack = callBack;
         this.mLogoutListener = mLogoutListener;
         setCancelable(isCancelable);
+        presenter=new PersonPresenter();
         initView();
     }
 
@@ -84,18 +62,7 @@ public class RealNameDialog extends Dialog {
 
     private void click() {
         submit.setOnClickListener(v -> {
-            n = name.getText().toString().trim();
-            c = code.getText().toString().trim();
-            String s = StrUtil.extractChinese(n);
-            if (TextUtils.isEmpty(s)) {
-                Toast.makeText(context, "请输入中文", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!StrUtil.isCard(c)) {
-                Toast.makeText(context, "请输入正确身份证号码", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            setRealName(context, c, n);
+            presenter.submitRealName(context,name,code,this,callBack);
         });
         name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -144,33 +111,4 @@ public class RealNameDialog extends Dialog {
             }
         });
     }
-
-    //实名认证
-    public void setRealName(Context context, String idCode, String realName) {
-        RealNameRequest realNameRequest = new RealNameRequest(idCode, realName);
-        RetrofitManager.getInstance(context).getApiService().setRealName(realNameRequest).enqueue(new MyCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(JSONObject jsStr) {
-                AccountPwBean data = JSONObject.toJavaObject(jsStr, AccountPwBean.class);
-                DBManager.getInstance(context).insertAccount(data, "");
-                Integer age = data.getData().getAge();
-                dismiss();
-                TimeService.start(context);
-                if (!(age < 18)) {
-                    RealNameRegisterDialog r = new RealNameRegisterDialog(context);
-                    r.show();
-                }
-                if (personFragment!=null)
-                    personFragment.onSuccess("");
-                if (callBack!=null)
-                    callBack.refresh();
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 }
