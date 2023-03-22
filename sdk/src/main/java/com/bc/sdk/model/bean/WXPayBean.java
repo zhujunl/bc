@@ -17,26 +17,26 @@ public class WXPayBean {
     @SerializedName("message")
     private String message;
     @SerializedName("data")
-    private DataBean data;
+    private Data data;
     @SerializedName("errors")
     private List<?> errors;
 
-    public static class DataBean {
-        @SerializedName("code")
-        private String code;
+    public static class Data {
+        @SerializedName("url")
+        private String url;
 
-        public String getCode() {
-            return code;
+        public String getUrl() {
+            return url;
         }
 
-        public void setCode(String code) {
-            this.code = code;
+        public void setUrl(String url) {
+            this.url = url;
         }
 
         @Override
         public String toString() {
-            return "DataBean{" +
-                    "code='" + code + '\'' +
+            return "Data{" +
+                    "url='" + url + '\'' +
                     '}';
         }
     }
@@ -57,11 +57,11 @@ public class WXPayBean {
         this.message = message;
     }
 
-    public DataBean getData() {
+    public Data getData() {
         return data;
     }
 
-    public void setData(DataBean data) {
+    public void setData(Data data) {
         this.data = data;
     }
 

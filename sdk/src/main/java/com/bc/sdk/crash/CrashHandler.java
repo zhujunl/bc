@@ -178,14 +178,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 crashEntity.log=sb.toString();
                 HttpManager.getInstance().CrashLog(mContext,crashEntity);
 
-//                String path = "/sdcard/crash/";
-//                File dir = new File(path);
-//                if (!dir.exists()) {
-//                    dir.mkdirs();
-//                }
-//                FileOutputStream fos = new FileOutputStream(path + fileName);
-//                fos.write(sb.toString().getBytes());
-//                fos.close();
             }
             return fileName;
         } catch (Exception e) {

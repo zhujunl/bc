@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -41,6 +43,7 @@ import com.bc.sdk.model.bean.RechargeOrder;
 import com.bc.sdk.model.bean.RoleBean;
 import com.bc.sdk.model.bean.URLBean;
 import com.bc.sdk.model.bean.User;
+import com.bc.sdk.model.bean.WXPayBean;
 import com.bc.sdk.model.request.BindPhoneRequest;
 import com.bc.sdk.model.request.LoginPwLoRequest;
 import com.bc.sdk.model.request.LoginPwReRequest;
@@ -50,6 +53,7 @@ import com.bc.sdk.model.request.PhoneLoginRequest;
 import com.bc.sdk.model.request.RealNameRequest;
 import com.bc.sdk.model.request.ResetPwdRequest;
 import com.bc.sdk.model.request.SDkRequest;
+import com.bc.sdk.model.request.WXPayRequest;
 import com.bc.sdk.model.utility.CountDownTimerUtils;
 import com.bc.sdk.model.utility.FileUtil;
 import com.bc.sdk.model.utility.SPUtils;
@@ -57,6 +61,7 @@ import com.bc.sdk.model.utility.ToastUtil;
 import com.bc.sdk.presenter.HomePresenter;
 import com.bc.sdk.service.TimeService;
 import com.bc.sdk.view.Constants;
+import com.bc.sdk.view.activity.WXPayActivity;
 import com.bc.sdk.view.dialog.BindNewPhoneDialog;
 import com.bc.sdk.view.dialog.ModifyPWDialog;
 import com.bc.sdk.view.dialog.RealNameDialog;
@@ -68,6 +73,7 @@ import com.bc.sdk.view.round.RoundView;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import okhttp3.Headers;
@@ -701,6 +707,7 @@ public class HttpManager {
     private HandlerThread mHandlerThread;
     private Handler mHandler;
 
+    //支付宝支付
     public void charge(Activity context, @NonNull RechargeOrder rechargeOrder, RechargeCallBack rechargeListener) {
         if (rechargeListener != null)
             this.rechargeListener = rechargeListener;
@@ -750,6 +757,42 @@ public class HttpManager {
         }
     }
 
+    //微信支付
+    public void WXCharge(Activity context, @NonNull RechargeOrder rechargeOrder, RechargeCallBack rechargeListener) {
+        if (rechargeListener != null)
+            this.rechargeListener = rechargeListener;
+        setRechargeOrder(rechargeOrder);
+        try {
+            Response<ResponseBody> execute = RetrofitManager.getInstance(context).getApiService().CreateOrder(rechargeOrder).execute();
+            JSONObject json = FileUtil.getResponseBody(execute.body());
+            assert json != null;
+            if (Objects.requireNonNull(json.get("code")).toString().equals("0")) {
+                OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
+                String orderNum = response.getData().getNumber();
+                WXPayRequest wxPayRequest=new WXPayRequest(orderNum,"weixin");
+                Response<ResponseBody> wxPay = RetrofitManager.getInstance(context).getApiService().WXPay(wxPayRequest).execute();
+                JSONObject wxJson = FileUtil.getResponseBody(wxPay.body());
+                assert wxJson != null;
+                if (Objects.requireNonNull(wxJson.get("code")).toString().equals("0")){
+                    WXPayBean wxPayBean = JSONObject.toJavaObject(wxJson, WXPayBean.class);
+                    PackageManager packageManager = context.getPackageManager();
+                    Intent intent=new Intent(context, WXPayActivity.class);
+                    intent.putExtra("url",wxPayBean.getData().getUrl());
+                    context.startActivity(intent);
+                }
+            } else if (Objects.requireNonNull(json.get("code")).toString().equals("1")) {
+                Looper.prepare();
+                RechargeDialog rechargeDialog = new RechargeDialog(context, json.get("message").toString().replaceAll("\\\\n", "\n"));
+                rechargeDialog.show();
+                Looper.loop();
+            } else {
+                if (this.rechargeListener != null)
+                    this.rechargeListener.onFail(json.get("message").toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     //用户创角
     public void CreateRole(Context context, RoleBean roleBean, GameCallBack callback) {

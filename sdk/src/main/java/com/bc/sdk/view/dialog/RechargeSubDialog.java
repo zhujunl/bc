@@ -1,11 +1,7 @@
 package com.bc.sdk.view.dialog;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -66,52 +62,10 @@ public class RechargeSubDialog extends Dialog {
                 if (pos == 1) {
                     HttpManager.getInstance().charge(context,rechargeOrder,listener);
                 } else {
-                    wxCharge();
+                    HttpManager.getInstance().WXCharge(context,rechargeOrder,listener);
                 }
             }).start();
             dismiss();
         });
     }
-
-    //微信支付
-    private void wxCharge() {
-        //        try {
-        //            Response<ResponseBody> execute = RetrofitManager.getInstance(getContext()).getApiService().CreateOrder(number_game, money, props_name, server_id,
-        //                    server_name, role_id, role_name, callback_url, extend_data).execute();
-        //            JSONObject json = FileUtil.getResponseBody(execute.body());
-        //            if (json.get("code").toString().equals("0")){
-        //                OrderBean response = JSONObject.toJavaObject(json, OrderBean.class);
-        //                String number = response.getData().getNumber();
-        //                Response<ResponseBody> aliExecute = RetrofitManager.getInstance(getContext()).getApiService().WeiChatPay(number).execute();
-        //                JSONObject aliJson = FileUtil.getResponseBody(aliExecute.body());
-        //                if (aliJson.get("code").toString().equals("0")){
-        //                    WXPayBean pay = JSONObject.toJavaObject(aliJson, WXPayBean.class);
-        ////                    Intent intent=new Intent(ActivityManager.getInstance().getCurrentActivity(),WebActivity.class);
-        ////                    intent.putExtra("url",pay.getData().getCode());
-        ////                    context.startActivity(intent);
-        //                }else {
-        //                    Toast.makeText(context, aliJson.get("message").toString(), Toast.LENGTH_SHORT).show();
-        //                }
-        //            }else {
-        //                Toast.makeText(context, json.get("message").toString(), Toast.LENGTH_SHORT).show();
-        //            };
-        //        } catch (IOException e) {
-        //            e.printStackTrace();
-        //        }
-    }
-
-
-    @SuppressLint("WrongConstant")
-    public static void toWeChatScanDirect(Context context) {
-        try {
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI"));
-            intent.putExtra("LauncherUI.From.Scaner.Shortcut", true);
-            intent.setFlags(335544320);
-            intent.setAction("android.intent.action.VIEW");
-            context.startActivity(intent);
-        } catch (Exception e) {
-        }
-    }
-
 }

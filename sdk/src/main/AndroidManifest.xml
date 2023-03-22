@@ -35,6 +35,9 @@
         <activity
             android:name="com.bc.sdk.permission.PermissionActivity"
             android:theme="@style/Translucent" />
+        <activity android:name=".view.activity.WXPayActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:theme="@style/Translucent" />
     </application>
 
 </manifest>

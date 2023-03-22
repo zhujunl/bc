@@ -1,5 +1,6 @@
 package com.bc.sdk.model;
 
+import com.bc.sdk.crash.CrashEntity;
 import com.bc.sdk.model.bean.RechargeOrder;
 import com.bc.sdk.model.bean.RoleBean;
 import com.bc.sdk.model.request.BindPhoneRequest;
@@ -11,7 +12,7 @@ import com.bc.sdk.model.request.PhoneLoginRequest;
 import com.bc.sdk.model.request.RealNameRequest;
 import com.bc.sdk.model.request.ResetPwdRequest;
 import com.bc.sdk.model.request.SDkRequest;
-import com.bc.sdk.crash.CrashEntity;
+import com.bc.sdk.model.request.WXPayRequest;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -118,8 +119,8 @@ public interface ApiService {
                               @Query("exception") boolean exception);
 
     //微信-扫码支付
-    @POST("sdk/v1/order/pay/wc/scan")
-    Call<ResponseBody> WeiChatPay(@Query("number") String number);
+    @POST("sdk/v1/order/pay/wc/h5")
+    Call<ResponseBody> WXPay(@Body WXPayRequest request);
     //支付宝-手机网站（h5）支付
     @POST("sdk/v1/order/pay/ali/wap")
     Call<ResponseBody> AliH5Pay(@Query("number") String number,
