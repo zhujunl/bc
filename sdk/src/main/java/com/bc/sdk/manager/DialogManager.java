@@ -127,7 +127,6 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            //用户协议弹窗
             boolean isFirstRun = bcSP.getBoolean("isFirst", false);
             if (!isFirstRun) {
                 activity.runOnUiThread(() -> popupAgreement());
@@ -211,17 +210,20 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
             PermissionUtil.request(activity, Constants.PermissionString, new PermissionCallback() {
                 @Override
                 public void onPermissionGranted() {
+                    presenter.getSdk(activity, true);
                     popupLoginCode();
                 }
 
                 @Override
                 public void shouldShowRational(RequestBean requestBean, String[] rationalPermissons, boolean before) {
-
+                    presenter.getSdk(activity, true);
+                    popupLoginCode();
                 }
 
                 @Override
                 public void onPermissonReject(String[] rejectPermissons) {
-
+                    presenter.getSdk(activity, true);
+                    popupLoginCode();
                 }
             });
         });

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.bc.sdk.broadcast.NetworkConnectChangedReceiver;
@@ -69,13 +70,13 @@ public class SDKManager {
         Map<String, String> channel = getChannel(activity);
         boolean fileExists = FileUtil.isFileExists(context, "bc_sdk_config.json");
         if (!fileExists) {
-            if (channel==null){
+            if (channel == null) {
                 if (!TextUtils.isEmpty(gameId)) {
                     Constants.DEVICEINFO = new DeviceInfo(map, new Device(context));
                 } else {
                     Constants.DEVICEINFO = new DeviceInfo(Constants.MAP, new Device(context));
                 }
-            }else {
+            } else {
                 Constants.DEVICEINFO = new DeviceInfo(channel, new Device(context));
             }
         } else {
@@ -102,8 +103,10 @@ public class SDKManager {
     private Map<String, String> getChannel(Context context) {
         ChannelInfo channelInfo = WalleChannelReader.getChannelInfo(context);
         if (channelInfo == null) {
+            Log.e("ChannelInfo:", "null");
             return null;
         }
+        Log.d("ChannelInfo:", channelInfo.getExtraInfo().toString());
         Map<String, String> extraInfo = channelInfo.getExtraInfo();
         String sdk_config = extraInfo.get("sdk_config");
         String decode = new String(Base64.decode(sdk_config));

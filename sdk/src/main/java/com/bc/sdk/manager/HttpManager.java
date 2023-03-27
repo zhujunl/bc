@@ -197,7 +197,7 @@ public class HttpManager {
     }
 
     //数据上报
-    public void getSdk(Context context, BasePresenter presenter) {
+    public void getSdk(Context context) {
         RetrofitManager.getInstance(context)
                 .getApiService()
                 .getSdk()
@@ -208,25 +208,18 @@ public class HttpManager {
                         JSONObject jsonObject = JSONObject.parseObject(data.toString());
                         String id = jsonObject.get("id").toString();
                         SPUtils.getInstance(context, "bcSP").put("id", Integer.valueOf(id));
-                        IBaseView view = presenter.getView();
-                        if (view != null) {
-                            view.onSuccess(jsStr);
-                        }
                     }
 
                     @Override
                     public void onError(String message) {
-                        IBaseView view = presenter.getView();
-                        if (view != null) {
-                            view.onError(message);
-                        }
+
                     }
                 });
 
     }
 
     //数据上报
-    public void getSdk(Context context, BasePresenter presenter, int id) {
+    public void getSdk(Context context,  int id) {
         SDkRequest sDkRequest = new SDkRequest(id);
         RetrofitManager.getInstance(context)
                 .getApiService()
@@ -234,18 +227,10 @@ public class HttpManager {
                 .enqueue(new MyCallback<ResponseBody>() {
                     @Override
                     public void onSuccess(JSONObject jsStr) {
-                        IBaseView view = presenter.getView();
-                        if (view != null) {
-                            view.onSuccess(jsStr);
-                        }
                     }
 
                     @Override
                     public void onError(String message) {
-                        IBaseView view = presenter.getView();
-                        if (view != null) {
-                            view.onError(message);
-                        }
                     }
                 });
 

@@ -136,10 +136,12 @@ public class MyDrawerLayout extends DrawerLayout implements PfRefreshCallBack, L
     }
 
     private void click() {
+        cServiceBtn.setOnClickListener(v->changeStyle(1));
         cServiceLin.setOnClickListener(view -> {
             Log.d(TAG, "点击cServiceLin");
             changeStyle(1);
         });
+        personBtn.setOnClickListener(v->changeStyle(0));
         PersonLin.setOnClickListener(view -> {
             Log.d(TAG, "点击PersonLin");
             changeStyle(0);

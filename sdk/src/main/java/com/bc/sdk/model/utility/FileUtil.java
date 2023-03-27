@@ -19,11 +19,13 @@ import com.alibaba.fastjson.JSONObject;
 
 import org.json.JSONException;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
@@ -37,8 +39,11 @@ import okio.BufferedSource;
 
 public class FileUtil {
 
-    static final String TAG="FileUtil";
-    static final String path=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"DCIM"+File.separator+"bc";
+    static final String TAG = "FileUtil";
+    static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+    static final String PIC = PATH + File.separator + "DCIM" + File.separator + "bc";
+    static final String BC = PATH + File.separator + "bc";
+
 
     public static int getResIdFromFileName(Context context, String defType, String file_name) {
         Resources rs = context.getResources();
@@ -47,14 +52,13 @@ public class FileUtil {
     }
 
     /**
-     *
      * @param context
      * @return
      */
 
     public static String getMyPackageName(Context context) {
         try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(),0).packageName;
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).packageName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -64,7 +68,7 @@ public class FileUtil {
     public static JSONObject getResponseBody(ResponseBody responseBody) {
 
         Charset UTF8 = Charset.forName("UTF-8");
-        if (responseBody.source()==null)
+        if (responseBody.source() == null)
             return null;
         BufferedSource source = responseBody.source();
         try {
@@ -87,10 +91,10 @@ public class FileUtil {
     }
 
     /**/
-    public static void saveImg(Context context,Bitmap bitmap){
-        File file=new File(path+File.separator+ SystemClock.currentThreadTimeMillis()+".png");
+    public static void saveImg(Context context, Bitmap bitmap) {
+        File file = new File(PIC + File.separator + SystemClock.currentThreadTimeMillis() + ".png");
         try {
-            if (!file.exists()){
+            if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
@@ -98,13 +102,13 @@ public class FileUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-            Log.d(TAG, "saveImg"  );
+            Log.d(TAG, "saveImg");
             fos.close();
-            if (Build.VERSION.SDK_INT <29) {
+            if (Build.VERSION.SDK_INT < 29) {
                 // 保存图片后发送广播通知更新数据库
                 Uri uri = Uri.fromFile(file);
                 context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-            }else {
+            } else {
                 ContentResolver localContentResolver = context.getContentResolver();
                 ContentValues localContentValues = getImageContentValues(context, file, System.currentTimeMillis());
                 localContentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, localContentValues);
@@ -114,7 +118,7 @@ public class FileUtil {
                 localIntent.setData(localUri);
                 context.sendBroadcast(localIntent);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -240,5 +244,44 @@ public class FileUtil {
             return false;
         }
         return false;
+    }
+
+    /**
+     * 日志保存
+     */
+    public static void saveLog(String message) {
+        String FILENAME = "log";
+        File file = new File(BC + File.separator + FILENAME);
+        FileOutputStream fos = null;
+        BufferedWriter writer = null;
+        try {
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            fos = new FileOutputStream(file, true);
+            writer = new BufferedWriter(new OutputStreamWriter(fos));
+            writer.write(message);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.flush();
+                    fos.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }

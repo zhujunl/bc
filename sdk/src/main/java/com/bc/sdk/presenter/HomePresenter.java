@@ -48,10 +48,10 @@ public class HomePresenter extends BasePresenter {
     public void getSdk(Context context, boolean isUpdate) {
         int id = SPUtils.getInstance(context, "bcSP").getInt("id");
         if (id == -1) {
-            HttpManager.getInstance().getSdk(context, this);
+            HttpManager.getInstance().getSdk(context);
         }
         if (id != -1 && isUpdate) {
-            HttpManager.getInstance().getSdk(context, this, id);
+            HttpManager.getInstance().getSdk(context,  id);
         }
     }
 
