@@ -63,4 +63,11 @@
 <!--        &lt;!&ndash; 是否半透明 &ndash;&gt;-->
 <!--        <item name="android:windowIsTranslucent">false</item>-->
     </style>
+
+    <style name="alertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Minor指竖屏模式下的宽度 -->
+        <item name="android:windowMinWidthMinor">300dp</item>
+        <item name="windowFixedWidthMinor">300dp</item>
+    </style>
 </resources>

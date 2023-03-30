@@ -49,14 +49,14 @@ public class WXPayActivity extends AppCompatActivity {
                     return true;
                 } catch (Exception e) {
                     AlertDialog.Builder builder;
-                    builder = new AlertDialog.Builder(WXPayActivity.this);
+                    builder = new AlertDialog.Builder(WXPayActivity.this,R.style.alertDialog);
+                    builder.setOnDismissListener(dialog -> finish());
                     builder.setTitle("支付中心").
                             setMessage("该手机没有安装微信客户端，请安装微信后重新完成支付，或换用支付宝进行支付").
                             setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
-                            finish();
                         }
                     }).create().show();
                     return true;

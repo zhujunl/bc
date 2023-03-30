@@ -64,8 +64,8 @@ public class RechargeSubDialog extends Dialog {
                 } else {
                     HttpManager.getInstance().WXCharge(context,rechargeOrder,listener);
                 }
+                dismiss();
             }).start();
-            dismiss();
         });
     }
 }

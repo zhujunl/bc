@@ -71,8 +71,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
  */
 public class DialogManager implements ClickListener, LogoutListener, LoginCallback, privacyListener {
     final String TAG = "DialogManager";
-    private AlertDialog AgreementDialog;
-    private MyDialog alertDialog;
+    private MyDialog AgreementDialog;
+    private AlertDialog alertDialog;
 
     private HomePresenter presenter;
 
@@ -164,10 +164,8 @@ public class DialogManager implements ClickListener, LogoutListener, LoginCallba
         Button popup_agree = inflate.findViewById(R.id.popup_agree);
         TextView popup_disagree = inflate.findViewById(R.id.popup_disagree);
         TextView privacyTxt = inflate.findViewById(R.id.txt_privacy);
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setView(inflate);
-        builder.setCancelable(false);
-        AgreementDialog = builder.create();
+        AgreementDialog =new MyDialog(activity);
+        AgreementDialog.setView(inflate);
         privacyTxt.setMovementMethod(LinkMovementMethod.getInstance());
         privacyTxt.setText("我们希望通过 ");
         SpannableString agreeTxt = new SpannableString("《用户协议》");
