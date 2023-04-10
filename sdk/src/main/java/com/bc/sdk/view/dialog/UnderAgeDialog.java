@@ -25,7 +25,7 @@ public class UnderAgeDialog extends Dialog {
     private Button btn;
 
     public UnderAgeDialog(@NonNull Context context, String t) {
-        super(context);
+        super(context, R.style.myDialog);
         setContentView(R.layout.dialog_underage);
         this.context = context;
         btn = findViewById(R.id.btn_under_age);

@@ -40,7 +40,7 @@ public class RechargeSubDialog extends Dialog {
     private RechargeCallBack listener;
 
     public RechargeSubDialog(@NonNull Activity context, RechargeOrder rechargeOrder, RechargeCallBack listener) {
-        super(context);
+        super(context, R.style.myDialog);
         setContentView(R.layout.dialog_recharge_sub);
         this.listener = listener;
         Log.d(TAG, "订单信息==" + rechargeOrder.toString());

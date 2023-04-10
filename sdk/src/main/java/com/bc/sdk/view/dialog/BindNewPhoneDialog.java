@@ -31,7 +31,7 @@ public class BindNewPhoneDialog extends Dialog {
 
     //绑定新手机，用于修改绑定手机
     public BindNewPhoneDialog(@NonNull Context context, VerifyPhoneDialog dialog, PersonPresenter presenter) {
-        super(context);
+        super(context, R.style.myDialog);
         this.context=context;
         this.dialog=dialog;
         this.presenter=presenter;
@@ -41,7 +41,7 @@ public class BindNewPhoneDialog extends Dialog {
 
     //绑定手机，用于初次绑定
     public BindNewPhoneDialog(@NonNull Context context,PersonPresenter presenter) {
-        super(context);
+        super(context, R.style.myDialog);
         this.context=context;
         this.presenter=presenter;
         setContentView(R.layout.dialog_bindnewphone);

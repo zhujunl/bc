@@ -28,7 +28,7 @@ public class RechargeDialog extends Dialog {
     private Context context;
 
     public RechargeDialog(@NonNull Context context, String text) {
-        super(context);
+        super(context, R.style.myDialog);
         setContentView(R.layout.dialog_recharge);
         this.context = context;
         Button btn = findViewById(R.id.popup_submit);
@@ -40,7 +40,7 @@ public class RechargeDialog extends Dialog {
     }
 
     public RechargeDialog(@NonNull Context context, String tittle, String tip, String txt) {
-        super(context);
+        super(context, R.style.myDialog);
         setContentView(R.layout.dialog_recharge);
         this.context = context;
         Button btn = findViewById(R.id.popup_submit);

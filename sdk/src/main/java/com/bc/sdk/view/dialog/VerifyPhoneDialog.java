@@ -34,7 +34,7 @@ public class VerifyPhoneDialog extends Dialog {
 
 
     public VerifyPhoneDialog(@NonNull Context context, PersonPresenter presenter) {
-        super(context);
+        super(context, R.style.myDialog);
         this.context = context;
         this.presenter=presenter;
         setContentView(R.layout.dialog_verifyphone);

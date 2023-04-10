@@ -42,7 +42,7 @@ public class ModifyPWDialog extends Dialog {
     private PersonPresenter presenter;
 
     public ModifyPWDialog(@NonNull Context context, PersonPresenter presenter) {
-        super(context);
+        super(context, R.style.myDialog);
         this.context = context;
         this.presenter = presenter;
         setContentView(R.layout.dialog_modifypw);
